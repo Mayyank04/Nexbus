@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import Link from 'next/link';
 import { DELHI_CORRIDORS } from '@/data/delhiTransitData';
+import { DATA_PROVENANCE_REGISTRY } from '@/data/provenanceRegistry';
+import { ML_VALIDATION_DOSSIER } from '@/lib/mlEvaluation';
 import {
   TrendingUp,
   Activity,
@@ -13,7 +16,14 @@ import {
   Compass,
   ArrowUpRight,
   Filter,
+  Download,
+  Printer,
+  Sliders,
+  CheckCircle2,
+  FileSpreadsheet,
+  AlertTriangle,
 } from 'lucide-react';
+import { Magnetic } from '@/components/ui/magnetic';
 
 interface SummaryData {
   metrics: {
@@ -48,6 +58,7 @@ interface SummaryData {
 export default function AnalyticsControlPage() {
   const [data, setData] = useState<SummaryData | null>(null);
   const [dayType, setDayType] = useState<'weekday' | 'weekend'>('weekday');
+  const [selectedCorridorId, setSelectedCorridorId] = useState<string>('corridor-ring-road');
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -64,6 +75,14 @@ export default function AnalyticsControlPage() {
   }, []);
 
   const flowData = data?.temporalDemand[dayType] || [];
+  const selectedCorridor =
+    DELHI_CORRIDORS.find((c) => c.id === selectedCorridorId) || DELHI_CORRIDORS[0];
+
+  const handlePrintReport = () => {
+    if (typeof window !== 'undefined') {
+      window.print();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
@@ -76,7 +95,7 @@ export default function AnalyticsControlPage() {
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-terracotta" />
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
-                AUTHORITY INTELLIGENCE / OBSERVATORY
+                AUTHORITY INTELLIGENCE / PILOT OBSERVATORY
               </span>
             </div>
             <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
@@ -87,10 +106,9 @@ export default function AnalyticsControlPage() {
             </p>
           </div>
 
-          {/* Weekday vs Weekend Filter */}
-          <div className="flex items-center space-x-3">
-            <span className="font-mono text-[10px] uppercase text-ink-muted">PATTERN:</span>
-            <div className="flex border border-divider bg-surface-white font-mono text-xs">
+          {/* Action Bar: Exports & Pattern Toggle */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex border border-divider bg-surface-white font-mono text-xs shadow-sm">
               <button
                 onClick={() => setDayType('weekday')}
                 className={`px-3 py-2 border-r border-divider transition-colors ${
@@ -99,7 +117,7 @@ export default function AnalyticsControlPage() {
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
-                Weekday Commute
+                Weekday
               </button>
               <button
                 onClick={() => setDayType('weekend')}
@@ -109,15 +127,37 @@ export default function AnalyticsControlPage() {
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
-                Weekend Pattern
+                Weekend
               </button>
             </div>
+
+            <a
+              href="/api/analytics/export?type=corridors"
+              download="nexbus_delhi_corridor_intelligence.csv"
+              className="px-3.5 py-2 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Download full corridor metrics as CSV"
+            >
+              <Download className="w-3.5 h-3.5 text-terracotta" />
+              <span>Export CSV</span>
+            </a>
+
+            <button
+              onClick={handlePrintReport}
+              className="px-3.5 py-2 bg-ink hover:bg-terracotta text-surface-white font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+              title="Print formatted executive PDF report"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Print PDF Briefing</span>
+            </button>
           </div>
         </div>
 
-        {/* High-level Operational Telemetry Grid */}
+        {/* High-level Operational Telemetry Grid with Data Status Badges */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm">
+          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
+            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-green-100 text-green-900 border border-green-300 absolute top-4 right-4">
+              ● OBSERVED
+            </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
               TOTAL DAILY BOARDINGS
             </span>
@@ -125,13 +165,15 @@ export default function AnalyticsControlPage() {
               {data ? (data.metrics.totalDailyPassengers / 1000000).toFixed(2) : '4.28'}M{' '}
               <span className="text-sm font-mono text-ink-muted">PAX</span>
             </div>
-            <div className="flex items-center text-xs text-green-700 font-mono pt-1">
-              <TrendingUp className="w-3.5 h-3.5 mr-1" />
-              <span>+4.2% vs previous fortnight</span>
+            <div className="text-xs text-ink-muted font-mono pt-1">
+              ETM Conductor Terminal Records
             </div>
           </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm">
+          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
+            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 absolute top-4 right-4">
+              ▲ ESTIMATED
+            </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
               NETWORK ON-TIME RATE
             </span>
@@ -139,11 +181,14 @@ export default function AnalyticsControlPage() {
               {data ? data.metrics.networkPunctualityPct : 81.4}%
             </div>
             <div className="text-xs text-ink-muted font-mono pt-1">
-              Headway variance &lt;3.5 minutes
+              AVL Telematics Headway Variance
             </div>
           </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm">
+          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
+            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-blue-100 text-blue-900 border border-blue-300 absolute top-4 right-4">
+              ◆ PREDICTED
+            </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
               AI FORECAST FIDELITY
             </span>
@@ -151,11 +196,14 @@ export default function AnalyticsControlPage() {
               {data ? data.metrics.forecastFidelityPct : 94.8}%
             </div>
             <div className="text-xs text-ink-muted font-mono pt-1">
-              Calibrated across 45-min lookahead
+              ST-GNN Holdout PICP-95 Coverage
             </div>
           </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm">
+          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
+            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-green-100 text-green-900 border border-green-300 absolute top-4 right-4">
+              ● OBSERVED
+            </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
               ELECTRIFIED FLEET
             </span>
@@ -374,6 +422,166 @@ export default function AnalyticsControlPage() {
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* PHASE 3 ML VALIDATION AUDIT & BENCHMARKING */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-divider pb-4 gap-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                  PHASE 3 / MACHINE LEARNING VALIDATION AUDIT
+                </span>
+                <span className="font-mono text-[9px] px-1.5 py-0.5 bg-blue-100 text-blue-900 border border-blue-300">
+                  TEMPORAL HOLDOUT BENCHMARK
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Model Evaluation & Empirical Benchmark Suite
+              </h3>
+            </div>
+            <a
+              href="/api/analytics/export?type=ml_validation"
+              download="nexbus_ml_model_evaluation.csv"
+              className="px-3 py-1.5 border border-divider hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors self-start md:self-auto"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-terracotta" />
+              <span>Export ML Metrics CSV</span>
+            </a>
+          </div>
+
+          <p className="text-xs text-ink-muted leading-relaxed font-light">
+            Reproducible validation across {ML_VALIDATION_DOSSIER.datasetSplit.totalRecords.toLocaleString()} hourly corridor records partitioned into a 70% Train, 15% Validation, and 15% Temporal Holdout Test split.
+          </p>
+
+          {/* Model Comparison Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-mono text-xs border border-divider">
+              <thead>
+                <tr className="bg-ivory border-b border-divider text-ink-muted text-[10px] uppercase">
+                  <th className="py-2.5 px-3">Architecture / Baseline</th>
+                  <th className="py-2.5 px-3">Inference Latency</th>
+                  <th className="py-2.5 px-3 text-right">MAE</th>
+                  <th className="py-2.5 px-3 text-right">RMSE</th>
+                  <th className="py-2.5 px-3 text-right">MAPE</th>
+                  <th className="py-2.5 px-3 text-right">PICP (95% CI)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-divider">
+                {ML_VALIDATION_DOSSIER.modelComparison.map((m) => (
+                  <tr
+                    key={m.modelName}
+                    className={m.isNEXBUSProductionSurrogate ? 'bg-parchment/30 font-medium' : ''}
+                  >
+                    <td className="py-3 px-3">
+                      <div className="font-serif text-sm text-ink">{m.modelName}</div>
+                      <div className="text-[10px] text-ink-muted">{m.modelType}</div>
+                    </td>
+                    <td className="py-3 px-3 text-ink-muted">{m.inferenceLatencyMs} ms</td>
+                    <td className="py-3 px-3 text-right font-semibold text-ink">{m.testMetrics.mae}%</td>
+                    <td className="py-3 px-3 text-right text-ink">{m.testMetrics.rmse}%</td>
+                    <td className="py-3 px-3 text-right text-ink">{m.testMetrics.mape}%</td>
+                    <td className="py-3 px-3 text-right text-terracotta font-semibold">
+                      {m.testMetrics.picp95 ? `${m.testMetrics.picp95}%` : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Disaggregated Corridor Error Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+            {ML_VALIDATION_DOSSIER.corridorBreakdown.map((c) => (
+              <div key={c.corridorId} className="p-4 border border-divider bg-ivory space-y-1.5 font-mono text-xs">
+                <span className="text-[10px] uppercase text-ink-muted block truncate">{c.corridorType}</span>
+                <h5 className="font-serif text-base text-ink truncate">{c.corridorName}</h5>
+                <div className="flex justify-between text-ink-muted pt-1">
+                  <span>MAE:</span>
+                  <span className="font-semibold text-ink">{c.metrics.mae}%</span>
+                </div>
+                <div className="flex justify-between text-ink-muted">
+                  <span>Coverage (95%):</span>
+                  <span className="font-semibold text-terracotta">{c.metrics.picp95}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-4 border border-amber-300 bg-amber-50 text-amber-950 text-xs font-mono flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-semibold">Epistemological & Surrogate Model Disclosure:</span>
+              <p className="font-sans text-[11px] text-amber-900 leading-relaxed">
+                {ML_VALIDATION_DOSSIER.epistemologicalDisclosure.surrogateModelStatement} {ML_VALIDATION_DOSSIER.epistemologicalDisclosure.recommendedDeploymentScope}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4">
+            <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+              PHASE 1 / CENTRAL DATA PROVENANCE REGISTRY
+            </span>
+            <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+              Verified Public Transit & Urban Datasets
+            </h3>
+            <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+              Complete catalog of primary publishers, original repository URLs, licenses, and coverage periods.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-mono text-xs border border-divider">
+              <thead>
+                <tr className="bg-ivory border-b border-divider text-ink-muted text-[10px] uppercase">
+                  <th className="py-2.5 px-3">Dataset Name & Publisher</th>
+                  <th className="py-2.5 px-3">License</th>
+                  <th className="py-2.5 px-3">Coverage & Frequency</th>
+                  <th className="py-2.5 px-3 text-center">Status</th>
+                  <th className="py-2.5 px-3 text-right">Tier</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-divider">
+                {DATA_PROVENANCE_REGISTRY.map((p) => (
+                  <tr key={p.id} className="hover:bg-ivory/60 transition-colors">
+                    <td className="py-3 px-3">
+                      <div className="font-serif text-sm text-ink">{p.datasetName}</div>
+                      <div className="text-[10px] text-ink-muted flex items-center gap-1.5 mt-0.5">
+                        <span>{p.publisher}</span>
+                        <span>•</span>
+                        <a
+                          href={p.originalUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-terracotta underline truncate max-w-[200px]"
+                        >
+                          Source URL
+                        </a>
+                      </div>
+                    </td>
+                    <td className="py-3 px-3 text-ink-muted text-[11px]">{p.license}</td>
+                    <td className="py-3 px-3 text-ink-muted text-[11px]">
+                      <div>{p.coveragePeriod}</div>
+                      <div className="text-[10px] text-ink-muted/80">{p.updateFrequency}</div>
+                    </td>
+                    <td className="py-3 px-3 text-center">
+                      <span className="px-2 py-0.5 text-[9px] bg-green-100 text-green-900 border border-green-300">
+                        {p.validationStatus}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <span className="font-mono text-[10px] text-terracotta font-medium">
+                        {p.epistemologicalTier}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </main>

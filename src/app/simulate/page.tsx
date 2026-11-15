@@ -349,6 +349,71 @@ export default function SimulationLabPage() {
               </div>
             </div>
 
+            {/* Governing Equations Block */}
+            {simulationData.governingEquations && (
+              <div className="p-5 border border-divider bg-ivory space-y-2">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                  GOVERNING EQUATIONS & CONTINUITY CONSTRAINTS
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs text-ink">
+                  {simulationData.governingEquations.map((eq, i) => (
+                    <div key={i} className="p-3 border border-divider bg-surface-white">
+                      {eq}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sensitivity Analysis Section */}
+            {simulationData.sensitivityAnalysis && (
+              <div className="border border-divider p-6 bg-ivory space-y-4">
+                <div className="flex items-center justify-between border-b border-divider pb-2">
+                  <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                    PARAMETRIC SENSITIVITY ANALYSIS
+                  </span>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    VARYING PASSENGER ELASTICITY & FLEET READINESS
+                  </span>
+                </div>
+                <p className="text-xs text-ink-muted font-light leading-relaxed">
+                  How projected cabin crowding responds when commuter elasticity to wait-time varies across literature-backed bounds:
+                </p>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-mono text-xs border border-divider">
+                    <thead>
+                      <tr className="bg-surface-white border-b border-divider text-ink-muted text-[10px] uppercase">
+                        <th className="py-2 px-3">Elasticity Coefficient (ε)</th>
+                        <th className="py-2 px-3 text-right">Projected Induced Commuters</th>
+                        <th className="py-2 px-3 text-right">Projected Load Factor</th>
+                        <th className="py-2 px-3 text-right">Equilibrium Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-divider bg-surface-white">
+                      {simulationData.sensitivityAnalysis.byElasticity.map((s) => (
+                        <tr
+                          key={s.elasticity}
+                          className={s.elasticity === -0.38 ? 'bg-parchment/40 font-medium' : ''}
+                        >
+                          <td className="py-2 px-3">
+                            ε = {s.elasticity} {s.elasticity === -0.38 && '(Nominal Benchmark)'}
+                          </td>
+                          <td className="py-2 px-3 text-right text-ink">+{s.projectedInducedDemandPct}%</td>
+                          <td className="py-2 px-3 text-right font-semibold text-terracotta">
+                            {s.projectedOccupancyPercentage}%
+                          </td>
+                          <td className="py-2 px-3 text-right text-ink-muted">
+                            {s.projectedOccupancyPercentage > 100 ? 'Standees Present' : 'Seated Guaranteed'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
             {/* Assumptions & Limitations */}
             <div className="pt-4 border-t border-divider flex items-start space-x-3 text-xs text-ink-muted">
               <HelpCircle className="w-4 h-4 text-stone shrink-0 mt-0.5" />

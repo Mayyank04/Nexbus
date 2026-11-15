@@ -122,6 +122,21 @@ export interface SimulationResultResponse {
       name: string;
       spilloverReliefPct: number;
     }[];
+    governingEquations?: string[];
+    sensitivityAnalysis?: {
+      byElasticity: {
+        elasticity: number;
+        projectedInducedDemandPct: number;
+        projectedOccupancyFactor: number;
+        projectedOccupancyPercentage: number;
+      }[];
+      byFleetAvailability: {
+        depotAvailabilityRate: number;
+        activeBusesCount: number;
+        addedCapacityPaxPerHour: number;
+        monthlyCo2OffsetTons: number;
+      }[];
+    };
     modelAssumptions: string[];
     uncertaintyBoundPct: number;
   };

@@ -22,6 +22,7 @@ import {
   Route as RouteIcon,
   RotateCcw,
 } from 'lucide-react';
+import { StopAutocomplete } from '@/components/ui/stop-autocomplete';
 import { Magnetic } from '@/components/ui/magnetic';
 
 export default function JourneyPlannerPage() {
@@ -90,71 +91,57 @@ export default function JourneyPlannerPage() {
         {/* Clean, Simple Inputs */}
         <div className="border border-divider bg-surface-white p-6 space-y-4 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            {/* Origin Stop */}
-            <div className="md:col-span-4 bg-parchment/30 border border-divider p-3 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
-                <MapPin className="w-3 h-3 text-terracotta" />
-                FROM (ORIGIN)
-              </span>
-              <select
-                value={originStop}
-                onChange={(e) => setOriginStop(e.target.value)}
-                className="w-full bg-transparent font-serif text-lg text-ink focus:outline-none cursor-pointer"
-              >
-                {DELHI_STOPS.map((stop) => (
-                  <option key={stop.id} value={stop.id}>
-                    {stop.name} ({stop.zone})
-                  </option>
-                ))}
-              </select>
+            {/* Origin Stop Autocomplete */}
+            <div className="md:col-span-4">
+              <StopAutocomplete
+                label="FROM (ORIGIN)"
+                selectedStopId={originStop}
+                onSelectStop={(id) => setOriginStop(id)}
+                iconColor="text-terracotta"
+                placeholder="Type stop or landmark..."
+              />
             </div>
 
             {/* Switch / Direction Arrow */}
-            <div className="md:col-span-1 flex justify-center">
+            <div className="md:col-span-1 flex justify-center pt-5">
               <button
                 onClick={() => {
                   const temp = originStop;
                   setOriginStop(destinationStop);
                   setDestinationStop(temp);
                 }}
-                className="w-8 h-8 rounded-full border border-divider bg-ivory hover:border-terracotta flex items-center justify-center text-ink-muted hover:text-terracotta transition-colors"
+                className="w-9 h-9 rounded-full border border-divider bg-ivory hover:border-terracotta flex items-center justify-center text-ink-muted hover:text-terracotta transition-colors shadow-sm"
                 title="Swap origin and destination"
               >
                 <ArrowRight className="w-4 h-4 text-terracotta" />
               </button>
             </div>
 
-            {/* Destination Stop */}
-            <div className="md:col-span-4 bg-parchment/30 border border-divider p-3 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
-                <MapPin className="w-3 h-3 text-gold" />
-                TO (DESTINATION)
-              </span>
-              <select
-                value={destinationStop}
-                onChange={(e) => setDestinationStop(e.target.value)}
-                className="w-full bg-transparent font-serif text-lg text-ink focus:outline-none cursor-pointer"
-              >
-                {DELHI_STOPS.map((stop) => (
-                  <option key={stop.id} value={stop.id}>
-                    {stop.name} ({stop.zone})
-                  </option>
-                ))}
-              </select>
+            {/* Destination Stop Autocomplete */}
+            <div className="md:col-span-4">
+              <StopAutocomplete
+                label="TO (DESTINATION)"
+                selectedStopId={destinationStop}
+                onSelectStop={(id) => setDestinationStop(id)}
+                iconColor="text-gold"
+                placeholder="Type destination..."
+              />
             </div>
 
             {/* Departure Time */}
-            <div className="md:col-span-3 bg-parchment/30 border border-divider p-3 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
+            <div className="md:col-span-3">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5 mb-1">
                 <Clock className="w-3 h-3 text-stone" />
                 DEPARTURE TIME
               </span>
-              <input
-                type="time"
-                value={departureTime}
-                onChange={(e) => setDepartureTime(e.target.value)}
-                className="w-full bg-transparent font-mono text-xs text-ink focus:outline-none"
-              />
+              <div className="p-3 border border-divider bg-surface-white">
+                <input
+                  type="time"
+                  value={departureTime}
+                  onChange={(e) => setDepartureTime(e.target.value)}
+                  className="w-full bg-transparent font-mono text-sm text-ink focus:outline-none cursor-pointer"
+                />
+              </div>
             </div>
           </div>
 

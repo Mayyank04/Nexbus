@@ -155,7 +155,69 @@ async function runTests() {
     'Simulation explicitly lists empirical model assumptions'
   );
 
-  // 7. Error Handling on Malformed Input
+  // 7. Data Provenance & Geographic Network Validation Tests
+  console.log('\n--- Testing Data Provenance & Geographic Validation ---');
+  const provApi = await fetchUrl('/api/network/provenance');
+  assert(
+    provApi.status === 200 && provApi.json?.success === true,
+    'GET /api/network/provenance returns 200 and success status'
+  );
+  assert(
+    provApi.json?.sources?.length >= 6,
+    `Provenance registry contains >= 6 verified sources (Found: ${provApi.json?.sources?.length})`
+  );
+  assert(
+    provApi.json?.networkValidation?.isValid === true,
+    'Network validation confirms 100% valid WGS84 geometry with 0 errors'
+  );
+
+  // 8. Machine Learning Model Evaluation Tests
+  console.log('\n--- Testing Machine Learning Model Evaluation API ---');
+  const mlApi = await fetchUrl('/api/ml/evaluation');
+  assert(
+    mlApi.status === 200 && mlApi.json?.success === true,
+    'GET /api/ml/evaluation returns benchmark validation dossier'
+  );
+  const stgnnModel = mlApi.json?.evaluation?.modelComparison?.find(
+    (m) => m.isNEXBUSProductionSurrogate === true
+  );
+  assert(
+    stgnnModel && stgnnModel.testMetrics?.mae <= 6.0,
+    `ST-GNN surrogate achieves high accuracy benchmark (MAE: ${stgnnModel?.testMetrics?.mae}%)`
+  );
+  assert(
+    stgnnModel?.testMetrics?.picp95 >= 93.0,
+    `ST-GNN surrogate 95% Bayesian interval coverage meets standard (PICP: ${stgnnModel?.testMetrics?.picp95}%)`
+  );
+
+  // 9. Simulation Sensitivity Analysis & Governing Equations
+  console.log('\n--- Testing Simulation Sensitivity Analysis ---');
+  assert(
+    Array.isArray(simApi.json?.scenario?.governingEquations) &&
+      simApi.json?.scenario?.governingEquations?.length >= 3,
+    'Simulation provides governing equations (Little\'s Law, Elasticity, Emissions)'
+  );
+  assert(
+    Array.isArray(simApi.json?.scenario?.sensitivityAnalysis?.byElasticity) &&
+      simApi.json?.scenario?.sensitivityAnalysis?.byElasticity?.length >= 5,
+    'Simulation provides parametric sensitivity analysis across elasticity grid'
+  );
+
+  // 10. Authority CSV Export Endpoint Tests
+  console.log('\n--- Testing Authority CSV Export Endpoints ---');
+  const csvCorridors = await fetchUrl('/api/analytics/export?type=corridors');
+  assert(
+    csvCorridors.status === 200 &&
+      csvCorridors.headers.get('content-type')?.includes('text/csv'),
+    'GET /api/analytics/export?type=corridors returns text/csv'
+  );
+  assert(
+    csvCorridors.text.includes('Corridor_ID') &&
+      csvCorridors.text.includes('corridor-ring-road'),
+    'Corridors CSV contains structured headers and corridor records'
+  );
+
+  // 11. Error Handling on Malformed Input
   console.log('\n--- Testing API Input Validation & Error Handling ---');
   const badJourney = await fetchUrl('/api/journey/plan', {
     method: 'POST',
