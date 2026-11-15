@@ -6,7 +6,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const latStr = searchParams.get('lat');
     const lngStr = searchParams.get('lng');
+    const profileParam = searchParams.get('profile');
     const service = getAccessibilityService();
+
+    let profile: any = 'GENERAL_PEDESTRIAN';
+    if (profileParam) {
+      const p = profileParam.toUpperCase();
+      if (p.includes('WHEEL') || p === 'WHEELCHAIR_ACCESSIBLE') {
+        profile = 'WHEELCHAIR_ACCESSIBLE';
+      } else if (p.includes('ELDER') || p === 'ELDERLY_MOBILITY') {
+        profile = 'ELDERLY_MOBILITY';
+      }
+    }
 
     if (latStr && lngStr) {
       const lat = parseFloat(latStr);
@@ -25,7 +36,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const report = service.getCoverageReport();
+    const report = service.getCoverageReport(profile);
     return NextResponse.json({
       success: true,
       ...report,
