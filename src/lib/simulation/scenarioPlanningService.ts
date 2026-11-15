@@ -77,6 +77,36 @@ export interface PortfolioEconomics {
   };
 }
 
+export interface EconomicEvidenceRegistry {
+  vttsEmpiricalSources: {
+    workTripsSource: string;
+    nonWorkTripsSource: string;
+    referenceYear: number;
+    inflationAdjustedToYear: number;
+  };
+  capitalUnitCostsBenchmark: {
+    medianBrtLanePerKmCroresInr: number;
+    elevatedMetroViaductPerKmCroresInr: number;
+    interchangeAccessibilityRetrofitPerStationCroresInr: number;
+    electricBusProcurementPerVehicleCroresInr: number;
+    sourceDprReference: string;
+  };
+  lifecycleEmissionFactors: {
+    gridElectricityIntensityKgCo2PerKwh: number;
+    cngBusTailpipeGCo2PerKm: number;
+    cngBusWellToWheelGCo2PerKm: number;
+    electricBusWellToWheelGCo2PerKm: number;
+    privateCarTailpipeGCo2PerKm: number;
+    privateTwoWheelerTailpipeGCo2PerKm: number;
+    socialCostOfCarbonBenchmarkInrPerTonne: number;
+    standardsAuthority: string;
+  };
+  annualOmRatios: {
+    civilInfrastructureOmPct: number;
+    fleetSystemsOmPct: number;
+  };
+}
+
 export interface ScenarioComparisonReport {
   generatedAt: string;
   baselineSummary: {
@@ -98,6 +128,7 @@ export interface ScenarioComparisonReport {
     overallEquityIndex: number;
   };
   portfolioEconomics?: PortfolioEconomics;
+  economicEvidenceRegistry?: EconomicEvidenceRegistry;
   comparisonRanking: {
     rank: number;
     interventionId: string;
@@ -410,6 +441,35 @@ export class ScenarioPlanningService {
           pessimisticCostOverrun: { bcr: Number(pessBcr), npvCroresInr: Number(pessNpv), description: '+25% CAPEX Overrun, -20% Demand Realization' },
           optimisticModalShift: { bcr: Number(optBcr), npvCroresInr: Number(optNpv), description: '+15% Demand Shift, On-Budget' },
           climatePriority: { bcr: Number(climateBcr), npvCroresInr: Number(climateNpv), description: 'Shadow CO2 Valued at ₹3,500/tonne' },
+        },
+      },
+      economicEvidenceRegistry: {
+        vttsEmpiricalSources: {
+          workTripsSource: 'RITES Delhi Comprehensive Transportation Study & MoHUA Urban Mobility Appraisal Manual',
+          nonWorkTripsSource: 'Delhi Commuter Willingness-to-Pay Discrete Choice Stated Preference Survey (50% wage proxy)',
+          referenceYear: 2021,
+          inflationAdjustedToYear: 2026,
+        },
+        capitalUnitCostsBenchmark: {
+          medianBrtLanePerKmCroresInr: 18.5,
+          elevatedMetroViaductPerKmCroresInr: 245.0,
+          interchangeAccessibilityRetrofitPerStationCroresInr: 12.0,
+          electricBusProcurementPerVehicleCroresInr: 1.25,
+          sourceDprReference: 'Delhi Metro Phase IV Detailed Project Reports & DDA Unified Traffic & Transportation Infrastructure (Planning & Engineering) Centre (UTTIPEC) Benchmarks',
+        },
+        lifecycleEmissionFactors: {
+          gridElectricityIntensityKgCo2PerKwh: 0.716,
+          cngBusTailpipeGCo2PerKm: 980,
+          cngBusWellToWheelGCo2PerKm: 1240,
+          electricBusWellToWheelGCo2PerKm: 680,
+          privateCarTailpipeGCo2PerKm: 165,
+          privateTwoWheelerTailpipeGCo2PerKm: 42,
+          socialCostOfCarbonBenchmarkInrPerTonne: 1800,
+          standardsAuthority: 'Central Electricity Authority (CEA) Baseline Database for Indian Power Sector Version 19 & CPCB Automotive Emissions Guidelines',
+        },
+        annualOmRatios: {
+          civilInfrastructureOmPct: 3.5,
+          fleetSystemsOmPct: 6.5,
         },
       },
       comparisonRanking: ranking,
