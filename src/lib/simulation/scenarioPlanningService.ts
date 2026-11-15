@@ -57,6 +57,26 @@ export interface InstitutionalIntervention {
   institutionalDisclaimer: string;
 }
 
+export interface PortfolioEconomics {
+  discountRatePct: number;
+  projectHorizonYears: number;
+  annuityFactor: number;
+  presentValueCostsCroresInr: number;
+  presentValueBenefitsCroresInr: number;
+  portfolioBcr: number;
+  vttsHourlyInr: {
+    workTrips: number;
+    nonWorkTrips: number;
+  };
+  shadowPriceCo2PerTonneInr: number;
+  sensitivityScenarios: {
+    baseCase: { bcr: number; npvCroresInr: number };
+    pessimisticCostOverrun: { bcr: number; npvCroresInr: number; description: string };
+    optimisticModalShift: { bcr: number; npvCroresInr: number; description: string };
+    climatePriority: { bcr: number; npvCroresInr: number; description: string };
+  };
+}
+
 export interface ScenarioComparisonReport {
   generatedAt: string;
   baselineSummary: {
@@ -77,6 +97,7 @@ export interface ScenarioComparisonReport {
     compositeBcrRatio: number;
     overallEquityIndex: number;
   };
+  portfolioEconomics?: PortfolioEconomics;
   comparisonRanking: {
     rank: number;
     interventionId: string;
@@ -279,9 +300,55 @@ export class ScenarioPlanningService {
       selected.reduce((acc, i) => acc + i.opexAnnualCroresInr, 0)
     ).toFixed(1);
 
-    const compositeBcr = +(
-      selected.reduce((acc, i) => acc + i.impactMetrics.benefitCostRatio20Yr, 0) / Math.max(1, selected.length)
-    ).toFixed(2);
+    // Social Discount Rate r = 8%, Project Horizon T = 20 years
+    // Annuity factor AF = [1 - (1+r)^-T] / r = [1 - 1.08^-20] / 0.08 = 9.8181
+    const discountRate = 0.08;
+    const horizonYears = 20;
+    const annuityFactor = +(
+      (1 - Math.pow(1 + discountRate, -horizonYears)) /
+      discountRate
+    ).toFixed(4);
+
+    let sumPvCostsCrores = 0;
+    let sumPvBenefitsCrores = 0;
+
+    for (const item of selected) {
+      const pvCost_i = item.capexCroresInr + item.opexAnnualCroresInr * annuityFactor;
+      const pvBenefit_i = item.impactMetrics.benefitCostRatio20Yr * pvCost_i;
+      sumPvCostsCrores += pvCost_i;
+      sumPvBenefitsCrores += pvBenefit_i;
+    }
+
+    // Economically rigorous Portfolio BCR: PV(Total Benefits) / PV(Total Costs)
+    const compositeBcr = sumPvCostsCrores > 0
+      ? +(sumPvBenefitsCrores / sumPvCostsCrores).toFixed(2)
+      : 1.0;
+
+    const baseNpv = +(sumPvBenefitsCrores - sumPvCostsCrores).toFixed(1);
+
+    // Parametric Sensitivity Scenarios
+    // 1. Pessimistic: +25% CAPEX overrun, -20% Demand Benefits
+    const pessPvCosts = selected.reduce(
+      (sum, item) => sum + (item.capexCroresInr * 1.25 + item.opexAnnualCroresInr * annuityFactor),
+      0
+    );
+    const pessPvBenefits = sumPvBenefitsCrores * 0.80;
+    const pessBcr = +(pessPvBenefits / Math.max(1, pessPvCosts)).toFixed(2);
+    const pessNpv = +(pessPvBenefits - pessPvCosts).toFixed(1);
+
+    // 2. Optimistic: +15% Demand Shift, On-Budget
+    const optPvBenefits = sumPvBenefitsCrores * 1.15;
+    const optBcr = +(optPvBenefits / Math.max(1, sumPvCostsCrores)).toFixed(2);
+    const optNpv = +(optPvBenefits - sumPvCostsCrores).toFixed(1);
+
+    // 3. Climate Priority: Shadow Price of Carbon increased from ₹1,800 to ₹3,500/tonne
+    const carbonBoostCrores = selected.reduce(
+      (sum, item) => sum + (item.impactMetrics.annualGhgAbatementTonnesCo2 * (3500 - 1800) * annuityFactor) / 10000000,
+      0
+    );
+    const climatePvBenefits = sumPvBenefitsCrores + carbonBoostCrores;
+    const climateBcr = +(climatePvBenefits / Math.max(1, sumPvCostsCrores)).toFixed(2);
+    const climateNpv = +(climatePvBenefits - sumPvCostsCrores).toFixed(1);
 
     const overallEquity = Math.round(
       selected.reduce((acc, i) => acc + i.impactMetrics.distributionalEquityScore, 0) / Math.max(1, selected.length)
@@ -325,6 +392,25 @@ export class ScenarioPlanningService {
         totalOpexAnnualCroresInr: Number(totalOpex),
         compositeBcrRatio: Number(compositeBcr),
         overallEquityIndex: overallEquity,
+      },
+      portfolioEconomics: {
+        discountRatePct: discountRate * 100,
+        projectHorizonYears: horizonYears,
+        annuityFactor,
+        presentValueCostsCroresInr: +sumPvCostsCrores.toFixed(1),
+        presentValueBenefitsCroresInr: +sumPvBenefitsCrores.toFixed(1),
+        portfolioBcr: Number(compositeBcr),
+        vttsHourlyInr: {
+          workTrips: 150,
+          nonWorkTrips: 75,
+        },
+        shadowPriceCo2PerTonneInr: 1800,
+        sensitivityScenarios: {
+          baseCase: { bcr: Number(compositeBcr), npvCroresInr: Number(baseNpv) },
+          pessimisticCostOverrun: { bcr: Number(pessBcr), npvCroresInr: Number(pessNpv), description: '+25% CAPEX Overrun, -20% Demand Realization' },
+          optimisticModalShift: { bcr: Number(optBcr), npvCroresInr: Number(optNpv), description: '+15% Demand Shift, On-Budget' },
+          climatePriority: { bcr: Number(climateBcr), npvCroresInr: Number(climateNpv), description: 'Shadow CO2 Valued at ₹3,500/tonne' },
+        },
       },
       comparisonRanking: ranking,
       institutionalNotice:
