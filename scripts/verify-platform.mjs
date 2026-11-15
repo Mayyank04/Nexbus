@@ -369,6 +369,17 @@ async function runTests() {
     assert(false, `Phase 10 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 11 Independent Validation & Technical Certification Harness ---');
+  try {
+    const phase11Output = execSync('node scripts/test-phase11-validation.mjs', { encoding: 'utf8' });
+    assert(
+      phase11Output.includes('PHASE 11 INDEPENDENT VALIDATION SUITE: ALL ASSERTIONS PASSED'),
+      'Phase 11 independent validation (evidence provenance, non-substitution, network sample disclosure, Furness IPF convergence, DCF portfolio BCR 4.07x, circuity equity, safety invariant) passes completely'
+    );
+  } catch (err) {
+    assert(false, `Phase 11 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
