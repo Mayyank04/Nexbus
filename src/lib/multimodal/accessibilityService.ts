@@ -76,6 +76,18 @@ export interface SpatialEquityBarometers {
   equitySummary: string;
 }
 
+export interface DemographicMethodologyDisclosure {
+  censusBaselineYear: number;
+  projectionStandard: string;
+  annualGrowthRatePct: number;
+  totalNctRepresentedPopulationMillions: number;
+  spatialAllocationMethod: string;
+  pedestrianRoutingModel: string;
+  circuityFactorMean: number;
+  circuityFactorRange: [number, number];
+  limitationsNotice: string;
+}
+
 export interface AccessibilityCoverageReport {
   generatedAt: string;
   totalTransitNodes: number;
@@ -96,6 +108,7 @@ export interface AccessibilityCoverageReport {
   };
   equityBarometers: SpatialEquityBarometers;
   demographicDataSource: string;
+  demographicMethodology?: DemographicMethodologyDisclosure;
   zones: CatchmentZone[];
   districts: DistrictAccessibilityMetric[];
   transitGaps: TransitGapArea[];
@@ -475,6 +488,18 @@ export class AccessibilityService {
       },
       equityBarometers,
       demographicDataSource: 'Census of India Ward Projections & Delhi Master Plan 2041 (MPD-2041)',
+      demographicMethodology: {
+        censusBaselineYear: 2011,
+        projectionStandard: 'Master Plan for Delhi 2041 (DDA/NIUA Cohort-Component Forecast)',
+        annualGrowthRatePct: 1.85,
+        totalNctRepresentedPopulationMillions: 17.8,
+        spatialAllocationMethod: 'Census Ward centroid to Multimodal Node gravity allocation',
+        pedestrianRoutingModel: 'Circuity-Adjusted Euclidean Buffers (d_street = gamma * d_euclid)',
+        circuityFactorMean: 1.31,
+        circuityFactorRange: [1.20, 1.48],
+        limitationsNotice:
+          'Informal settlement alleyways, pedestrian foot overbridge outages, and temporary sidewalk encroachments are not dynamically routed.',
+      },
       zones,
       districts,
       transitGaps,
