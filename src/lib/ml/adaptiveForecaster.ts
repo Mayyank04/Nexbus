@@ -82,7 +82,7 @@ export const REGISTERED_MODELS: Record<ModelArchitecture, ModelMetadata> = {
     version: 'v1.4.2-stgnn',
     architecture: 'STGNN_SURROGATE',
     displayName: 'NEXBUS Spatio-Temporal Graph Neural Surrogate (Production)',
-    parametersCount: '124,800 neural surrogate response weights',
+    parametersCount: '124,800 active graph surrogate weights (342,800 PyTorch architecture parameters)',
     inferenceLatencyMs: 12.8,
     epistemologicalStatus: 'MODEL PREDICTION',
   },

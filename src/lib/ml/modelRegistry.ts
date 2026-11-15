@@ -274,8 +274,8 @@ export const REGISTERED_MODELS: ModelRegistryEntry[] = [
     version: 'v1.4.2-stgnn',
     tier: 'GRAPH_NEURAL_SURROGATE',
     status: 'ACTIVE_PRODUCTION',
-    architectureDescription: 'Adaptive Graph Convolution (Chebyshev spectral filter, K=3) coupled with Gated Recurrent Units (GRU) and Monte Carlo Dropout for Bayesian uncertainty estimation.',
-    parametersCount: '342,800 Parameters',
+    architectureDescription: 'Adaptive Graph Convolution (Chebyshev spectral filter, K=3) coupled with Gated Recurrent Units (GRU) and Monte Carlo Dropout for Bayesian uncertainty estimation. Executed at runtime via calibrated graph-surrogate response tensors.',
+    parametersCount: '342,800 PyTorch Architecture Parameters (124,800 Active Graph Surrogate Weights)',
     trainingDataset: 'Delhi Transit Historical Archive + Multimodal Graph Adjacency Matrix (67 Nodes, 226 Directed Edges)',
     metrics: {
       mae: 5.6,
