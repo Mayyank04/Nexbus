@@ -31,6 +31,9 @@ export async function GET() {
         gtfsScheduleSync: 'operational',
         stgnnSurrogateLatencyMs: 14.5,
         webgl3dSupport: 'available-with-2d-fallback',
+        shadowOperationsEngine: 'operational-read-only',
+        ingestionPipeline: 'active-with-circuit-breaker',
+        nonInterventionSafety: 'isolated-advisory-mode',
       },
     },
     {

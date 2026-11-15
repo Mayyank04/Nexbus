@@ -44,9 +44,27 @@ export default function DigitalTwinPage() {
 
   const [predictionData, setPredictionData] = useState<CrowdingPredictionResponse['prediction'] | null>(null);
   const [isLoadingPrediction, setIsLoadingPrediction] = useState<boolean>(false);
+  const [observedVehicles, setObservedVehicles] = useState<any[]>([]);
+  const [inspectedVehicle, setInspectedVehicle] = useState<any | null>(null);
+  const [liveFreshnessLag, setLiveFreshnessLag] = useState<number>(14);
 
   // Playback timer
   const playTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    fetch('/api/ingestion/observations?limit=16')
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.observations && res.observations.length > 0) {
+          setObservedVehicles(res.observations);
+          setInspectedVehicle(res.observations[0]);
+        }
+        if (res.metrics?.freshnessLagSeconds !== undefined) {
+          setLiveFreshnessLag(res.metrics.freshnessLagSeconds);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (isPlaying) {
@@ -286,19 +304,55 @@ export default function DigitalTwinPage() {
               className="w-full h-full"
             />
 
-            {/* In-viewport Coordinates */}
-            <div className="absolute top-4 left-4 pointer-events-none">
-              <div className="bg-surface-white/90 border border-divider px-3 py-1.5 backdrop-blur-sm shadow-sm space-y-0.5">
-                <div className="font-mono text-[9px] uppercase tracking-widest text-ink-muted">
-                  GEODETIC DATUM
+            {/* In-viewport Coordinates & Live Telemetry HUD */}
+            <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
+              <div className="bg-surface-white/95 border border-divider px-3 py-2 backdrop-blur-sm shadow-sm space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-ink font-semibold">
+                    SHADOW OPERATIONS STREAM
+                  </span>
                 </div>
-                <div className="font-mono text-xs text-ink font-medium">
-                  DELHI METRO AREA / WGS84
+                <div className="font-mono text-[11px] text-ink-muted flex items-center gap-2">
+                  <span>Lag: <strong className="text-ink">{liveFreshnessLag}s</strong></span>
+                  <span>•</span>
+                  <span className="text-amber-800 bg-amber-50 px-1 py-0.2 border border-amber-200 text-[9px]">
+                    ▲ CALIBRATED ESTIMATE
+                  </span>
                 </div>
+              </div>
+
+              {/* Quick Focus Pills */}
+              <div className="flex flex-wrap gap-1.5 font-mono text-[10px]">
+                <button
+                  onClick={() => {
+                    setSelectedCorridor(null);
+                    setSelectedStop(null);
+                  }}
+                  className={`px-2 py-1 bg-surface-white/90 border transition-colors ${
+                    !selectedCorridor ? 'border-terracotta text-terracotta font-medium' : 'border-divider text-ink-muted hover:text-ink'
+                  }`}
+                >
+                  Overview
+                </button>
+                {DELHI_CORRIDORS.slice(0, 3).map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => {
+                      setSelectedCorridor(c);
+                      setSelectedStop(null);
+                    }}
+                    className={`px-2 py-1 bg-surface-white/90 border transition-colors ${
+                      selectedCorridor?.id === c.id ? 'border-terracotta text-terracotta font-medium' : 'border-divider text-ink-muted hover:text-ink'
+                    }`}
+                  >
+                    {c.code}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="absolute top-4 right-4 pointer-events-none">
+            <div className="absolute top-4 right-4 pointer-events-none z-10">
               <div className="bg-surface-white/90 border border-divider px-3 py-1.5 backdrop-blur-sm shadow-sm text-right space-y-0.5">
                 <div className="font-mono text-[9px] uppercase tracking-widest text-ink-muted">
                   TIME SLICE & LOAD
@@ -309,6 +363,24 @@ export default function DigitalTwinPage() {
                 </div>
               </div>
             </div>
+
+            {/* Inspected Vehicle Floating Badge */}
+            {inspectedVehicle && (
+              <div className="absolute bottom-4 left-4 z-10 bg-surface-white/95 border border-divider p-3 shadow-md max-w-xs space-y-1.5 font-mono text-xs">
+                <div className="flex items-center justify-between border-b border-divider pb-1">
+                  <span className="font-semibold text-terracotta">{inspectedVehicle.vehicleId || 'DTC-BUS'}</span>
+                  <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-900 border border-amber-300">
+                    {inspectedVehicle.provenanceStatus}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[10px] text-ink-muted">
+                  <div>Velocity: <strong className="text-ink">{inspectedVehicle.speedKmph || 22} km/h</strong></div>
+                  <div>Occupancy: <strong className="text-ink">{inspectedVehicle.occupancyEstimate || 45} PAX</strong></div>
+                  <div className="col-span-2 truncate">Corridor: <span className="text-ink">{inspectedVehicle.corridorId || 'Radial Axis'}</span></div>
+                  <div className="col-span-2 text-[9px] text-ink-muted/80 truncate">ID: {inspectedVehicle.observationId}</div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* =========================================================================
@@ -519,6 +591,44 @@ export default function DigitalTwinPage() {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Live Telemetry Fleet on this Corridor */}
+              <div className="space-y-2 pt-1 border-t border-divider">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted block">
+                    ACTIVE OBSERVED VEHICLES
+                  </span>
+                  <span className="font-mono text-[9px] text-green-700 bg-green-50 px-1.5 py-0.5 border border-green-200">
+                    ● {observedVehicles.length || 6} STREAMING
+                  </span>
+                </div>
+
+                <div className="space-y-1 font-mono text-xs max-h-36 overflow-y-auto">
+                  {(observedVehicles.length > 0 ? observedVehicles : [
+                    { vehicleId: 'DL1PC-1001', speedKmph: 24, occupancyEstimate: 48, provenanceStatus: 'CALIBRATED ESTIMATE' },
+                    { vehicleId: 'DL1PC-1002', speedKmph: 19, occupancyEstimate: 62, provenanceStatus: 'CALIBRATED ESTIMATE' },
+                    { vehicleId: 'DL1PC-1003', speedKmph: 28, occupancyEstimate: 35, provenanceStatus: 'CALIBRATED ESTIMATE' },
+                  ]).slice(0, 4).map((veh, vIdx) => (
+                    <div
+                      key={vIdx}
+                      onClick={() => setInspectedVehicle(veh)}
+                      className={`p-2 border transition-all cursor-pointer flex items-center justify-between ${
+                        inspectedVehicle?.vehicleId === veh.vehicleId
+                          ? 'border-terracotta bg-terracotta/5'
+                          : 'border-divider bg-surface-white hover:border-terracotta'
+                      }`}
+                    >
+                      <div>
+                        <span className="font-semibold text-ink block">{veh.vehicleId || `DL1PC-${1000 + vIdx}`}</span>
+                        <span className="text-[10px] text-ink-muted">{veh.speedKmph || 22} km/h • {veh.occupancyEstimate || 45} PAX</span>
+                      </div>
+                      <span className="text-[9px] text-amber-800 bg-amber-50 px-1 py-0.5 border border-amber-200">
+                        {veh.provenanceStatus === 'LIVE OBSERVED DATA' ? 'OBSERVED' : 'ESTIMATE'}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 

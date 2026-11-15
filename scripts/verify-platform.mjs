@@ -272,6 +272,18 @@ async function runTests() {
     assert(false, `Simulation validation harness failed: ${err.message}`);
   }
 
+  // 14. Phase 6 Shadow Operations & Real-Time Ingestion Harness
+  console.log('\n--- Executing Phase 6 Shadow Operations & Real-Time Ingestion Harness ---');
+  try {
+    const shadowOutput = execSync('node scripts/test-shadow-operations.mjs', { encoding: 'utf8' });
+    assert(
+      shadowOutput.includes('SHADOW OPERATIONS AUDIT: 32 PASSED, 0 FAILED'),
+      'Shadow operations harness validates coordinates, normalization, ingestion API, corridor state, and drift monitoring'
+    );
+  } catch (err) {
+    assert(false, `Shadow operations harness failed: ${err.message}`);
+  }
+
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log(`========================================\n`);
