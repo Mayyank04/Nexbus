@@ -14,13 +14,13 @@
  */
 
 import crypto from 'node:crypto';
-import {
+import type {
   EvidenceClassification,
   CollectionStatus,
   ObservationLifecycleState,
   FieldworkProjectStatus,
   EthicsApprovalStatus,
-} from '@/lib/evidence/evidenceClassification';
+} from '../evidence/evidenceClassification.ts';
 
 export type MobilityObservationType =
   | 'SCHEDULED_VS_OBSERVED'
