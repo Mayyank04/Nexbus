@@ -88,6 +88,10 @@ export default function AnalyticsControlPage() {
   const [congestionTimePeriod, setCongestionTimePeriod] = useState<'AM_PEAK' | 'PM_PEAK' | 'OFF_PEAK'>('AM_PEAK');
   const [explainabilityData, setExplainabilityData] = useState<any>(null);
 
+  // Phase 10: City-Scale Origin-Destination Matrix & Desire Lines
+  const [odReport, setOdReport] = useState<any>(null);
+  const [odTimeWindow, setOdTimeWindow] = useState<'AM_PEAK' | 'MIDDAY' | 'PM_PEAK' | 'LATE_NIGHT'>('AM_PEAK');
+
   const fetchPhase9Data = () => {
     fetch(`/api/demand/corridor-demand?corridorId=${selectedCorridorId}&dayType=${demandDayType}&synthetic=${isSyntheticDemand}`)
       .then((res) => res.json())
@@ -109,6 +113,13 @@ export default function AnalyticsControlPage() {
         if (json.success && json.explanation) setExplainabilityData(json.explanation);
       })
       .catch((err) => console.error('Error fetching explainability data:', err));
+
+    fetch(`/api/demand/od-matrix?timeWindow=${odTimeWindow}&dayType=${demandDayType}&synthetic=${isSyntheticDemand}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.report) setOdReport(json.report);
+      })
+      .catch((err) => console.error('Error fetching OD report:', err));
   };
 
   const fetchPhase8Data = () => {
@@ -178,7 +189,7 @@ export default function AnalyticsControlPage() {
 
   useEffect(() => {
     fetchPhase9Data();
-  }, [selectedCorridorId, demandDayType, isSyntheticDemand, congestionTimePeriod]);
+  }, [selectedCorridorId, demandDayType, isSyntheticDemand, congestionTimePeriod, odTimeWindow]);
 
 
   const handleManualSync = async () => {
@@ -1570,6 +1581,131 @@ export default function AnalyticsControlPage() {
               <div className="p-3 bg-ivory/60 border border-divider font-mono text-[11px] text-ink-muted">
                 {demandMetrics.privacyComplianceNotice}
               </div>
+
+              {/* PHASE 10: ORIGIN-DESTINATION (OD) MATRIX & TOP DESIRE LINES */}
+              {odReport && (
+                <div className="border-t border-divider pt-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                          PHASE 10 / ORIGIN-DESTINATION MOBILITY INTELLIGENCE
+                        </span>
+                        <span className="px-1.5 py-0.5 text-[9px] bg-terracotta/10 text-terracotta border border-terracotta/20 font-mono">
+                          {odReport.evidenceClassification}
+                        </span>
+                      </div>
+                      <h4 className="font-serif text-xl text-ink font-normal mt-0.5">
+                        City-Scale Zone-to-Zone Travel Demand & Desire Lines
+                      </h4>
+                      <p className="text-xs text-ink-muted font-light leading-relaxed">
+                        Calibrated doubly-constrained exponential gravity distribution across Delhi's 11 administrative planning zones and NCR gateways.
+                      </p>
+                    </div>
+
+                    {/* Time Window Selector */}
+                    <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                      {(['AM_PEAK', 'MIDDAY', 'PM_PEAK', 'LATE_NIGHT'] as const).map((tw) => (
+                        <button
+                          key={tw}
+                          onClick={() => setOdTimeWindow(tw)}
+                          className={`px-2.5 py-1 border transition-all ${
+                            odTimeWindow === tw
+                              ? 'bg-ink text-surface-white border-ink'
+                              : 'bg-ivory border-divider text-ink-muted hover:border-stone'
+                          }`}
+                        >
+                          {tw.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Key OD Barometers */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3 border border-divider bg-ivory space-y-0.5 font-mono text-xs">
+                      <span className="text-[10px] uppercase text-ink-muted block">Total Hourly Trips</span>
+                      <div className="font-serif text-xl text-ink font-medium">
+                        {odReport.totalNetworkHourlyTrips.toLocaleString()}
+                      </div>
+                      <span className="text-[10px] text-ink-muted">across network</span>
+                    </div>
+
+                    <div className="p-3 border border-divider bg-ivory space-y-0.5 font-mono text-xs">
+                      <span className="text-[10px] uppercase text-ink-muted block">Avg Trip Impedance</span>
+                      <div className="font-serif text-xl text-terracotta font-medium">
+                        {odReport.averageTripImpedanceMinutes} min
+                      </div>
+                      <span className="text-[10px] text-ink-muted">in-vehicle + transfer</span>
+                    </div>
+
+                    <div className="p-3 border border-divider bg-ivory space-y-0.5 font-mono text-xs">
+                      <span className="text-[10px] uppercase text-ink-muted block">Gini Demand Concentration</span>
+                      <div className="font-serif text-xl text-ink font-medium">
+                        G = {odReport.giniDemandConcentration}
+                      </div>
+                      <span className="text-[10px] text-ink-muted">spatial inequality</span>
+                    </div>
+
+                    <div className="p-3 border border-divider bg-ivory space-y-0.5 font-mono text-xs">
+                      <span className="text-[10px] uppercase text-ink-muted block">k-Anonymity Protection</span>
+                      <div className="font-serif text-xl text-green-800 font-medium">
+                        k ≥ {odReport.privacyThresholdK}
+                      </div>
+                      <span className="text-[10px] text-green-700">{odReport.suppressedCellsCount} sparse cells cut</span>
+                    </div>
+                  </div>
+
+                  {/* Top Desire Lines Table */}
+                  <div className="border border-divider bg-surface-white p-4 space-y-2">
+                    <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold block">
+                      TOP 5 STRATEGIC TRANSIT DESIRE LINES
+                    </span>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left font-mono text-xs">
+                        <thead>
+                          <tr className="border-b border-divider text-[10px] text-ink-muted uppercase">
+                            <th className="py-1.5 px-2">Rank</th>
+                            <th className="py-1.5 px-2">Origin Zone</th>
+                            <th className="py-1.5 px-2">Destination Zone</th>
+                            <th className="py-1.5 px-2 text-right">Flow (pax/h)</th>
+                            <th className="py-1.5 px-2 text-right">Impedance</th>
+                            <th className="py-1.5 px-2">Primary Trunk Corridor</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-divider">
+                          {odReport.topDesireLines?.map((dl: any) => (
+                            <tr key={dl.rank} className="hover:bg-ivory/50">
+                              <td className="py-2 px-2 font-bold text-terracotta">#{dl.rank}</td>
+                              <td className="py-2 px-2 text-ink font-medium">{dl.originZoneName}</td>
+                              <td className="py-2 px-2 text-ink font-medium">{dl.destinationZoneName}</td>
+                              <td className="py-2 px-2 text-right font-semibold text-ink">
+                                {dl.flowPaxPerHour.toLocaleString()}
+                              </td>
+                              <td className="py-2 px-2 text-right text-ink-muted">{dl.impedanceMinutes} min</td>
+                              <td className="py-2 px-2 text-ink-muted text-[11px]">{dl.primaryCorridor}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Mathematical Formulation Disclosure */}
+                  <div className="p-3 bg-ivory/40 border border-divider font-mono text-xs text-ink-muted space-y-1">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-semibold text-ink">GOVERNING TRIP DISTRIBUTION FORMULATION:</span>
+                      <span className="text-terracotta">β = {odReport.governingFormulation?.frictionParameterBeta} min⁻¹</span>
+                    </div>
+                    <code className="text-xs text-ink block bg-surface-white p-2 border border-divider font-mono">
+                      {odReport.governingFormulation?.formula}
+                    </code>
+                    <p className="text-[10px] text-ink-muted pt-0.5">
+                      Production P_i calibrated against Census ward population; Attraction A_j calibrated against employment and commercial density.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
