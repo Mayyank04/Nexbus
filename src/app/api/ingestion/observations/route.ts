@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const corridorId = searchParams.get('corridorId') || undefined;
     const observationType = searchParams.get('type') as any || undefined;
+    const collectionStatus = searchParams.get('collectionStatus') as any || undefined;
     const limitParam = searchParams.get('limit');
     const limit = limitParam ? Math.min(200, Math.max(1, parseInt(limitParam, 10))) : 50;
 
@@ -14,10 +15,11 @@ export async function GET(request: NextRequest) {
     const ledger = getObservationLedger();
     const legacyObservations = ledger.getObservations(limit, corridorId);
 
-    // 2. Query Phase 12 field observations
+    // 2. Query Phase 12/13 field observations
     const fieldResult = fieldObservationService.queryObservations({
       corridorId,
       observationType,
+      collectionStatus,
       limit,
     });
 
@@ -25,6 +27,7 @@ export async function GET(request: NextRequest) {
       success: true,
       count: legacyObservations.length,
       corridorFilter: corridorId || 'ALL',
+      collectionStatusFilter: collectionStatus || 'ALL',
       observations: legacyObservations,
       metrics: ledger.getMetrics(),
       fieldResearch: {
@@ -100,12 +103,20 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     if (error?.digest?.startsWith('NEXT_')) throw error;
     console.error('Error in POST /api/ingestion/observations:', error);
+    const msg = error instanceof Error ? error.message : String(error);
+    const isValidation =
+      msg.includes('boundary') ||
+      msg.includes('boundaries') ||
+      msg.includes('bounds') ||
+      msg.includes('negative') ||
+      msg.includes('invalid') ||
+      msg.includes('Voluntary');
     return NextResponse.json(
       {
-        error: 'Failed to record field observation',
-        details: error instanceof Error ? error.message : String(error),
+        error: isValidation ? 'Validation failure' : 'Failed to record field observation',
+        details: msg,
       },
-      { status: 500 }
+      { status: isValidation ? 400 : 500 }
     );
   }
 }
