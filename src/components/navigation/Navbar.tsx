@@ -31,7 +31,7 @@ export default function Navbar() {
               <span className="font-serif text-2xl tracking-tight text-ink font-normal group-hover:text-terracotta transition-colors">
                 NEXBUS
               </span>
-              <span className="font-mono text-[10px] tracking-widest text-ink-muted uppercase border-l border-divider pl-2.5 hidden sm:inline-block">
+              <span className="font-mono text-[11px] tracking-widest text-ink-muted uppercase border-l border-divider pl-2.5 hidden sm:inline-block">
                 DELHI / 28°36&apos;N 77°12&apos;E
               </span>
             </Link>
@@ -67,7 +67,7 @@ export default function Navbar() {
           {/* Actions & Mobile Toggle */}
           <div className="flex items-center space-x-3">
             <div className="hidden lg:flex items-center space-x-2 border border-divider px-2.5 py-1.5 bg-surface-white text-[11px] font-mono text-ink-muted">
-              <span className={`w-2 h-2 rounded-full ${isAuthoritySurface ? 'bg-amber-600' : 'bg-status-green'} animate-pulse`} />
+              <span className={`w-2 h-2 rounded-full ${isAuthoritySurface ? 'bg-amber-600' : 'bg-status-green'}`} />
               <span className="tracking-wider uppercase">
                 {isAuthoritySurface ? 'SHADOW AUDIT' : 'CIVIC TRANSIT'}
               </span>

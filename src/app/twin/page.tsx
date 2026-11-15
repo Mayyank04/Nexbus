@@ -131,16 +131,16 @@ export default function DigitalTwinPage() {
             Delhi Metropolitan Digital Twin
           </span>
           <span className="hidden sm:inline text-divider">|</span>
-          <span className="font-mono text-[10px] sm:text-[11px] text-ink-muted uppercase">
+          <span className="font-mono text-[11px] sm:text-[11px] text-ink-muted uppercase">
             AREA: NCT OF DELHI (28°36&apos;N 77°12&apos;E)
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] sm:text-[11px]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] sm:text-[11px]">
           <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
             <button
               onClick={() => setViewMode('3D')}
-              className={`px-2 py-0.5 font-mono text-[10px] transition-colors ${
+              className={`px-2 py-0.5 font-mono text-[11px] transition-colors ${
                 viewMode === '3D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
               }`}
             >
@@ -148,7 +148,7 @@ export default function DigitalTwinPage() {
             </button>
             <button
               onClick={() => setViewMode('2D')}
-              className={`px-2 py-0.5 font-mono text-[10px] transition-colors ${
+              className={`px-2 py-0.5 font-mono text-[11px] transition-colors ${
                 viewMode === '2D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
               }`}
             >
@@ -163,9 +163,9 @@ export default function DigitalTwinPage() {
       </div>
 
       {/* Advisory & Analytical Integrity Notice */}
-      <div className="px-4 sm:px-6 py-1 bg-amber-500/10 border-b border-amber-500/20 text-[9px] sm:text-[10px] font-mono text-amber-900 flex flex-wrap items-center justify-between gap-1 z-20">
+      <div className="px-4 sm:px-6 py-1 bg-amber-500/10 border-b border-amber-500/20 text-[11px] sm:text-[11px] font-mono text-amber-900 flex flex-wrap items-center justify-between gap-1 z-20">
         <span className="truncate max-w-full sm:max-w-none">▲ ANALYTICAL DIGITAL TWIN • READ-ONLY + PASSIVE + ADVISORY</span>
-        <span className="uppercase text-[8px] sm:text-[9px] text-amber-800">NO PHYSICAL ACTUATION • PASSIVE TWIN</span>
+        <span className="uppercase text-[11px] sm:text-[11px] text-amber-800">NO PHYSICAL ACTUATION • PASSIVE TWIN</span>
       </div>
 
       {/* Main Digital Twin Workbench */}
@@ -177,10 +177,10 @@ export default function DigitalTwinPage() {
           {/* Layer Selector */}
           <div className="p-4 border-b border-divider bg-parchment/30 space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
                 ANALYTICAL LAYERS ({TWIN_LAYERS.length})
               </span>
-              <span className="font-mono text-[9px] text-terracotta uppercase">{activeLayer}</span>
+              <span className="font-mono text-[11px] text-terracotta uppercase">{activeLayer}</span>
             </div>
             <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
               {TWIN_LAYERS.map((layer) => (
@@ -194,7 +194,7 @@ export default function DigitalTwinPage() {
                   }`}
                 >
                   <span className="truncate">{layer.label}</span>
-                  <span className={`text-[8px] uppercase tracking-tight ${activeLayer === layer.id ? 'text-surface-white/80' : 'text-stone'}`}>
+                  <span className={`text-[11px] uppercase tracking-tight ${activeLayer === layer.id ? 'text-surface-white' : 'text-stone'}`}>
                     {layer.tag}
                   </span>
                 </button>
@@ -202,7 +202,7 @@ export default function DigitalTwinPage() {
             </div>
 
             {/* Layer Legend */}
-            <div className="pt-2 border-t border-divider/60 flex items-center justify-between font-mono text-[10px] text-ink-muted">
+            <div className="pt-2 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
               <span>LEGEND:</span>
               <div className="flex items-center space-x-2">
                 <span className="flex items-center space-x-1">
@@ -237,7 +237,7 @@ export default function DigitalTwinPage() {
 
           {/* Corridors List */}
           <div className="flex-1 p-3 space-y-2 overflow-y-auto">
-            <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted block mb-1">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
               ARTERIAL CONDUITS ({filteredCorridors.length})
             </span>
 
@@ -257,7 +257,7 @@ export default function DigitalTwinPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-[10px] font-medium text-ink-muted">
+                    <span className="font-mono text-[11px] font-medium text-ink-muted">
                       {corridor.code}
                     </span>
                     <span
@@ -268,7 +268,7 @@ export default function DigitalTwinPage() {
                   <h4 className="font-serif text-base text-ink font-normal leading-snug">
                     {corridor.name}
                   </h4>
-                  <div className="mt-2 pt-1.5 border-t border-divider/60 flex items-center justify-between font-mono text-[9px] text-ink-muted">
+                  <div className="mt-2 pt-1.5 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
                     <span>{corridor.busesPerHour} BUSES/HR</span>
                     <span className="text-terracotta font-medium uppercase">
                       {corridor.status}
@@ -281,7 +281,7 @@ export default function DigitalTwinPage() {
             {/* Stops in search */}
             {searchQuery && filteredStops.length > 0 && (
               <div className="pt-2">
-                <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted block mb-1">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
                   MATCHING STOPS ({filteredStops.length})
                 </span>
                 <div className="space-y-1">
@@ -319,7 +319,7 @@ export default function DigitalTwinPage() {
                 setSelectedStop(null);
                 setSearchQuery('');
               }}
-              className="text-terracotta hover:underline uppercase text-[10px]"
+              className="text-terracotta hover:underline uppercase text-[11px]"
             >
               RESET VIEW
             </button>
@@ -349,22 +349,22 @@ export default function DigitalTwinPage() {
             <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
               <div className="bg-surface-white/95 border border-divider px-3 py-2 backdrop-blur-sm shadow-sm space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-ink font-semibold">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  <span className="font-mono text-[11px] uppercase tracking-widest text-ink font-semibold">
                     SHADOW OPERATIONS STREAM
                   </span>
                 </div>
                 <div className="font-mono text-[11px] text-ink-muted flex items-center gap-2">
                   <span>Lag: <strong className="text-ink">{liveFreshnessLag}s</strong></span>
                   <span>•</span>
-                  <span className="text-amber-800 bg-amber-50 px-1 py-0.2 border border-amber-200 text-[9px]">
+                  <span className="text-amber-800 bg-amber-50 px-1 py-0.2 border border-amber-200 text-[11px]">
                     ▲ CALIBRATED ESTIMATE
                   </span>
                 </div>
               </div>
 
               {/* Quick Focus Pills */}
-              <div className="flex flex-wrap gap-1.5 font-mono text-[10px]">
+              <div className="flex flex-wrap gap-1.5 font-mono text-[11px]">
                 <button
                   onClick={() => {
                     setSelectedCorridor(null);
@@ -395,7 +395,7 @@ export default function DigitalTwinPage() {
 
             <div className="absolute top-4 right-4 pointer-events-none z-10">
               <div className="bg-surface-white/90 border border-divider px-3 py-1.5 backdrop-blur-sm shadow-sm text-right space-y-0.5">
-                <div className="font-mono text-[9px] uppercase tracking-widest text-ink-muted">
+                <div className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
                   TIME SLICE & LOAD
                 </div>
                 <div className="font-mono text-xs font-semibold text-terracotta">
@@ -410,15 +410,15 @@ export default function DigitalTwinPage() {
               <div className="absolute bottom-4 left-4 z-10 bg-surface-white/95 border border-divider p-3 shadow-md max-w-xs space-y-1.5 font-mono text-xs">
                 <div className="flex items-center justify-between border-b border-divider pb-1">
                   <span className="font-semibold text-terracotta">{inspectedVehicle.vehicleId || 'DTC-BUS'}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-900 border border-amber-300">
+                  <span className="text-[11px] px-1.5 py-0.5 bg-amber-100 text-amber-900 border border-amber-300">
                     {inspectedVehicle.provenanceStatus}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-[10px] text-ink-muted">
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-ink-muted">
                   <div>Velocity: <strong className="text-ink">{inspectedVehicle.speedKmph || 22} km/h</strong></div>
                   <div>Occupancy: <strong className="text-ink">{inspectedVehicle.occupancyEstimate || 45} PAX</strong></div>
                   <div className="col-span-2 truncate">Corridor: <span className="text-ink">{inspectedVehicle.corridorId || 'Radial Axis'}</span></div>
-                  <div className="col-span-2 text-[9px] text-ink-muted/80 truncate">ID: {inspectedVehicle.observationId}</div>
+                  <div className="col-span-2 text-[11px] text-ink-muted/80 truncate">ID: {inspectedVehicle.observationId}</div>
                 </div>
               </div>
             )}
@@ -444,7 +444,7 @@ export default function DigitalTwinPage() {
                   </span>
                 </div>
 
-                <span className="font-mono text-[9px] px-2 py-0.5 bg-parchment border border-divider text-ink-muted">
+                <span className="font-mono text-[11px] px-2 py-0.5 bg-parchment border border-divider text-ink-muted">
                   {currentTimeHour >= 8 && currentTimeHour <= 10
                     ? 'MORNING PEAK'
                     : currentTimeHour >= 17 && currentTimeHour <= 19
@@ -455,7 +455,7 @@ export default function DigitalTwinPage() {
 
               {/* Slider Scrubber */}
               <div className="w-full md:w-96 flex items-center space-x-3">
-                <span className="font-mono text-[9px] text-ink-muted">06:00</span>
+                <span className="font-mono text-[11px] text-ink-muted">06:00</span>
                 <input
                   type="range"
                   min="6"
@@ -465,18 +465,18 @@ export default function DigitalTwinPage() {
                   onChange={(e) => setCurrentTimeHour(parseInt(e.target.value, 10))}
                   className="w-full accent-[#B84C32] cursor-pointer"
                 />
-                <span className="font-mono text-[9px] text-ink-muted">22:00</span>
+                <span className="font-mono text-[11px] text-ink-muted">22:00</span>
               </div>
 
               <div className="flex items-center space-x-3 font-mono text-xs shrink-0">
                 <div className="text-right">
-                  <span className="text-ink-muted text-[9px] block">EXPECTED PAX</span>
+                  <span className="text-ink-muted text-[11px] block">EXPECTED PAX</span>
                   <span className="font-medium text-ink">
                     {predictionData ? predictionData.predictedPassengersPerHour.toLocaleString() : '---'}
                   </span>
                 </div>
                 <div className="border-l border-divider pl-3 text-right">
-                  <span className="text-ink-muted text-[9px] block">CONFIDENCE</span>
+                  <span className="text-ink-muted text-[11px] block">CONFIDENCE</span>
                   <span className="font-medium text-terracotta">
                     {predictionData ? `${predictionData.confidenceScore}% CI` : '95%'}
                   </span>
@@ -494,10 +494,7 @@ export default function DigitalTwinPage() {
             <div className="p-5 space-y-5">
               <div className="flex items-center justify-between border-b border-divider pb-3">
                 <div>
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-terracotta">
-                    CORRIDOR TELEMETRY
-                  </span>
-                  <h3 className="font-serif text-2xl font-normal text-ink mt-0.5">
+                  <h3 className="font-serif text-2xl font-normal text-ink">
                     {selectedCorridor.name}
                   </h3>
                 </div>
@@ -506,7 +503,7 @@ export default function DigitalTwinPage() {
                 </span>
               </div>
 
-              <p className="text-xs text-ink-muted leading-relaxed font-light">
+              <p className="text-sm text-ink-secondary leading-relaxed">
                 {selectedCorridor.description}
               </p>
 
@@ -514,11 +511,11 @@ export default function DigitalTwinPage() {
               {predictionData && (
                 <div className="p-4 border border-divider bg-parchment/30 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
                       PREDICTED CABIN LOAD
                     </span>
                     <span
-                      className={`font-mono text-[10px] uppercase px-2 py-0.5 ${
+                      className={`font-mono text-[11px] uppercase px-2 py-0.5 ${
                         predictionData.severity === 'critical'
                           ? 'bg-red-100 text-red-900 border border-red-300'
                           : predictionData.severity === 'high'
@@ -550,7 +547,7 @@ export default function DigitalTwinPage() {
 
                   {/* Deep Telemetry revealed on demand */}
                   {showDeepTelemetry && (
-                    <div className="pt-2 border-t border-divider/60 font-mono text-[10px] text-ink-muted space-y-1">
+                    <div className="pt-2 border-t border-divider/60 font-mono text-[11px] text-ink-muted space-y-1">
                       <div className="flex justify-between">
                         <span>80% CREDIBLE BOUND:</span>
                         <span className="font-medium text-ink">
@@ -578,25 +575,25 @@ export default function DigitalTwinPage() {
               {/* Key Metrics */}
               <div className="grid grid-cols-2 gap-2.5">
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">LENGTH</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">LENGTH</span>
                   <span className="font-serif text-lg text-ink font-normal">
                     {selectedCorridor.lengthKm} KM
                   </span>
                 </div>
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">FREQUENCY</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">FREQUENCY</span>
                   <span className="font-serif text-lg text-ink font-normal">
                     {selectedCorridor.busesPerHour} / HR
                   </span>
                 </div>
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">AVG SPEED</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">AVG SPEED</span>
                   <span className="font-serif text-lg text-ink font-normal">
                     {selectedCorridor.averageSpeedKmH} km/h
                   </span>
                 </div>
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">PUNCTUALITY</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">PUNCTUALITY</span>
                   <span className="font-serif text-lg text-terracotta font-normal">
                     {selectedCorridor.currentPunctuality}%
                   </span>
@@ -605,7 +602,7 @@ export default function DigitalTwinPage() {
 
               {/* Associated Stops Sequence */}
               <div className="space-y-2 pt-1">
-                <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted block">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
                   KEY INTERCHANGE STOPS
                 </span>
                 <div className="space-y-1.5 border-l border-terracotta/40 pl-3 ml-1">
@@ -622,11 +619,11 @@ export default function DigitalTwinPage() {
                           <span className="font-medium text-ink group-hover:text-terracotta transition-colors block">
                             {stop.name}
                           </span>
-                          <span className="text-[10px] text-ink-muted font-light">
+                          <span className="text-[11px] text-ink-muted font-light">
                             {stop.hindiName}
                           </span>
                         </div>
-                        <span className="font-mono text-[10px] text-ink-muted">
+                        <span className="font-mono text-[11px] text-ink-muted">
                           {stop.dailyFootfall.toLocaleString()} pax/d
                         </span>
                       </div>
@@ -638,10 +635,10 @@ export default function DigitalTwinPage() {
               {/* Live Telemetry Fleet on this Corridor */}
               <div className="space-y-2 pt-1 border-t border-divider">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted block">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
                     ACTIVE OBSERVED VEHICLES
                   </span>
-                  <span className="font-mono text-[9px] text-green-700 bg-green-50 px-1.5 py-0.5 border border-green-200">
+                  <span className="font-mono text-[11px] text-green-700 bg-green-50 px-1.5 py-0.5 border border-green-200">
                     ● {observedVehicles.length || 6} STREAMING
                   </span>
                 </div>
@@ -663,9 +660,9 @@ export default function DigitalTwinPage() {
                     >
                       <div>
                         <span className="font-semibold text-ink block">{veh.vehicleId || `DL1PC-${1000 + vIdx}`}</span>
-                        <span className="text-[10px] text-ink-muted">{veh.speedKmph || 22} km/h • {veh.occupancyEstimate || 45} PAX</span>
+                        <span className="text-[11px] text-ink-muted">{veh.speedKmph || 22} km/h • {veh.occupancyEstimate || 45} PAX</span>
                       </div>
-                      <span className="text-[9px] text-amber-800 bg-amber-50 px-1 py-0.5 border border-amber-200">
+                      <span className="text-[11px] text-amber-800 bg-amber-50 px-1 py-0.5 border border-amber-200">
                         {veh.provenanceStatus === 'LIVE OBSERVED DATA' ? 'OBSERVED' : 'ESTIMATE'}
                       </span>
                     </div>
@@ -679,7 +676,7 @@ export default function DigitalTwinPage() {
                   <ShieldCheck className="w-3.5 h-3.5 text-terracotta" />
                   <span className="uppercase">DATA PROVENANCE</span>
                 </div>
-                <p className="text-[10px] text-ink-muted leading-relaxed font-light">
+                <p className="text-xs text-ink-secondary leading-relaxed">
                   Calibrated Research Model (DTC GTFS-aligned topology & ST-GNN prediction).
                 </p>
               </div>
@@ -689,10 +686,7 @@ export default function DigitalTwinPage() {
             <div className="p-5 space-y-5">
               <div className="flex items-center justify-between border-b border-divider pb-3">
                 <div>
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-terracotta">
-                    INTERCHANGE NODE
-                  </span>
-                  <h3 className="font-serif text-2xl font-normal text-ink mt-0.5">
+                  <h3 className="font-serif text-2xl font-normal text-ink">
                     {selectedStop.name}
                   </h3>
                   <div className="text-xs text-ink-muted">{selectedStop.hindiName}</div>
@@ -704,13 +698,13 @@ export default function DigitalTwinPage() {
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">ZONE</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">ZONE</span>
                   <span className="font-serif text-lg text-ink font-normal">
                     {selectedStop.zone} Delhi
                   </span>
                 </div>
                 <div className="p-2.5 border border-divider bg-surface-white">
-                  <span className="font-mono text-[9px] text-ink-muted block">DAILY FOOTFALL</span>
+                  <span className="font-mono text-[11px] text-ink-muted block">DAILY FOOTFALL</span>
                   <span className="font-serif text-lg text-ink font-normal">
                     {selectedStop.dailyFootfall.toLocaleString()}
                   </span>
@@ -719,7 +713,7 @@ export default function DigitalTwinPage() {
 
               {selectedStop.metroInterchange && (
                 <div className="p-3 border border-divider bg-parchment/20 space-y-1">
-                  <span className="font-mono text-[9px] text-ink-muted uppercase block">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
                     METRO MULTIMODAL INTERCHANGE
                   </span>
                   <span className="text-xs font-medium text-ink">

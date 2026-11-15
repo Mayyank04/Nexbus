@@ -44,10 +44,10 @@ export default function HomePage() {
           {/* Left Narrative Composition (45% width on desktop) */}
           <div className="lg:col-span-5 flex flex-col justify-between z-10 py-1">
             <div className="space-y-5">
-              <div className="flex items-center space-x-2.5">
+              <div className="flex items-center space-x-2">
                 <span className="w-2 h-2 rounded-full bg-terracotta" />
-                <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
-                  DELHI / URBAN MOBILITY INTELLIGENCE
+                <span className="font-mono text-xs text-ink-secondary">
+                  Metropolitan Decision-Support System / NCT of Delhi
                 </span>
               </div>
 
@@ -128,9 +128,9 @@ export default function HomePage() {
             />
 
             {/* Restrained Hairline Annotations */}
-            <div className="absolute top-4 left-4 pointer-events-none">
+            <div className="hidden sm:block absolute top-4 left-4 pointer-events-none">
               <div className="bg-surface-white/95 border border-divider px-3 py-1.5 shadow-sm space-y-0.5">
-                <div className="font-mono text-[9px] uppercase tracking-widest text-ink-muted">
+                <div className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
                   NETWORK TOPOLOGY
                 </div>
                 <div className="font-mono text-xs font-semibold text-ink">
@@ -139,9 +139,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="absolute top-4 right-4 pointer-events-none">
+            <div className="hidden sm:block absolute top-4 right-4 pointer-events-none">
               <div className="bg-surface-white/95 border border-divider px-3 py-1.5 shadow-sm text-right space-y-0.5">
-                <div className="font-mono text-[9px] uppercase tracking-widest text-ink-muted">
+                <div className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
                   PEAK HOURLY FLOW
                 </div>
                 <div className="font-mono text-xs font-semibold text-terracotta">
@@ -150,9 +150,9 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="absolute bottom-4 left-4 pointer-events-none">
-              <div className="bg-surface-white/95 border border-divider px-3 py-1.5 shadow-sm space-y-0.5">
-                <div className="font-mono text-[9px] uppercase tracking-wider text-ink-muted">
+            <div className="absolute bottom-3 left-4 pointer-events-none">
+              <div className="bg-ivory/95 px-3 py-1.5 space-y-0.5">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
                   ACTIVE CORRIDOR
                 </div>
                 <div className="font-serif text-sm font-medium text-ink">
@@ -161,10 +161,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="absolute bottom-4 right-4 pointer-events-none">
-              <div className="bg-surface-white/95 border border-divider px-3 py-1.5 shadow-sm flex items-center space-x-2">
+            <div className="absolute bottom-3 right-4 pointer-events-none">
+              <div className="bg-ivory/95 px-3 py-1.5 flex items-center space-x-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />
-                <span className="font-mono text-[10px] text-ink-muted tracking-tight">
+                <span className="font-mono text-[11px] text-ink-muted tracking-tight">
                   DRAG TO ROTATE • WHEEL TO ZOOM
                 </span>
               </div>
@@ -181,7 +181,7 @@ export default function HomePage() {
               <span>10,800 SENSOR NODES</span>
             </div>
             <div className="flex items-center space-x-2 text-ink-secondary">
-              <span className="tracking-widest uppercase text-[10px]">SCROLL FOR TRANSIT ANALYSIS</span>
+              <span className="tracking-widest uppercase text-[11px]">SCROLL FOR TRANSIT ANALYSIS</span>
             </div>
             <div>
               <span>HEADWAY CALIBRATION: 94.8% CI</span>
@@ -197,15 +197,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-5 space-y-4">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                01 — ARTERIAL TRANSIT TOPOLOGY
-              </span>
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
                 A city of 32 million souls, carved into radial arteries.
               </h2>
               <div className="w-12 h-[1.5px] bg-terracotta my-3" />
               <p className="text-ink-secondary leading-relaxed font-normal text-sm sm:text-base">
-                Delhi does not operate on a simple Euclidean grid. It is an intricate spatial system of concentric ring roads, dense historic walled settlements, and radial avenues converging on Connaught Place and the Central Secretariat.
+                Delhi does not operate on a simple Euclidean grid. The network combines concentric ring roads, historic walled settlements, and radial avenues converging on Connaught Place and the Central Secretariat.
               </p>
               <div className="pt-2">
                 <Link
@@ -243,7 +240,7 @@ export default function HomePage() {
                       <td className="py-3.5 px-4 font-semibold">640,000 PAX</td>
                       <td className="py-3.5 px-4 text-terracotta font-medium">81.4%</td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] uppercase font-semibold">NORMAL</span>
+                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[11px] uppercase font-semibold">NORMAL</span>
                       </td>
                     </tr>
                     <tr className="hover:bg-parchment/20 transition-colors">
@@ -252,7 +249,7 @@ export default function HomePage() {
                       <td className="py-3.5 px-4 font-semibold">380,000 PAX</td>
                       <td className="py-3.5 px-4 text-terracotta font-medium">78.2%</td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] uppercase font-semibold">MODERATE</span>
+                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[11px] uppercase font-semibold">MODERATE</span>
                       </td>
                     </tr>
                     <tr className="hover:bg-parchment/20 transition-colors">
@@ -261,7 +258,7 @@ export default function HomePage() {
                       <td className="py-3.5 px-4 font-semibold">510,000 PAX</td>
                       <td className="py-3.5 px-4 text-terracotta font-medium">84.0%</td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] uppercase font-semibold">NORMAL</span>
+                        <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[11px] uppercase font-semibold">NORMAL</span>
                       </td>
                     </tr>
                     <tr className="hover:bg-parchment/20 transition-colors">
@@ -270,7 +267,7 @@ export default function HomePage() {
                       <td className="py-3.5 px-4 font-semibold">420,000 PAX</td>
                       <td className="py-3.5 px-4 text-terracotta font-medium">74.6%</td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] uppercase font-semibold">HIGH CROWD</span>
+                        <span className="px-2 py-0.5 bg-rose-100 text-rose-800 text-[11px] uppercase font-semibold">HIGH CROWD</span>
                       </td>
                     </tr>
                   </tbody>
@@ -288,9 +285,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="max-w-xl space-y-3">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                02 — HIGH-FREQUENCY PASSENGER CORRIDORS
-              </span>
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
                 Corridors that breathe with the morning rush.
               </h2>
@@ -359,9 +353,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-5 space-y-5">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                03 — CROWD-AWARE JOURNEY INTELLIGENCE
-              </span>
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
                 Travel planning built around commuter comfort.
               </h2>
@@ -394,43 +385,43 @@ export default function HomePage() {
               <div className="space-y-3 font-mono text-xs">
                 <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-amber-900 bg-amber-100 px-2 py-0.5 border border-amber-300">
+                    <span className="text-[11px] uppercase font-bold text-amber-900 bg-amber-100 px-2 py-0.5 border border-amber-300">
                       FASTEST
                     </span>
-                    <h4 className="font-serif text-lg text-ink font-normal mt-1">Route 502 Radial Express</h4>
-                    <p className="text-ink-secondary text-[11px] font-sans">Direct corridor • 6 stops • 84% cabin crowd</p>
+                    <h3 className="font-serif text-lg text-ink font-normal mt-1">Route 502 Radial Express</h3>
+                    <p className="text-ink-secondary text-xs font-sans">Direct corridor • 6 stops • 84% cabin crowd</p>
                   </div>
                   <div className="text-right">
                     <span className="font-serif text-2xl text-ink font-semibold">26 MIN</span>
-                    <span className="block text-[10px] text-ink-muted">0 TRANSFERS</span>
+                    <span className="block text-[11px] text-ink-muted">0 TRANSFERS</span>
                   </div>
                 </div>
 
                 <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-green-900 bg-green-100 px-2 py-0.5 border border-green-300">
+                    <span className="text-[11px] uppercase font-bold text-green-900 bg-green-100 px-2 py-0.5 border border-green-300">
                       BALANCED
                     </span>
-                    <h4 className="font-serif text-lg text-ink font-normal mt-1">TMS Sewa + Janpath Feeder</h4>
-                    <p className="text-ink-secondary text-[11px] font-sans">1 sheltered transfer at Moolchand • 62% cabin crowd</p>
+                    <h3 className="font-serif text-lg text-ink font-normal mt-1">TMS Sewa + Janpath Feeder</h3>
+                    <p className="text-ink-secondary text-xs font-sans">1 sheltered transfer at Moolchand • 62% cabin crowd</p>
                   </div>
                   <div className="text-right">
                     <span className="font-serif text-2xl text-ink font-semibold">34 MIN</span>
-                    <span className="block text-[10px] text-ink-muted">1 TRANSFER</span>
+                    <span className="block text-[11px] text-ink-muted">1 TRANSFER</span>
                   </div>
                 </div>
 
                 <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-blue-900 bg-blue-100 px-2 py-0.5 border border-blue-300">
+                    <span className="text-[11px] uppercase font-bold text-blue-900 bg-blue-100 px-2 py-0.5 border border-blue-300">
                       LESS CROWDED
                     </span>
-                    <h4 className="font-serif text-lg text-ink font-normal mt-1">Electric Premium AC Shuttle</h4>
-                    <p className="text-ink-secondary text-[11px] font-sans">94% seat availability • Terminal staging • 100% AC</p>
+                    <h3 className="font-serif text-lg text-ink font-normal mt-1">Electric Premium AC Shuttle</h3>
+                    <p className="text-ink-secondary text-xs font-sans">94% seat availability • Terminal staging • 100% AC</p>
                   </div>
                   <div className="text-right">
                     <span className="font-serif text-2xl text-ink font-semibold">38 MIN</span>
-                    <span className="block text-[10px] text-ink-muted">SEATED COMMUTE</span>
+                    <span className="block text-[11px] text-ink-muted">SEATED COMMUTE</span>
                   </div>
                 </div>
               </div>
@@ -446,9 +437,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-5 space-y-5">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                04 — POLICY COUNTERFACTUAL SIMULATION
-              </span>
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
                 Test the hypothetical before spending public funds.
               </h2>
@@ -476,9 +464,9 @@ export default function HomePage() {
                   <span className="font-mono text-xs text-terracotta uppercase tracking-wider font-semibold">
                     COUNTERFACTUAL BENCHMARK
                   </span>
-                  <h4 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                  <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
                     Ring Road +15 EV Shuttles Scenario
-                  </h4>
+                  </h3>
                 </div>
                 <span className="font-mono text-[11px] px-2.5 py-1 bg-parchment border border-divider text-ink font-medium">
                   SYNCHRONIZED TWIN
@@ -487,7 +475,7 @@ export default function HomePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="border border-divider p-4 bg-parchment/20 space-y-2">
-                  <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
                     CURRENT OBSERVED STATE
                   </span>
                   <div className="font-serif text-3xl text-ink font-semibold">14.2 min</div>
@@ -500,7 +488,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="border border-terracotta/40 p-4 bg-terracotta/5 space-y-2">
-                  <span className="font-mono text-[10px] text-terracotta uppercase font-semibold block">
+                  <span className="font-mono text-[11px] text-terracotta uppercase font-semibold block">
                     SIMULATED STATE
                   </span>
                   <div className="font-serif text-3xl text-terracotta font-semibold">6.8 min</div>
@@ -515,15 +503,15 @@ export default function HomePage() {
 
               <div className="grid grid-cols-3 gap-4 pt-5 mt-5 border-t border-divider font-mono text-xs">
                 <div>
-                  <span className="text-ink-muted block text-[10px]">CROWDING INDEX</span>
+                  <span className="text-ink-muted block text-[11px]">CROWDING INDEX</span>
                   <span className="font-semibold text-ink">148% → 82%</span>
                 </div>
                 <div>
-                  <span className="text-ink-muted block text-[10px]">CO2 OFFSET</span>
+                  <span className="text-ink-muted block text-[11px]">CO2 OFFSET</span>
                   <span className="font-semibold text-ink">112 Tonnes/Mo</span>
                 </div>
                 <div>
-                  <span className="text-ink-muted block text-[10px]">COMMUTER SAVINGS</span>
+                  <span className="text-ink-muted block text-[11px]">COMMUTER SAVINGS</span>
                   <span className="font-semibold text-terracotta">+1.8M Hrs/Yr</span>
                 </div>
               </div>
@@ -538,9 +526,6 @@ export default function HomePage() {
       <section className="py-20 border-b border-divider bg-parchment/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center space-y-3 mb-12">
-            <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
-              05 — DATA GOVERNANCE & EPISTEMOLOGY
-            </span>
             <h2 className="font-serif text-3xl sm:text-5xl text-ink font-normal">
               Scientific rigor over black-box guesswork.
             </h2>
@@ -551,40 +536,40 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 font-mono text-xs">
             <div className="border border-green-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-green-800 font-bold block text-[10px] uppercase">
+              <span className="text-green-800 font-bold block text-[11px] uppercase">
                 ● TIER 01: OBSERVED
               </span>
-              <h4 className="font-serif text-xl text-ink font-normal">Hardware Telemetry</h4>
+              <h3 className="font-serif text-xl text-ink font-normal">Hardware Telemetry</h3>
               <p className="font-sans text-xs text-ink-secondary leading-relaxed font-normal">
                 GPS AVL telemetry pings and 4.28M conductor ETM smartcard punches across 420 fare stages.
               </p>
             </div>
 
             <div className="border border-amber-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-amber-800 font-bold block text-[10px] uppercase">
+              <span className="text-amber-800 font-bold block text-[11px] uppercase">
                 ▲ TIER 02: ESTIMATED
               </span>
-              <h4 className="font-serif text-xl text-ink font-normal">Trip Chaining</h4>
+              <h3 className="font-serif text-xl text-ink font-normal">Trip Chaining</h3>
               <p className="font-sans text-xs text-ink-secondary leading-relaxed font-normal">
                 Inferring alighting drop-offs and stop dwell times via probabilistic origin-destination clustering.
               </p>
             </div>
 
             <div className="border border-blue-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-blue-800 font-bold block text-[10px] uppercase">
+              <span className="text-blue-800 font-bold block text-[11px] uppercase">
                 ◆ TIER 03: PREDICTED
               </span>
-              <h4 className="font-serif text-xl text-ink font-normal">Neural Forecasts</h4>
+              <h3 className="font-serif text-xl text-ink font-normal">Neural Forecasts</h3>
               <p className="font-sans text-xs text-ink-secondary leading-relaxed font-normal">
                 Spatio-Temporal Graph Neural Networks computing lookahead crowding with 95% Bayesian bounds.
               </p>
             </div>
 
             <div className="border border-purple-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-purple-800 font-bold block text-[10px] uppercase">
+              <span className="text-purple-800 font-bold block text-[11px] uppercase">
                 ★ TIER 04: HYPOTHETICAL
               </span>
-              <h4 className="font-serif text-xl text-ink font-normal">Micro-Simulation</h4>
+              <h3 className="font-serif text-xl text-ink font-normal">Micro-Simulation</h3>
               <p className="font-sans text-xs text-ink-secondary leading-relaxed font-normal">
                 Synthetic counterfactual scenarios testing headway adjustments and new electric bus routes.
               </p>
@@ -611,7 +596,7 @@ export default function HomePage() {
             <p className="text-xs text-ink-secondary leading-relaxed font-normal max-w-sm">
               An architectural public mobility intelligence platform for the National Capital Territory of Delhi. Built with editorial restraint and computational precision.
             </p>
-            <div className="font-mono text-[10px] text-ink-muted">
+            <div className="font-mono text-[11px] text-ink-muted">
               DELHI TRANSPORT CORPORATION &copy; 2026. DATA HARMONIZED UNDER OPEN MOBILITY ACCORD.
             </div>
           </div>
