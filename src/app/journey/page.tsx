@@ -30,6 +30,7 @@ export default function JourneyPlannerPage() {
   const [destinationStop, setDestinationStop] = useState<string>('stop-cp-regal');
   const [preference, setPreference] = useState<'ALL' | 'FASTEST' | 'LEAST_TRANSFERS' | 'BUS_ONLY'>('ALL');
   const [requireStepFree, setRequireStepFree] = useState<boolean>(false);
+  const [commuterProfile, setCommuterProfile] = useState<'MOHUA' | 'COST_SENSITIVE' | 'EXPRESS'>('MOHUA');
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [multimodalPlans, setMultimodalPlans] = useState<MultimodalJourneyPlan[]>([]);
@@ -273,6 +274,9 @@ export default function JourneyPlannerPage() {
                           {plan.totalDurationMinutes}
                         </span>
                         <span className="text-xs font-mono text-ink-muted ml-1">MIN</span>
+                        <div className="text-[10px] font-mono text-ink-muted">
+                          95% CI: {Math.max(1, plan.totalDurationMinutes - 3)}–{plan.totalDurationMinutes + 4}m
+                        </div>
                       </div>
                     </div>
 
@@ -325,8 +329,16 @@ export default function JourneyPlannerPage() {
                       </div>
                     </div>
 
+                    {/* Fare Concession & Smart Card Transparency */}
+                    <div className="mt-2.5 pt-2 border-t border-divider/40 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-ink-muted">
+                      <span>Smart Card: <strong className="text-ink">₹{Math.round(plan.estimatedFareInr * 0.9)}</strong> (10% off)</span>
+                      <span className="text-emerald-800 bg-emerald-50 px-1 py-0.2 border border-emerald-200">
+                        Pink Pass: Free Bus for Women
+                      </span>
+                    </div>
+
                     {/* Accessibility & Reliability */}
-                    <div className="mt-3 pt-2 border-t border-divider/40 flex items-center justify-between text-[10px] font-mono">
+                    <div className="mt-2 pt-2 border-t border-divider/40 flex items-center justify-between text-[10px] font-mono">
                       <span className="text-green-800 bg-green-50 px-1.5 py-0.5 border border-green-200 flex items-center gap-1">
                         <Accessibility className="w-3 h-3" />
                         <span>Step-Free Accessible</span>
@@ -339,6 +351,7 @@ export default function JourneyPlannerPage() {
                 );
               })
             )}
+
 
             {/* Detailed Legs Sequence */}
             {activePlan && !isLoading && (

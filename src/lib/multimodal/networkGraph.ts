@@ -395,7 +395,167 @@ export const METRO_STATIONS: MultimodalNode[] = [
     escalatorCount: 6,
     evidenceClassification: 'VERIFIED_EXTERNAL',
   },
+
+  // Phase 9 Expanded Metro Stations
+  // Magenta Line (West to East South Orbital)
+  {
+    id: 'metro-terminal-1-igi',
+    code: 'MST-M02',
+    name: 'Terminal 1 IGI Airport',
+    hindiName: 'टर्मिनल 1 आई.जी.आई एयरपोर्ट',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-28, 24],
+    coordinatesWgs84: [28.5583, 77.1219],
+    zone: 'West',
+    metroLines: ['Magenta'],
+    isStepFreeAccessible: true,
+    elevatorCount: 6,
+    escalatorCount: 12,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-munirka',
+    code: 'MST-M05',
+    name: 'Munirka Metro',
+    hindiName: 'मुनीरका मेट्रो',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-2, 32],
+    coordinatesWgs84: [28.5583, 77.1738],
+    zone: 'South',
+    metroLines: ['Magenta'],
+    isStepFreeAccessible: true,
+    elevatorCount: 4,
+    escalatorCount: 8,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-kalkaji-mandir',
+    code: 'MST-M08',
+    name: 'Kalkaji Mandir',
+    hindiName: 'कालकाजी मंदिर',
+    type: 'METRO_STATION',
+    coordinatesLocal: [20, 36],
+    coordinatesWgs84: [28.5501, 77.2602],
+    zone: 'South',
+    metroLines: ['Magenta', 'Violet'],
+    isStepFreeAccessible: true,
+    elevatorCount: 6,
+    escalatorCount: 12,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-botanical-garden',
+    code: 'MST-M12',
+    name: 'Botanical Garden',
+    hindiName: 'बॉटनिकल गार्डन',
+    type: 'METRO_STATION',
+    coordinatesLocal: [36, 32],
+    coordinatesWgs84: [28.5645, 77.3344],
+    zone: 'East',
+    metroLines: ['Magenta', 'Blue'],
+    isStepFreeAccessible: true,
+    elevatorCount: 6,
+    escalatorCount: 14,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+
+  // Red Line (North-West to East)
+  {
+    id: 'metro-rithala',
+    code: 'MST-R01',
+    name: 'Rithala Metro Terminal',
+    hindiName: 'रिठाला मेट्रो',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-24, -46],
+    coordinatesWgs84: [28.7208, 77.1072],
+    zone: 'North',
+    metroLines: ['Red'],
+    isStepFreeAccessible: true,
+    elevatorCount: 4,
+    escalatorCount: 8,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-netaji-subhash-place',
+    code: 'MST-R04',
+    name: 'Netaji Subhash Place',
+    hindiName: 'नेताजी सुभाष प्लेस',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-16, -28],
+    coordinatesWgs84: [28.6953, 77.1528],
+    zone: 'North',
+    metroLines: ['Red', 'Pink'],
+    isStepFreeAccessible: true,
+    elevatorCount: 6,
+    escalatorCount: 14,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+
+  // Green Line (Radial North-West)
+  {
+    id: 'metro-inderlok',
+    code: 'MST-G01',
+    name: 'Inderlok Metro Interchange',
+    hindiName: 'इंदरलोक',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-10, -22],
+    coordinatesWgs84: [28.6734, 77.1706],
+    zone: 'North',
+    metroLines: ['Green', 'Red'],
+    isStepFreeAccessible: true,
+    elevatorCount: 5,
+    escalatorCount: 10,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-kirti-nagar',
+    code: 'MST-G04',
+    name: 'Kirti Nagar',
+    hindiName: 'कीर्ति नगर',
+    type: 'METRO_STATION',
+    coordinatesLocal: [-18, -14],
+    coordinatesWgs84: [28.6558, 77.1506],
+    zone: 'West',
+    metroLines: ['Green', 'Blue'],
+    isStepFreeAccessible: true,
+    elevatorCount: 4,
+    escalatorCount: 8,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+
+  // Delhi-Meerut Regional Rapid Transit System (RRTS Namo Bharat)
+  {
+    id: 'metro-rrts-sarai-kale-khan',
+    code: 'MST-RR01',
+    name: 'Sarai Kale Khan RRTS Namo Bharat',
+    hindiName: 'सराय काले खाँ आर.आर.टी.एस',
+    type: 'METRO_STATION',
+    coordinatesLocal: [23, 17],
+    coordinatesWgs84: [28.5905, 77.2555],
+    zone: 'South',
+    metroLines: ['RRTS Namo Bharat', 'Pink'],
+    isStepFreeAccessible: true,
+    elevatorCount: 8,
+    escalatorCount: 16,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
+  {
+    id: 'metro-rrts-anand-vihar',
+    code: 'MST-RR02',
+    name: 'Anand Vihar RRTS Station',
+    hindiName: 'आनंद विहार आर.आर.टी.एस',
+    type: 'METRO_STATION',
+    coordinatesLocal: [39, -11],
+    coordinatesWgs84: [28.6475, 77.3170],
+    zone: 'East',
+    metroLines: ['RRTS Namo Bharat', 'Blue', 'Pink'],
+    isStepFreeAccessible: true,
+    elevatorCount: 8,
+    escalatorCount: 16,
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+  },
 ];
+
 
 // Convert DTC bus stops into multimodal graph nodes
 export const BUS_STOP_NODES: MultimodalNode[] = DELHI_STOPS.map((stop: BusStop) => ({
@@ -508,7 +668,66 @@ export const METRO_LINES: MetroLineDefinition[] = [
       'metro-airport-dhaula-kuan',
     ],
   },
+  {
+    id: 'line-magenta',
+    name: 'Magenta Line (Janakpuri West – Botanical Garden)',
+    code: 'LINE-08',
+    color: '#A2238E', // Magenta
+    operatingAgency: 'Delhi Metro Rail Corporation (DMRC)',
+    averageSpeedKmH: 35.2,
+    typicalHeadwayMin: 3.5,
+    stations: [
+      'metro-janakpuri-west',
+      'metro-terminal-1-igi',
+      'metro-munirka',
+      'metro-hauz-khas',
+      'metro-kalkaji-mandir',
+      'metro-botanical-garden',
+    ],
+  },
+  {
+    id: 'line-red',
+    name: 'Red Line (Rithala – Kashmere Gate – Shaheed Sthal)',
+    code: 'LINE-01',
+    color: '#E31B23', // Red
+    operatingAgency: 'Delhi Metro Rail Corporation (DMRC)',
+    averageSpeedKmH: 33.0,
+    typicalHeadwayMin: 3.5,
+    stations: [
+      'metro-rithala',
+      'metro-netaji-subhash-place',
+      'metro-inderlok',
+      'metro-kashmere-gate',
+    ],
+  },
+  {
+    id: 'line-green',
+    name: 'Green Line (Inderlok / Kirti Nagar – Brigadier Hoshiar Singh)',
+    code: 'LINE-05',
+    color: '#00A859', // Green
+    operatingAgency: 'Delhi Metro Rail Corporation (DMRC)',
+    averageSpeedKmH: 32.5,
+    typicalHeadwayMin: 4.5,
+    stations: [
+      'metro-inderlok',
+      'metro-kirti-nagar',
+    ],
+  },
+  {
+    id: 'line-rrts',
+    name: 'Delhi-Meerut RRTS Namo Bharat (Sarai Kale Khan – Anand Vihar)',
+    code: 'RRTS-01',
+    color: '#004F9E', // Cobalt Blue
+    operatingAgency: 'National Capital Region Transport Corporation (NCRTC)',
+    averageSpeedKmH: 90.0,
+    typicalHeadwayMin: 12.0,
+    stations: [
+      'metro-rrts-sarai-kale-khan',
+      'metro-rrts-anand-vihar',
+    ],
+  },
 ];
+
 
 // Helper to compute Haversine distance in km between two WGS84 points
 export function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -814,7 +1033,56 @@ export const INTERCHANGE_SURVEYS: InterchangeHubSurvey[] = [
     bottleneckDescription: 'India’s tallest metro escalators create pinch points at peak descent.',
     wayfindingQualityScore: 4.4,
   },
+  {
+    hubId: 'hub-hauz-khas',
+    name: 'Hauz Khas Deep Concourse Interchange (Yellow & Magenta Lines)',
+    busStopId: 'stop-aiims',
+    metroStationIds: ['metro-hauz-khas'],
+    walkingDistanceMeters: 160,
+    walkingDurationMinutes: 2.8,
+    verticalLevelsChange: 4, // 29m deep underground transfer concourse
+    isCoveredWalkway: true,
+    roadCrossingsCount: 0,
+    hasElevator: true,
+    hasEscalator: true,
+    isStepFreeAccessible: true,
+    bottleneckDescription: 'Deep 29m vertical transition between Yellow and Magenta line platforms; heavy morning transfer volume.',
+    wayfindingQualityScore: 4.6,
+  },
+  {
+    hubId: 'hub-netaji-subhash-place',
+    name: 'Netaji Subhash Place Commercial Hub (Red & Pink Lines)',
+    busStopId: 'stop-rohini',
+    metroStationIds: ['metro-netaji-subhash-place'],
+    walkingDistanceMeters: 130,
+    walkingDurationMinutes: 2.2,
+    verticalLevelsChange: 2,
+    isCoveredWalkway: true,
+    roadCrossingsCount: 0,
+    hasElevator: true,
+    hasEscalator: true,
+    isStepFreeAccessible: true,
+    bottleneckDescription: 'Concourse ticketing barrier queues during North-West evening commute.',
+    wayfindingQualityScore: 4.3,
+  },
+  {
+    hubId: 'hub-kalkaji-mandir',
+    name: 'Kalkaji Mandir Transit Hub (Violet & Magenta Lines)',
+    busStopId: 'stop-nehru-place',
+    metroStationIds: ['metro-kalkaji-mandir'],
+    walkingDistanceMeters: 115,
+    walkingDurationMinutes: 1.9,
+    verticalLevelsChange: 2,
+    isCoveredWalkway: true,
+    roadCrossingsCount: 0,
+    hasElevator: true,
+    hasEscalator: true,
+    isStepFreeAccessible: true,
+    bottleneckDescription: 'Elevated-to-underground transition footbridge pinch points.',
+    wayfindingQualityScore: 4.1,
+  },
 ];
+
 
 function generateTransferEdges(): MultimodalEdge[] {
   const edges: MultimodalEdge[] = [];
@@ -934,6 +1202,48 @@ export class MultimodalNetworkGraph {
       interchangeHubsCount: INTERCHANGE_SURVEYS.length,
     };
   }
+
+  public validateNetworkConnectivity() {
+    const inDegree = new Map<string, number>();
+    const outDegree = new Map<string, number>();
+
+    for (const node of this.nodes.values()) {
+      inDegree.set(node.id, 0);
+      outDegree.set(node.id, 0);
+    }
+
+    for (const edge of this.allEdges) {
+      outDegree.set(edge.sourceNodeId, (outDegree.get(edge.sourceNodeId) || 0) + 1);
+      inDegree.set(edge.targetNodeId, (inDegree.get(edge.targetNodeId) || 0) + 1);
+    }
+
+    const isolatedNodes: string[] = [];
+    for (const node of this.nodes.values()) {
+      const inD = inDegree.get(node.id) || 0;
+      const outD = outDegree.get(node.id) || 0;
+      if (inD === 0 && outD === 0) {
+        isolatedNodes.push(node.id);
+      }
+    }
+
+    const coordinateErrors: string[] = [];
+    for (const node of this.nodes.values()) {
+      const [lat, lng] = node.coordinatesWgs84;
+      if (lat < 28.40 || lat > 28.88 || lng < 76.84 || lng > 77.40) {
+        coordinateErrors.push(`Node ${node.id} coordinates (${lat}, ${lng}) outside Delhi NCT boundary`);
+      }
+    }
+
+    return {
+      isValid: isolatedNodes.length === 0 && coordinateErrors.length === 0,
+      totalNodes: this.nodes.size,
+      totalEdges: this.allEdges.length,
+      isolatedNodes,
+      coordinateErrors,
+      averageOutDegree: Math.round((this.allEdges.length / this.nodes.size) * 10) / 10,
+    };
+  }
+
 }
 
 // Global cached instance

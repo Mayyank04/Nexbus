@@ -79,6 +79,37 @@ export default function AnalyticsControlPage() {
   const [resilienceLoading, setResilienceLoading] = useState<boolean>(false);
   const [accessibilityData, setAccessibilityData] = useState<any>(null);
 
+  // Phase 9: Passenger Demand, Interchange Congestion & Model Explainability (XAI)
+  const [demandMetrics, setDemandMetrics] = useState<any>(null);
+  const [demandDayType, setDemandDayType] = useState<'weekday' | 'weekend'>('weekday');
+  const [isSyntheticDemand, setIsSyntheticDemand] = useState<boolean>(false);
+  const [interchangeCongestion, setInterchangeCongestion] = useState<any[]>([]);
+  const [congestionTimePeriod, setCongestionTimePeriod] = useState<'AM_PEAK' | 'PM_PEAK' | 'OFF_PEAK'>('AM_PEAK');
+  const [explainabilityData, setExplainabilityData] = useState<any>(null);
+
+  const fetchPhase9Data = () => {
+    fetch(`/api/demand/corridor-demand?corridorId=${selectedCorridorId}&dayType=${demandDayType}&synthetic=${isSyntheticDemand}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.demand) setDemandMetrics(json.demand);
+      })
+      .catch((err) => console.error('Error fetching demand metrics:', err));
+
+    fetch(`/api/multimodal/interchanges/congestion?timePeriod=${congestionTimePeriod}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.diagnostics) setInterchangeCongestion(json.diagnostics);
+      })
+      .catch((err) => console.error('Error fetching interchange congestion:', err));
+
+    fetch(`/api/ml/explainability?corridorId=${selectedCorridorId}&horizon=30&isPeak=true`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.explanation) setExplainabilityData(json.explanation);
+      })
+      .catch((err) => console.error('Error fetching explainability data:', err));
+  };
+
   const fetchPhase8Data = () => {
     fetch('/api/multimodal/interchanges')
       .then((res) => res.json())
@@ -141,7 +172,13 @@ export default function AnalyticsControlPage() {
     fetchShadowData();
     fetchPhase8Data();
     fetchResilienceScenario('ring-road-waterlogging');
+    fetchPhase9Data();
   }, []);
+
+  useEffect(() => {
+    fetchPhase9Data();
+  }, [selectedCorridorId, demandDayType, isSyntheticDemand, congestionTimePeriod]);
+
 
   const handleManualSync = async () => {
     setIsSyncing(true);
@@ -1334,6 +1371,392 @@ export default function AnalyticsControlPage() {
           )}
         </div>
 
+        {/* PHASE 9: PASSENGER DEMAND INTELLIGENCE & DIRECTIONAL IMBALANCE */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 9 / PASSENGER DEMAND INTELLIGENCE
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Corridor Demand Patterns, Peak Hour Factor (PHF) & Directional Split
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Privacy-preserving k-anonymity (k ≥ 15) aggregation analyzing passenger arrival intensity, peak surging ratios, and spatial concentration.
+              </p>
+            </div>
+
+            {/* Day Type & Synthetic Mode Controls */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setDemandDayType('weekday')}
+                className={`font-mono text-xs px-3 py-1.5 border transition-all ${
+                  demandDayType === 'weekday'
+                    ? 'bg-ink text-surface-white border-ink'
+                    : 'bg-ivory border-divider text-ink hover:border-stone'
+                }`}
+              >
+                Weekday
+              </button>
+              <button
+                onClick={() => setDemandDayType('weekend')}
+                className={`font-mono text-xs px-3 py-1.5 border transition-all ${
+                  demandDayType === 'weekend'
+                    ? 'bg-ink text-surface-white border-ink'
+                    : 'bg-ivory border-divider text-ink hover:border-stone'
+                }`}
+              >
+                Weekend
+              </button>
+
+              <button
+                onClick={() => setIsSyntheticDemand(!isSyntheticDemand)}
+                className={`font-mono text-xs px-3 py-1.5 border transition-all ${
+                  isSyntheticDemand
+                    ? 'bg-amber-100 text-amber-900 border-amber-300'
+                    : 'bg-ivory border-divider text-ink-muted hover:text-ink'
+                }`}
+              >
+                {isSyntheticDemand ? 'Mode: SYNTHETIC' : 'Mode: CALIBRATED (DERIVED)'}
+              </button>
+            </div>
+          </div>
+
+          {demandMetrics && (
+            <div className="space-y-6">
+              {/* Summary Metric Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Peak Hour Factor (PHF)</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {demandMetrics.peakHourFactor}
+                  </div>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    V / (4 × V₁₅) • Flow Stability
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Directional Split (α)</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {(demandMetrics.directionalImbalanceRatio * 100).toFixed(0)}%
+                  </div>
+                  <span className="font-mono text-[10px] text-terracotta">
+                    {demandMetrics.dominantDirection}
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Gini Concentration (G)</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {demandMetrics.giniPassengerConcentration}
+                  </div>
+                  <span className="font-mono text-[10px] text-stone">
+                    Spatial Boarding Inequality
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">AM Peak Volume</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {(demandMetrics.morningPeakPaxPerHour / 1000).toFixed(1)}k
+                  </div>
+                  <span className="font-mono text-[10px] text-emerald-800">
+                    pax/hour across corridor
+                  </span>
+                </div>
+              </div>
+
+              {/* Busiest Boarding Nodes & Hourly Timeline */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-5 border border-divider p-5 bg-surface-white space-y-3">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold block border-b border-divider pb-2">
+                    TOP CORRIDOR BOARDING NODES
+                  </span>
+                  <div className="space-y-2.5">
+                    {demandMetrics.busiestStops?.map((s: any) => (
+                      <div key={s.stopId} className="flex items-center justify-between text-xs p-2 bg-ivory/40 border border-divider">
+                        <span className="font-medium text-ink">{s.stopName}</span>
+                        <div className="text-right font-mono text-[11px]">
+                          <strong className="text-terracotta">{s.shareOfCorridorDemandPct}%</strong>
+                          <span className="text-ink-muted ml-1">of demand</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 border border-divider p-5 bg-surface-white space-y-3">
+                  <div className="flex items-center justify-between border-b border-divider pb-2">
+                    <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold">
+                      HOURLY DEMAND & BAYESIAN 95% CREDIBLE INTERVALS
+                    </span>
+                    <span className="font-mono text-[10px] text-stone">
+                      UNCERTAINTY: ±12%
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto max-h-56">
+                    <table className="w-full text-left font-mono text-xs">
+                      <thead>
+                        <tr className="border-b border-divider text-[10px] text-ink-muted uppercase">
+                          <th className="py-1.5 px-2">Hour</th>
+                          <th className="py-1.5 px-2 text-right">Expected (pax/h)</th>
+                          <th className="py-1.5 px-2 text-right">95% CI Range</th>
+                          <th className="py-1.5 px-2 text-center">Load Factor</th>
+                          <th className="py-1.5 px-2 text-right">Dir Split</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-divider">
+                        {demandMetrics.hourlyProfiles?.slice(0, 10).map((hp: any) => (
+                          <tr key={hp.hour} className={hp.isPeak ? 'bg-amber-50/50' : ''}>
+                            <td className="py-1.5 px-2 font-semibold text-ink">{hp.timeLabel}</td>
+                            <td className="py-1.5 px-2 text-right text-ink">{hp.expectedPaxPerHour.toLocaleString()}</td>
+                            <td className="py-1.5 px-2 text-right text-ink-muted">
+                              {hp.lowerCi95PaxPerHour.toLocaleString()} – {hp.upperCi95PaxPerHour.toLocaleString()}
+                            </td>
+                            <td className="py-1.5 px-2 text-center">
+                              <span className={`px-1.5 py-0.2 text-[10px] border ${
+                                hp.loadFactorPercentage > 100
+                                  ? 'bg-red-100 text-red-900 border-red-300'
+                                  : 'bg-green-100 text-green-900 border-green-300'
+                              }`}>
+                                {hp.loadFactorPercentage}%
+                              </span>
+                            </td>
+                            <td className="py-1.5 px-2 text-right text-ink">
+                              {(hp.directionalSplitRatio * 100).toFixed(0)}%
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Privacy Notice */}
+              <div className="p-3 bg-ivory/60 border border-divider font-mono text-[11px] text-ink-muted">
+                {demandMetrics.privacyComplianceNotice}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* PHASE 9: INTERCHANGE CONGESTION INTELLIGENCE & FRUIN LEVEL OF SERVICE */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 9 / INTERCHANGE CONGESTION INTELLIGENCE
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Pedestrian Flow Density, Fruin Level of Service (LOS) & Concourse Dynamics
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Concourse flow rates (pax/min/m), stairwell queuing, and Volume-to-Capacity (V/C) ratios across Delhi multimodal hubs.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs text-ink-muted uppercase">Interval:</span>
+              {(['AM_PEAK', 'PM_PEAK', 'OFF_PEAK'] as const).map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setCongestionTimePeriod(period)}
+                  className={`font-mono text-xs px-2.5 py-1 border transition-all ${
+                    congestionTimePeriod === period
+                      ? 'bg-terracotta text-surface-white border-terracotta'
+                      : 'bg-ivory border-divider text-ink'
+                  }`}
+                >
+                  {period.replace('_', ' ')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Congestion Table */}
+          <div className="border border-divider">
+            <div className="bg-ivory border-b border-divider px-4 py-2 flex items-center justify-between text-xs font-mono font-semibold uppercase text-ink">
+              <span>MULTIMODAL HUB CONGESTION DIAGNOSTIC MATRIX</span>
+              <span className="text-ink-muted text-[10px]">TIME WINDOW: {congestionTimePeriod.replace('_', ' ')}</span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr className="bg-surface-white border-b border-divider text-[10px] text-ink-muted uppercase">
+                    <th className="py-2.5 px-3">Interchange Hub</th>
+                    <th className="py-2.5 px-3 text-center">Peak Arrival</th>
+                    <th className="py-2.5 px-3 text-center">Flow Rate (v_p)</th>
+                    <th className="py-2.5 px-3 text-center">Fruin LOS</th>
+                    <th className="py-2.5 px-3 text-center">V/C Ratio</th>
+                    <th className="py-2.5 px-3 text-center">ICI Score</th>
+                    <th className="py-2.5 px-3">Primary Circulation Constraint</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-divider">
+                  {interchangeCongestion.map((hub: any) => (
+                    <tr key={hub.hubId} className="hover:bg-ivory/40">
+                      <td className="py-2.5 px-3 font-semibold text-ink">
+                        {hub.name.split('(')[0].trim()}
+                      </td>
+                      <td className="py-2.5 px-3 text-center text-ink">{hub.peakArrivalIntensityPaxPerMin} pax/m</td>
+                      <td className="py-2.5 px-3 text-center text-ink font-mono">{hub.concourseFlowRatePaxPerMinPerMeter} pax/min/m</td>
+                      <td className="py-2.5 px-3 text-center">
+                        <span className={`px-2 py-0.5 text-[10px] font-bold border ${
+                          hub.fruinLevelOfService === 'LOS_A' || hub.fruinLevelOfService === 'LOS_B'
+                            ? 'bg-green-100 text-green-900 border-green-300'
+                            : hub.fruinLevelOfService === 'LOS_C' || hub.fruinLevelOfService === 'LOS_D'
+                            ? 'bg-amber-100 text-amber-900 border-amber-300'
+                            : 'bg-red-100 text-red-900 border-red-300'
+                        }`}>
+                          {hub.fruinLevelOfService.replace('LOS_', 'LOS ')}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-center text-ink">{hub.volumeToCapacityRatio}</td>
+                      <td className="py-2.5 px-3 text-center font-bold text-terracotta">{hub.interchangeCongestionIndex}/100</td>
+                      <td className="py-2.5 px-3 text-xs text-ink-muted">{hub.verticalBottleneckConstraint}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* PHASE 9: PREDICTIVE MOBILITY & SHAP MODEL EXPLAINABILITY (XAI) */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 9 / PREDICTIVE MOBILITY & EXPLAINABLE AI (XAI)
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                SHAP Feature Attribution Waterfall & Model Interpretability
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Decomposes machine learning delay predictions into exact feature contributions (minutes), uncertainty categories, and global rankings.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-ivory border border-divider text-ink font-mono text-xs">
+              <span>Surrogate: {explainabilityData?.modelVersion || 'v2.0.0-institutional'}</span>
+            </div>
+          </div>
+
+          {explainabilityData && (
+            <div className="space-y-6">
+              {/* Prediction Summary Header */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Baseline Expected Delay</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {explainabilityData.baselinePredictionMinutes} min
+                  </div>
+                  <span className="font-mono text-[10px] text-ink-muted">Historical Background Mean E[Y]</span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Final Predicted Delay</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1 text-terracotta">
+                    +{explainabilityData.finalPredictedDelayMinutes} min
+                  </div>
+                  <span className="font-mono text-[10px] text-terracotta">E[Y] + ∑ SHAP Values</span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Crowding Forecast</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {explainabilityData.pointForecastCrowdingPct}%
+                  </div>
+                  <span className="font-mono text-[10px] text-stone">
+                    95% CI: [{explainabilityData.uncertaintyInterval95[0]}% – {explainabilityData.uncertaintyInterval95[1]}%]
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Uncertainty Breakdown</span>
+                  <div className="font-serif text-xl text-ink font-normal mt-1">
+                    {explainabilityData.uncertaintyDecomposition?.aleatoricUncertaintyPct}% Aleatoric
+                  </div>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    {explainabilityData.uncertaintyDecomposition?.epistemicUncertaintyPct}% Epistemic parameter noise
+                  </span>
+                </div>
+              </div>
+
+              {/* Local Waterfall Breakdown */}
+              <div className="border border-divider">
+                <div className="bg-ivory border-b border-divider px-4 py-2.5 flex items-center justify-between">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold">
+                    LOCAL SHAP VALUE FEATURE ATTRIBUTIONS (WATERFALL)
+                  </span>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    UNITS: DELAY CONTRIBUTION IN MINUTES
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-mono text-xs">
+                    <thead>
+                      <tr className="bg-surface-white border-b border-divider text-[10px] text-ink-muted uppercase">
+                        <th className="py-2.5 px-3">Predictive Feature</th>
+                        <th className="py-2.5 px-3">Category</th>
+                        <th className="py-2.5 px-3">Observed Value</th>
+                        <th className="py-2.5 px-3 text-center">SHAP Impact (min)</th>
+                        <th className="py-2.5 px-3 text-right">Attribution %</th>
+                        <th className="py-2.5 px-3">Behavioral Interpretation</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-divider">
+                      {explainabilityData.localFeatureWaterfall?.map((f: any) => (
+                        <tr key={f.featureName} className="hover:bg-ivory/40">
+                          <td className="py-2.5 px-3 font-semibold text-ink">{f.featureName}</td>
+                          <td className="py-2.5 px-3 text-stone text-[10px]">{f.category}</td>
+                          <td className="py-2.5 px-3 text-ink-muted">{f.featureValue}</td>
+                          <td className="py-2.5 px-3 text-center font-bold">
+                            <span className={f.shapValueContributionMinutes > 0 ? 'text-terracotta' : 'text-emerald-700'}>
+                              {f.shapValueContributionMinutes > 0 ? `+${f.shapValueContributionMinutes}` : f.shapValueContributionMinutes}m
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3 text-right text-ink font-semibold">{f.attributionPercentage}%</td>
+                          <td className="py-2.5 px-3 text-xs text-ink-muted">{f.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Analytical Narrative & Non-Causal Notice */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="border border-divider p-4 bg-ivory/30 space-y-2">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold block">
+                    MODEL EXPLANATION NARRATIVE
+                  </span>
+                  <div className="space-y-1.5 text-xs text-ink leading-relaxed">
+                    {explainabilityData.explanationNarrative?.map((n: string, nIdx: number) => (
+                      <p key={nIdx}>• {n}</p>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border border-amber-300 p-4 bg-amber-50 text-amber-950 space-y-2 text-xs font-mono">
+                  <span className="font-semibold uppercase tracking-wider block text-amber-900">
+                    STATISTICAL NON-CAUSAL DIRECTIVE
+                  </span>
+                  <p className="font-sans leading-relaxed">
+                    {explainabilityData.limitationsNotice}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
           <div className="border-b border-divider pb-4">
             <span className="font-mono text-xs uppercase tracking-wider text-terracotta">

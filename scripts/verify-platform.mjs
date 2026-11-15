@@ -347,6 +347,18 @@ async function runTests() {
     assert(false, `Multimodal tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 9 Institutional Validation & Predictive Intelligence Tests ---');
+  try {
+    const phase9Output = execSync('node scripts/test-phase9-institutional.mjs', { encoding: 'utf8' });
+    assert(
+      phase9Output.includes('PHASE 9 TEST SUMMARY: 45 PASSED'),
+      'Phase 9 institutional validation, demand intelligence, Fruin LOS, cascade disruption, and SHAP XAI tests pass completely (45/45 assertions)'
+    );
+  } catch (err) {
+    assert(false, `Phase 9 tests failed: ${err.message}`);
+  }
+
+
 
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);

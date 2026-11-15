@@ -274,3 +274,68 @@ export async function fetchAccessibilityReport(lat?: number, lng?: number, signa
   }
 }
 
+export async function fetchCorridorDemand(
+  corridorId?: string,
+  dayType?: 'weekday' | 'weekend',
+  synthetic?: boolean,
+  signal?: AbortSignal
+) {
+  try {
+    const params = new URLSearchParams();
+    if (corridorId) params.set('corridorId', corridorId);
+    if (dayType) params.set('dayType', dayType);
+    if (synthetic) params.set('synthetic', 'true');
+    const url = `/api/demand/corridor-demand?${params.toString()}`;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Demand API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching corridor demand:', err);
+    return null;
+  }
+}
+
+export async function fetchInterchangeCongestion(
+  hubId?: string,
+  timePeriod?: string,
+  signal?: AbortSignal
+) {
+  try {
+    const params = new URLSearchParams();
+    if (hubId) params.set('hubId', hubId);
+    if (timePeriod) params.set('timePeriod', timePeriod);
+    const url = `/api/multimodal/interchanges/congestion?${params.toString()}`;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Congestion API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching interchange congestion:', err);
+    return null;
+  }
+}
+
+export async function fetchModelExplainability(
+  corridorId?: string,
+  horizon?: number,
+  isPeak?: boolean,
+  signal?: AbortSignal
+) {
+  try {
+    const params = new URLSearchParams();
+    if (corridorId) params.set('corridorId', corridorId);
+    if (horizon) params.set('horizon', String(horizon));
+    if (isPeak !== undefined) params.set('isPeak', String(isPeak));
+    const url = `/api/ml/explainability?${params.toString()}`;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Explainability API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching model explainability:', err);
+    return null;
+  }
+}
+
+
