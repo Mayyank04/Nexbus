@@ -159,43 +159,41 @@ export default function MethodologyPage() {
   const activeStage = METHODOLOGY_STAGES[activeStageIndex];
 
   return (
-    <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-ivory flex flex-col">
+    <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full space-y-16">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 w-full space-y-16">
         {/* Editorial Heading */}
-        <ScrollReveal>
-          <div className="max-w-3xl space-y-4">
-            <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-terracotta" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
-                SYSTEM METHODOLOGY / COMPUTATIONAL PIPELINE
-              </span>
-            </div>
-            <h1 className="font-serif text-5xl sm:text-7xl text-ink font-normal leading-[0.98]">
-              From ticket tap to urban foresight.
-            </h1>
-            <p className="text-lg text-ink-light font-light leading-relaxed pt-2">
-              The complete 9-stage engineering architecture powering NEXBUS. We strictly categorize every datum into four epistemological tiers: Observed, Estimated, Predicted, or Hypothetical.
-            </p>
-
-            {/* Epistemological Tier Legend */}
-            <div className="flex flex-wrap items-center gap-3 pt-4 font-mono text-xs">
-              <span className="px-2.5 py-1 bg-[#EBF5EE] text-[#1E5631] border border-[#C3E4CD]">
-                ● OBSERVED (Hardware Sensor Pings)
-              </span>
-              <span className="px-2.5 py-1 bg-[#FBF5E8] text-[#8C6D1F] border border-[#F0DFB3]">
-                ▲ ESTIMATED (Statistical Imputation)
-              </span>
-              <span className="px-2.5 py-1 bg-[#EDF3F9] text-[#1D5288] border border-[#C5DAEE]">
-                ◆ PREDICTED (Neural Graph Models)
-              </span>
-              <span className="px-2.5 py-1 bg-[#F4EEF8] text-[#693A86] border border-[#DFCDEC]">
-                ★ HYPOTHETICAL (Counterfactual Sims)
-              </span>
-            </div>
+        <div className="max-w-3xl space-y-4">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-terracotta" />
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
+              SYSTEM METHODOLOGY / COMPUTATIONAL PIPELINE
+            </span>
           </div>
-        </ScrollReveal>
+          <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-ink font-normal leading-[1.02] tracking-tight">
+            From ticket tap to urban foresight.
+          </h1>
+          <p className="text-base sm:text-lg text-ink-secondary font-normal leading-relaxed pt-1">
+            The complete 9-stage engineering architecture powering NEXBUS. We strictly categorize every datum into four epistemological tiers: Observed, Estimated, Predicted, or Hypothetical.
+          </p>
+
+          {/* Epistemological Tier Legend */}
+          <div className="flex flex-wrap items-center gap-2.5 pt-2 font-mono text-xs">
+            <span className="px-2.5 py-1 bg-green-50 text-green-800 border border-green-300">
+              ● OBSERVED (Hardware Sensor Pings)
+            </span>
+            <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-300">
+              ▲ ESTIMATED (Statistical Imputation)
+            </span>
+            <span className="px-2.5 py-1 bg-blue-50 text-blue-800 border border-blue-300">
+              ◆ PREDICTED (Neural Graph Models)
+            </span>
+            <span className="px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-300">
+              ★ HYPOTHETICAL (Counterfactual Sims)
+            </span>
+          </div>
+        </div>
 
         {/* =========================================================================
             INTERACTIVE PIPELINE STAGES EXPLORER

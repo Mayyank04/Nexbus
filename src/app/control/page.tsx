@@ -222,46 +222,46 @@ export default function AnalyticsControlPage() {
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full space-y-12">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-12">
         {/* Editorial Masthead / Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-divider pb-8">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-terracotta" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-muted">
                 AUTHORITY INTELLIGENCE / PILOT OBSERVATORY
               </span>
-              <span className="font-mono text-[10px] px-2 py-0.5 border border-terracotta/40 bg-terracotta/10 text-terracotta font-medium uppercase tracking-wider">
+              <span className="font-mono text-[10px] px-2 py-0.5 border border-terracotta/40 bg-terracotta/10 text-terracotta font-semibold uppercase tracking-wider">
                 PILOT READY
               </span>
             </div>
-            <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
+            <h1 className="font-serif text-4xl sm:text-6xl text-ink font-normal leading-[1.05] tracking-tight">
               Executive Mobility Observatory
             </h1>
-            <p className="text-base text-ink-muted font-light leading-relaxed">
+            <p className="text-sm sm:text-base text-ink-secondary font-normal leading-relaxed">
               Empirical transit analytics synthesized from {data?.metrics.totalConnectedBuses.toLocaleString() || '3,840'} connected DTC transponders, ETM fare punches, and multi-sensor ridership telemetry.
             </p>
           </div>
 
           {/* Action Bar: Exports & Pattern Toggle */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex border border-divider bg-surface-white font-mono text-xs shadow-sm">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex border border-divider bg-surface-white font-mono text-xs shadow-xs h-9">
               <button
                 onClick={() => setDayType('weekday')}
-                className={`px-3 py-2 border-r border-divider transition-colors ${
+                className={`px-3 border-r border-divider transition-colors ${
                   dayType === 'weekday'
                     ? 'bg-terracotta text-surface-white font-medium'
-                    : 'text-ink-muted hover:text-ink'
+                    : 'text-ink-secondary hover:text-ink'
                 }`}
               >
                 Weekday
               </button>
               <button
                 onClick={() => setDayType('weekend')}
-                className={`px-3 py-2 transition-colors ${
+                className={`px-3 transition-colors ${
                   dayType === 'weekend'
                     ? 'bg-terracotta text-surface-white font-medium'
-                    : 'text-ink-muted hover:text-ink'
+                    : 'text-ink-secondary hover:text-ink'
                 }`}
               >
                 Weekend
@@ -271,27 +271,27 @@ export default function AnalyticsControlPage() {
             <button
               onClick={handleManualSync}
               disabled={isSyncing}
-              className="px-3.5 py-2 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
+              className="h-9 px-3.5 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-xs disabled:opacity-50"
               title="Poll active source adapters for fresh observations"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-terracotta ${isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isSyncing ? 'Syncing...' : 'Sync Live Feeds'}</span>
+              <span>{isSyncing ? 'Syncing...' : 'Sync Feeds'}</span>
             </button>
 
             <a
               href="/api/analytics/export?type=shadow-audit"
               download="nexbus_shadow_operations_audit.csv"
-              className="px-3.5 py-2 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+              className="h-9 px-3.5 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-xs"
               title="Download shadow corridor intelligence audit as CSV"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-terracotta" />
-              <span>Shadow Audit CSV</span>
+              <span>Shadow Audit</span>
             </a>
 
             <a
               href="/api/analytics/export?type=corridors"
               download="nexbus_delhi_corridor_intelligence.csv"
-              className="px-3.5 py-2 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+              className="h-9 px-3.5 border border-divider bg-surface-white hover:border-terracotta text-ink font-mono text-xs flex items-center gap-1.5 transition-colors shadow-xs"
               title="Download full corridor metrics as CSV"
             >
               <Download className="w-3.5 h-3.5 text-terracotta" />
@@ -300,11 +300,11 @@ export default function AnalyticsControlPage() {
 
             <button
               onClick={handlePrintReport}
-              className="px-3.5 py-2 bg-ink hover:bg-terracotta text-surface-white font-mono text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+              className="h-9 px-3.5 bg-ink hover:bg-terracotta text-surface-white font-mono text-xs flex items-center gap-1.5 transition-colors shadow-xs"
               title="Print formatted executive PDF report"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Print PDF Briefing</span>
+              <span>Print Briefing</span>
             </button>
           </div>
         </div>
