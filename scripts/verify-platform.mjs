@@ -358,6 +358,17 @@ async function runTests() {
     assert(false, `Phase 9 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 10 City-Scale Mobility Intelligence & Digital Twin Tests ---');
+  try {
+    const phase10Output = execSync('node scripts/test-phase10-city-scale.mjs', { encoding: 'utf8' });
+    assert(
+      phase10Output.includes('Phase 10 Tests Complete: 46 passed, 0 failed'),
+      'Phase 10 city-scale network (67 nodes, 226 edges, 15 hubs), data governance, OD gravity, digital twin, resilience, accessibility equity, scenario planning, and ML registry tests pass completely (46/46 assertions)'
+    );
+  } catch (err) {
+    assert(false, `Phase 10 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
