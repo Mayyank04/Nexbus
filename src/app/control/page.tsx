@@ -227,6 +227,9 @@ export default function AnalyticsControlPage() {
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
                 AUTHORITY INTELLIGENCE / PILOT OBSERVATORY
               </span>
+              <span className="font-mono text-[10px] px-2 py-0.5 border border-terracotta/40 bg-terracotta/10 text-terracotta font-medium uppercase tracking-wider">
+                PILOT READY
+              </span>
             </div>
             <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
               Executive Mobility Observatory
@@ -298,6 +301,85 @@ export default function AnalyticsControlPage() {
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print PDF Briefing</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Institutional Pilot Demonstration Scenarios Panel */}
+        <div className="border border-divider bg-parchment/30 p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-divider pb-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-600" />
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                Institutional Pilot Mode — Controlled Scenario Demonstrations
+              </span>
+            </div>
+            <span className="font-mono text-[10px] text-ink-muted uppercase tracking-tight">
+              Safety Invariant: READ-ONLY + PASSIVE + ADVISORY (No Automated Dispatch)
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <button
+              onClick={() => {
+                setOdTimeWindow('AM_PEAK');
+                setDemandDayType('weekday');
+                setSelectedCorridorId('corridor-radial-south');
+              }}
+              className="p-3 border border-divider bg-surface-white hover:border-terracotta text-left space-y-1 transition-all group shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] text-terracotta font-semibold uppercase tracking-wider">
+                  Preset A: AM Peak Surge
+                </span>
+                <span className="font-mono text-[9px] px-1 py-0.2 border border-divider text-ink-muted">DERIVED</span>
+              </div>
+              <div className="font-serif text-sm text-ink group-hover:text-terracotta transition-colors">
+                Trans-Yamuna & Radial South Commute
+              </div>
+              <div className="text-[11px] text-ink-muted leading-tight">
+                Doubly-constrained Furness OD matrix: 331k pax/hr targeting Central Secretariat & Connaught Place.
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setResilienceScenarioId('ring-road-waterlogging');
+                fetchResilienceScenario('ring-road-waterlogging');
+              }}
+              className="p-3 border border-divider bg-surface-white hover:border-terracotta text-left space-y-1 transition-all group shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] text-terracotta font-semibold uppercase tracking-wider">
+                  Preset B: Monsoon Disruption
+                </span>
+                <span className="font-mono text-[9px] px-1 py-0.2 border border-divider text-ink-muted">SIMULATED</span>
+              </div>
+              <div className="font-serif text-sm text-ink group-hover:text-terracotta transition-colors">
+                Mahatma Gandhi Ring Road Flood
+              </div>
+              <div className="text-[11px] text-ink-muted leading-tight">
+                Simulates 14km/h bus drop, cascade rerouting to Pink/Yellow Lines, and Fruin LOS F crowding.
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedCorridorId('corridor-ring-road');
+              }}
+              className="p-3 border border-divider bg-surface-white hover:border-terracotta text-left space-y-1 transition-all group shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] text-terracotta font-semibold uppercase tracking-wider">
+                  Preset C: Feeder Fleet Equity
+                </span>
+                <span className="font-mono text-[9px] px-1 py-0.2 border border-divider text-ink-muted">SIMULATED</span>
+              </div>
+              <div className="font-serif text-sm text-ink group-hover:text-terracotta transition-colors">
+                Peripheral Transit Desert Relief
+              </div>
+              <div className="text-[11px] text-ink-muted leading-tight">
+                500 electric feeder buses in Narela & Burari: 1.82x quintile ratio relief, BCR 4.62x.
+              </div>
             </button>
           </div>
         </div>
