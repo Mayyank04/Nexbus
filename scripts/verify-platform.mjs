@@ -336,6 +336,18 @@ async function runTests() {
     assert(false, `Connectivity audit failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 8 Multimodal Intelligence & Resilience Tests ---');
+  try {
+    const multimodalOutput = execSync('node scripts/test-multimodal-network.mjs', { encoding: 'utf8' });
+    assert(
+      multimodalOutput.includes('PHASE 8 TEST SUMMARY: 34 PASSED'),
+      'Multimodal intelligence, IFI scoring, and resilience stress tests pass completely (34/34 assertions)'
+    );
+  } catch (err) {
+    assert(false, `Multimodal tests failed: ${err.message}`);
+  }
+
+
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log(`========================================\n`);

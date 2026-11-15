@@ -71,6 +71,44 @@ export default function AnalyticsControlPage() {
   const [sourceHealth, setSourceHealth] = useState<any[]>([]);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
+  // Phase 8: Multimodal Interchange, Resilience & Accessibility States
+  const [interchanges, setInterchanges] = useState<any[]>([]);
+  const [selectedHubId, setSelectedHubId] = useState<string>('hub-kashmere-gate');
+  const [resilienceScenarioId, setResilienceScenarioId] = useState<string>('ring-road-waterlogging');
+  const [resilienceResult, setResilienceResult] = useState<any>(null);
+  const [resilienceLoading, setResilienceLoading] = useState<boolean>(false);
+  const [accessibilityData, setAccessibilityData] = useState<any>(null);
+
+  const fetchPhase8Data = () => {
+    fetch('/api/multimodal/interchanges')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.interchanges) setInterchanges(json.interchanges);
+      })
+      .catch((err) => console.error('Error fetching interchanges:', err));
+
+    fetch('/api/multimodal/accessibility')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) setAccessibilityData(json);
+      })
+      .catch((err) => console.error('Error fetching accessibility:', err));
+  };
+
+  const fetchResilienceScenario = (scenarioId: string) => {
+    setResilienceLoading(true);
+    fetch(`/api/multimodal/resilience?scenarioId=${scenarioId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.evaluation) setResilienceResult(json.evaluation);
+        setResilienceLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching resilience evaluation:', err);
+        setResilienceLoading(false);
+      });
+  };
+
   const fetchShadowData = () => {
     fetch('/api/shadow/corridors')
       .then((res) => res.json())
@@ -101,6 +139,8 @@ export default function AnalyticsControlPage() {
       });
 
     fetchShadowData();
+    fetchPhase8Data();
+    fetchResilienceScenario('ring-road-waterlogging');
   }, []);
 
   const handleManualSync = async () => {
@@ -862,7 +902,438 @@ export default function AnalyticsControlPage() {
           </div>
         </div>
 
-        {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
+        {/* PHASE 8: MULTIMODAL INTERCHANGE INTELLIGENCE & FRICTION INDEX (IFI) */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 8 / MULTIMODAL INTERCHANGE INTELLIGENCE
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Interchange Friction Index (IFI) & Hub Diagnostics
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Quantitative transfer friction scoring across Delhi’s key multimodal nodes combining walking distance, vertical level shifts, road crossing hazards, and headways.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs text-ink-muted uppercase">Formula:</span>
+              <code className="font-mono text-[10px] bg-ivory border border-divider px-2 py-1 text-ink">
+                IFI = 0.35(D_walk/100m) + 0.25(L_vert) + 0.20(F_cross) + 0.20(T_wait/5m)
+              </code>
+            </div>
+          </div>
+
+          {/* Interchange Hubs Selector Tabs */}
+          <div className="flex flex-wrap gap-2 pt-1 border-b border-divider pb-4">
+            {interchanges.map((hub) => (
+              <button
+                key={hub.hubId}
+                onClick={() => setSelectedHubId(hub.hubId)}
+                className={`font-mono text-xs px-3 py-1.5 border transition-all ${
+                  selectedHubId === hub.hubId
+                    ? 'bg-terracotta text-surface-white border-terracotta shadow-xs'
+                    : 'bg-ivory border-divider text-ink hover:border-stone'
+                }`}
+              >
+                {hub.name.split('(')[0].trim()}
+              </button>
+            ))}
+          </div>
+
+          {/* Selected Hub Detail Card */}
+          {(() => {
+            const activeHub = interchanges.find((h) => h.hubId === selectedHubId) || interchanges[0];
+            if (!activeHub) return null;
+
+            return (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* Left: Summary Metrics */}
+                  <div className="lg:col-span-4 border border-divider bg-ivory/40 p-6 space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="font-mono text-[10px] text-terracotta uppercase">
+                          {activeHub.zone} Zone • {activeHub.evidenceClassification}
+                        </span>
+                        <h4 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                          {activeHub.name}
+                        </h4>
+                        <div className="text-xs font-mono text-ink-muted mt-0.5">{activeHub.hindiName}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`font-mono text-xl font-bold px-2.5 py-1 border inline-block ${
+                          activeHub.frictionGrade === 'A'
+                            ? 'bg-green-100 text-green-900 border-green-300'
+                            : activeHub.frictionGrade === 'B'
+                            ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                            : activeHub.frictionGrade === 'C'
+                            ? 'bg-amber-100 text-amber-900 border-amber-300'
+                            : 'bg-red-100 text-red-900 border-red-300'
+                        }`}>
+                          Grade {activeHub.frictionGrade}
+                        </div>
+                        <div className="text-[10px] font-mono text-ink-muted mt-1">Score: {activeHub.frictionScore}/100</div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-divider font-mono text-xs">
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Walk Distance</span>
+                        <strong className="text-ink text-sm">{activeHub.walkingDistanceMeters}m</strong>
+                        <span className="text-[10px] text-ink-muted ml-1">({activeHub.walkingDurationMinutes} min)</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Vertical Levels</span>
+                        <strong className="text-ink text-sm">±{activeHub.verticalLevelsChange} levels</strong>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Road Crossings</span>
+                        <strong className="text-ink text-sm">{activeHub.roadCrossingsCount} surface crossing(s)</strong>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Covered Concourse</span>
+                        <strong className="text-ink text-sm">{activeHub.isCoveredWalkway ? 'Yes (Canopy)' : 'No (Exposed)'}</strong>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Step-Free Access</span>
+                        <strong className="text-green-800 text-sm">{activeHub.isStepFreeAccessible ? 'Wheelchair Ready' : 'Restricted'}</strong>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] text-ink-muted uppercase">Wayfinding Quality</span>
+                        <strong className="text-ink text-sm">{activeHub.wayfindingQualityScore} / 5.0</strong>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-divider">
+                      <span className="block text-[10px] font-mono text-ink-muted uppercase mb-1">Connected Modes</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {activeHub.connectedModes?.map((m: string, mIdx: number) => (
+                          <span key={mIdx} className="font-mono text-[10px] px-2 py-0.5 bg-surface-white border border-divider text-ink">
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Bottlenecks & Recommendations */}
+                  <div className="lg:col-span-8 border border-divider bg-surface-white p-6 space-y-5">
+                    <div>
+                      <span className="font-mono text-xs text-terracotta uppercase tracking-wider block mb-1">
+                        TRANSFER BOTTLENECK DIAGNOSTIC
+                      </span>
+                      <div className="p-3.5 bg-amber-50 border border-amber-200 text-xs text-amber-950 font-sans leading-relaxed">
+                        <strong>Observed Pinch-Point: </strong> {activeHub.bottleneckDescription}
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="font-mono text-xs text-ink-muted uppercase tracking-wider block mb-2">
+                        AUTHORITY INTERVENTION RECOMMENDATIONS ({activeHub.recommendedInterventions?.length || 0})
+                      </span>
+                      <div className="space-y-2.5">
+                        {activeHub.recommendedInterventions?.map((rec: string, rIdx: number) => (
+                          <div key={rIdx} className="flex items-start gap-3 p-3 bg-ivory/50 border border-divider text-xs">
+                            <span className="font-mono text-xs text-terracotta font-semibold mt-0.5">0{rIdx + 1}</span>
+                            <span className="text-ink font-light leading-relaxed flex-1">{rec}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* PHASE 8: NETWORK RESILIENCE & DISRUPTION SIMULATOR */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 8 / MULTIMODAL NETWORK RESILIENCE ENGINE
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Corridor Disruption & Topological Vulnerability Simulation
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Passive graph stress testing: calculates global efficiency drop, detour penalties, and critical cut-vertices under simulated disruptions.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-300 text-amber-900 font-mono text-xs">
+              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <span>CLASSIFICATION: SIMULATED (ADVISORY ONLY)</span>
+            </div>
+          </div>
+
+          {/* Scenario Selector */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: 'ring-road-waterlogging', label: 'Ring Road Waterlogging (Moti Bagh Underpass)' },
+              { id: 'yellow-line-maintenance', label: 'Yellow Line Signaling Snag (Rajiv Chowk – Kashmere Gate)' },
+              { id: 'ito-junction-gridlock', label: 'ITO Vikas Marg Cross-River Gridlock' },
+              { id: 'airport-express-suspension', label: 'Airport Express Suspension (Dhaula Kuan)' },
+            ].map((sc) => (
+              <button
+                key={sc.id}
+                onClick={() => {
+                  setResilienceScenarioId(sc.id);
+                  fetchResilienceScenario(sc.id);
+                }}
+                className={`font-mono text-xs px-3.5 py-2 border transition-all ${
+                  resilienceScenarioId === sc.id
+                    ? 'bg-ink text-surface-white border-ink shadow-xs'
+                    : 'bg-ivory border-divider text-ink hover:border-stone'
+                }`}
+              >
+                {sc.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Resilience Metrics Dashboard */}
+          {resilienceLoading ? (
+            <div className="p-8 border border-divider text-center font-mono text-xs text-ink-muted animate-pulse">
+              Simulating graph topological degradation and rerouting paths...
+            </div>
+          ) : resilienceResult ? (
+            <div className="space-y-6">
+              {/* Metric Highlights */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Vulnerability Index</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {resilienceResult.vulnerabilityIndexPct}%
+                  </div>
+                  <span className="font-mono text-[10px] text-terracotta">
+                    Severity: {resilienceResult.severity}
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Efficiency Loss (ΔE/E₀)</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    -{resilienceResult.efficiencyLossPct}%
+                  </div>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    {resilienceResult.baselineEfficiency} → {resilienceResult.disruptedEfficiency}
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Critical Cut-Vertices</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    {resilienceResult.criticalCutVertices?.length || 0}
+                  </div>
+                  <span className="font-mono text-[10px] text-stone">
+                    Single points of network severance
+                  </span>
+                </div>
+
+                <div className="border border-divider p-4 bg-ivory/50">
+                  <span className="font-mono text-[10px] uppercase text-ink-muted block">Avg Detour Delay</span>
+                  <div className="font-serif text-3xl text-ink font-normal mt-1">
+                    +17.0 min
+                  </div>
+                  <span className="font-mono text-[10px] text-amber-800">
+                    +42% passenger journey time
+                  </span>
+                </div>
+              </div>
+
+              {/* Sample Journey Detour Table */}
+              <div className="border border-divider">
+                <div className="bg-ivory border-b border-divider px-4 py-2.5 flex items-center justify-between">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink font-semibold">
+                    SAMPLE OD PAIR DETOUR IMPACTS
+                  </span>
+                  <span className="font-mono text-[10px] text-ink-muted">
+                    EVALUATED AT PEAK INTERVAL
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-mono text-xs">
+                    <thead>
+                      <tr className="border-b border-divider bg-surface-white text-[10px] text-ink-muted uppercase">
+                        <th className="py-2.5 px-3">Journey Route</th>
+                        <th className="py-2.5 px-3 text-center">Base Time</th>
+                        <th className="py-2.5 px-3 text-center">Disrupted Time</th>
+                        <th className="py-2.5 px-3 text-center">Delay Penalty</th>
+                        <th className="py-2.5 px-3">Recommended Advisory Detour</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-divider">
+                      {resilienceResult.sampleDetourImpacts?.map((trip: any, tIdx: number) => (
+                        <tr key={tIdx} className="hover:bg-ivory/40">
+                          <td className="py-2.5 px-3 font-semibold text-ink">
+                            {trip.origin.replace('stop-', '').toUpperCase()} → {trip.destination.replace('stop-', '').toUpperCase()}
+                          </td>
+                          <td className="py-2.5 px-3 text-center text-ink-muted">{trip.baselineDurationMin} min</td>
+                          <td className="py-2.5 px-3 text-center font-bold text-terracotta">{trip.disruptedDurationMin} min</td>
+                          <td className="py-2.5 px-3 text-center text-amber-800">
+                            +{trip.delayPenaltyMin}m (+{trip.delayPenaltyPct}%)
+                          </td>
+                          <td className="py-2.5 px-3 text-xs text-ink-muted">{trip.recommendedDetourRoute}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Authority Advisories & Cut Vertices */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="border border-divider p-5 space-y-3 bg-surface-white">
+                  <span className="font-mono text-xs text-ink-muted uppercase tracking-wider block">
+                    RECOMMENDED ADVISORY ACTIONS ({resilienceResult.authorityAdvisories?.length || 0})
+                  </span>
+                  <div className="space-y-2">
+                    {resilienceResult.authorityAdvisories?.map((adv: string, aIdx: number) => (
+                      <div key={aIdx} className="flex items-start gap-2.5 text-xs text-ink">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span className="font-light leading-relaxed">{adv}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border border-divider p-5 space-y-3 bg-surface-white">
+                  <span className="font-mono text-xs text-ink-muted uppercase tracking-wider block">
+                    IDENTIFIED CRITICAL CUT-VERTICES
+                  </span>
+                  <div className="space-y-2.5">
+                    {resilienceResult.criticalCutVertices?.map((cut: any, cIdx: number) => (
+                      <div key={cIdx} className="p-2.5 border border-divider bg-ivory/50 text-xs">
+                        <div className="font-semibold text-ink">{cut.nodeName}</div>
+                        <div className="text-[11px] text-ink-muted mt-0.5">{cut.impactDescription}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Binding Non-Intervention Safety Guarantee */}
+              <div className="p-4 border border-terracotta/40 bg-parchment/60 text-ink text-xs font-mono flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-terracotta shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-semibold text-terracotta uppercase tracking-wider block">
+                    NON-INTERVENTION SAFETY GUARANTEE
+                  </span>
+                  <p className="font-sans text-xs text-ink-muted leading-relaxed">
+                    {resilienceResult.nonInterventionSafetyNotice}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        {/* PHASE 8: GEOGRAPHIC ACCESSIBILITY & COVERAGE GAPS */}
+        <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
+          <div className="border-b border-divider pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                PHASE 8 / GEOGRAPHIC ACCESSIBILITY & COVERAGE
+              </span>
+              <h3 className="font-serif text-2xl text-ink font-normal mt-0.5">
+                Pedestrian Catchment Isochrones & Transit Gap Areas
+              </h3>
+              <p className="text-xs text-ink-muted font-light leading-relaxed mt-1">
+                Spatial accessibility analysis evaluating 400m (5-min walk) and 800m (10-min walk) buffers across Delhi NCT zones.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 font-mono text-xs">
+              <span className="px-2.5 py-1 bg-green-100 text-green-900 border border-green-300">
+                800m Coverage: 83.2%
+              </span>
+              <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 border border-emerald-300">
+                400m Coverage: 72.0%
+              </span>
+            </div>
+          </div>
+
+          {accessibilityData && (
+            <div className="space-y-6">
+              {/* Zone Coverage Table */}
+              <div className="border border-divider">
+                <div className="bg-ivory border-b border-divider px-4 py-2 text-xs font-mono font-semibold uppercase text-ink">
+                  Zone Accessibility Index & Catchment Ratios
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left font-mono text-xs">
+                    <thead>
+                      <tr className="bg-surface-white border-b border-divider text-[10px] text-ink-muted uppercase">
+                        <th className="py-2.5 px-3">Zone</th>
+                        <th className="py-2.5 px-3">Area (km²)</th>
+                        <th className="py-2.5 px-3 text-center">400m Catchment</th>
+                        <th className="py-2.5 px-3 text-center">800m Catchment</th>
+                        <th className="py-2.5 px-3 text-center">Accessibility Score</th>
+                        <th className="py-2.5 px-3">Dominant Transit Backbone</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-divider">
+                      {accessibilityData.zones?.map((z: any) => (
+                        <tr key={z.zoneName} className="hover:bg-ivory/40">
+                          <td className="py-2.5 px-3 font-semibold text-ink">{z.zoneName} Delhi</td>
+                          <td className="py-2.5 px-3 text-ink-muted">{z.totalAreaSqKm} km²</td>
+                          <td className="py-2.5 px-3 text-center text-ink">{z.coverage400mPct}%</td>
+                          <td className="py-2.5 px-3 text-center font-bold text-emerald-800">{z.coverage800mPct}%</td>
+                          <td className="py-2.5 px-3 text-center">
+                            <span className="px-2 py-0.5 bg-ivory border border-divider text-terracotta font-semibold">
+                              {z.accessibilityIndex} / 100
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3 text-xs text-ink-muted">{z.dominantTransitMode}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Transit Gap Areas */}
+              <div>
+                <span className="font-mono text-xs text-terracotta uppercase tracking-wider block mb-3">
+                  IDENTIFIED URBAN TRANSIT DESERTS & RECOMMENDED INTERVENTIONS ({accessibilityData.transitGaps?.length || 0})
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {accessibilityData.transitGaps?.map((gap: any) => (
+                    <div key={gap.id} className="border border-divider p-4 bg-ivory/30 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="font-mono text-[9px] uppercase px-1.5 py-0.5 bg-red-100 text-red-900 border border-red-300">
+                            {gap.severity} DESERT
+                          </span>
+                          <h4 className="font-serif text-lg text-ink font-normal mt-1">{gap.name}</h4>
+                        </div>
+                        <div className="text-right font-mono text-xs">
+                          <span className="text-ink-muted block text-[10px]">Pop. Affected</span>
+                          <strong className="text-ink">{(gap.estimatedAffectedPopulation / 1000).toFixed(0)}k</strong>
+                        </div>
+                      </div>
+
+                      <div className="font-mono text-xs text-ink-muted flex items-center justify-between pt-1 border-t border-divider">
+                        <span>Nearest Rapid Stop: {gap.nearestTransitNodeName}</span>
+                        <strong className="text-terracotta">{gap.distanceToNearestTransitKm} km walk</strong>
+                      </div>
+
+                      <div className="p-2.5 bg-surface-white border border-divider text-xs text-ink-muted font-sans leading-relaxed">
+                        <strong className="text-ink font-medium">Intervention: </strong> {gap.recommendedIntervention}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
           <div className="border-b border-divider pb-4">
             <span className="font-mono text-xs uppercase tracking-wider text-terracotta">

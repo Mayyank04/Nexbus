@@ -211,3 +211,66 @@ export async function runSimulationEvaluation(
     return null;
   }
 }
+
+export async function fetchMultimodalJourneyPlans(
+  origin: string,
+  destination: string,
+  preference?: string,
+  stepFree?: boolean,
+  signal?: AbortSignal
+) {
+  try {
+    const params = new URLSearchParams({ origin, destination });
+    if (preference) params.set('preference', preference);
+    if (stepFree !== undefined) params.set('stepFree', String(stepFree));
+    const res = await fetch(`/api/multimodal/plan?${params.toString()}`, { signal });
+    if (!res.ok) throw new Error('Multimodal plan API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching multimodal plans:', err);
+    return null;
+  }
+}
+
+export async function fetchInterchangeHubs(hubId?: string, signal?: AbortSignal) {
+  try {
+    const url = hubId ? `/api/multimodal/interchanges?hubId=${hubId}` : '/api/multimodal/interchanges';
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Interchanges API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching interchange hubs:', err);
+    return null;
+  }
+}
+
+export async function fetchNetworkResilience(scenarioId?: string, signal?: AbortSignal) {
+  try {
+    const url = scenarioId ? `/api/multimodal/resilience?scenarioId=${scenarioId}` : '/api/multimodal/resilience';
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Resilience API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching resilience:', err);
+    return null;
+  }
+}
+
+export async function fetchAccessibilityReport(lat?: number, lng?: number, signal?: AbortSignal) {
+  try {
+    const url = lat !== undefined && lng !== undefined
+      ? `/api/multimodal/accessibility?lat=${lat}&lng=${lng}`
+      : '/api/multimodal/accessibility';
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('Accessibility API failed');
+    return await res.json();
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') return null;
+    console.error('Error fetching accessibility report:', err);
+    return null;
+  }
+}
+

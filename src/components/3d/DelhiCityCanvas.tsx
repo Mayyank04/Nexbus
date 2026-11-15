@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { DELHI_STOPS, DELHI_CORRIDORS, BusStop, TransitCorridor } from '@/data/delhiTransitData';
+import { METRO_LINES, METRO_STATIONS, INTERCHANGE_SURVEYS } from '@/lib/multimodal/networkGraph';
 
 export type CameraPreset = 'overview' | 'corridor' | 'street' | 'simulation' | 'journey';
 
@@ -546,6 +547,78 @@ export default function DelhiCityCanvas({
 
       scene.add(stopGroup);
       stopMarkersRef.current.set(stop.id, stopGroup);
+    });
+
+    // 6b. DMRC Metro Lines & Spatial Rail Conduits (Phase 8 Multimodal Integration)
+    METRO_LINES.forEach((line) => {
+      const linePoints: THREE.Vector3[] = [];
+      for (const stId of line.stations) {
+        const st = METRO_STATIONS.find((s) => s.id === stId);
+        if (st) {
+          linePoints.push(new THREE.Vector3(st.coordinatesLocal[0], 0.12, st.coordinatesLocal[1]));
+        }
+      }
+      if (linePoints.length > 1) {
+        const metroCurve = new THREE.CatmullRomCurve3(linePoints, false);
+        const metroGeo = new THREE.TubeGeometry(metroCurve, 80, 0.16, 6, false);
+        const metroMat = new THREE.MeshBasicMaterial({
+          color: new THREE.Color(line.color),
+          transparent: true,
+          opacity: 0.85,
+        });
+        const metroMesh = new THREE.Mesh(metroGeo, metroMat);
+        scene.add(metroMesh);
+      }
+    });
+
+    // 6c. DMRC Metro Stations & Interchange Disc Portals
+    METRO_STATIONS.forEach((station) => {
+      const stGroup = new THREE.Group();
+      stGroup.position.set(station.coordinatesLocal[0], 0, station.coordinatesLocal[1]);
+
+      const discGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.08, 16);
+      const discMat = new THREE.MeshBasicMaterial({ color: 0x1B6CA8 });
+      const disc = new THREE.Mesh(discGeo, discMat);
+      disc.position.y = 0.06;
+      stGroup.add(disc);
+
+      const ringGeo = new THREE.RingGeometry(0.5, 0.7, 24);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.9,
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.y = 0.14;
+      stGroup.add(ring);
+
+      scene.add(stGroup);
+    });
+
+    // 6d. Multimodal Interchange Beacon Rings (IFI Hubs)
+    INTERCHANGE_SURVEYS.forEach((hub) => {
+      const busStop = DELHI_STOPS.find((s) => s.id === hub.busStopId);
+      if (!busStop) return;
+
+      const hubGroup = new THREE.Group();
+      hubGroup.position.set(busStop.coordinates[0], 0, busStop.coordinates[1]);
+
+      const beaconRing = new THREE.Mesh(
+        new THREE.RingGeometry(1.2, 1.5, 28),
+        new THREE.MeshBasicMaterial({
+          color: 0xc89b53, // Antique Gold
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.7,
+        })
+      );
+      beaconRing.rotation.x = -Math.PI / 2;
+      beaconRing.position.y = 0.22;
+      hubGroup.add(beaconRing);
+
+      scene.add(hubGroup);
     });
 
     // 7. Architectural Buses (Dual-tone, properly proportioned)
