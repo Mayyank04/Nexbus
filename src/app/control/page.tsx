@@ -27,6 +27,7 @@ import {
   Database,
   Server,
   Zap,
+  ShieldAlert,
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
 import { SOURCE_CAPABILITY_REGISTRY } from '@/data/sourceCapabilityRegistry';
@@ -741,11 +742,11 @@ export default function AnalyticsControlPage() {
             <table className="w-full text-left font-mono text-xs border border-divider">
               <thead>
                 <tr className="bg-ivory border-b border-divider text-ink-muted text-[10px] uppercase">
-                  <th className="py-2.5 px-3">Feed Name & Source ID</th>
-                  <th className="py-2.5 px-3">Protocol & Auth</th>
-                  <th className="py-2.5 px-3">Polling Interval</th>
-                  <th className="py-2.5 px-3 text-center">Capability Status</th>
-                  <th className="py-2.5 px-3 text-right">Reliability</th>
+                  <th className="py-2.5 px-3">Feed Name, Publisher & Scope</th>
+                  <th className="py-2.5 px-3">Protocol, Method & Auth</th>
+                  <th className="py-2.5 px-3">Frequency & Freshness</th>
+                  <th className="py-2.5 px-3 text-center">Provider Status & Evidence Tier</th>
+                  <th className="py-2.5 px-3 text-right">Reliability & Latency</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-divider">
@@ -758,32 +759,62 @@ export default function AnalyticsControlPage() {
                         <span>•</span>
                         <span>{src.provider}</span>
                       </div>
+                      <div className="text-[10px] text-ink-muted/90 mt-1 italic max-w-sm">
+                        {src.knownLimitations}
+                      </div>
                     </td>
                     <td className="py-3 px-3 text-ink-muted text-[11px]">
-                      <div>{src.protocol}</div>
+                      <div>{src.protocol} ({src.retrievalMethod})</div>
                       <div className="text-[10px] text-ink-muted/80">{src.authMethod}</div>
+                      <div className="text-[9px] text-ink-muted/60 mt-0.5">{src.geographicCoverage}</div>
                     </td>
-                    <td className="py-3 px-3 text-ink-muted text-[11px]">{src.updateFrequency}</td>
+                    <td className="py-3 px-3 text-ink-muted text-[11px]">
+                      <div>{src.updateFrequency}</div>
+                      <div className="text-[10px] text-ink-muted/80">Tested: {src.lastTestedAt ? new Date(src.lastTestedAt).toLocaleDateString() : 'N/A'}</div>
+                    </td>
                     <td className="py-3 px-3 text-center">
                       <span
                         className={`px-2 py-0.5 text-[9px] border font-mono ${
-                          src.status === 'VALIDATED' || src.status === 'INTEGRATED'
+                          src.providerStatus === 'AVAILABLE'
                             ? 'bg-green-100 text-green-900 border-green-300'
-                            : src.status === 'AUTHENTICATED'
+                            : src.providerStatus === 'AUTH_REQUIRED'
+                            ? 'bg-indigo-100 text-indigo-900 border-indigo-300'
+                            : src.providerStatus === 'DEGRADED' || src.providerStatus === 'RATE_LIMITED'
                             ? 'bg-amber-100 text-amber-900 border-amber-300'
+                            : src.providerStatus === 'STALE'
+                            ? 'bg-orange-100 text-orange-900 border-orange-300'
                             : 'bg-red-100 text-red-900 border-red-300'
                         }`}
                       >
-                        {src.status}
+                        {src.providerStatus}
                       </span>
+                      <div className="mt-1">
+                        <span className="px-1.5 py-0.5 text-[8px] bg-terracotta/10 text-terracotta border border-terracotta/20 font-mono">
+                          {src.dataClassification}
+                        </span>
+                      </div>
                     </td>
                     <td className="py-3 px-3 text-right font-semibold text-ink">
-                      {src.reliabilityScorePct}%
+                      <div>{src.reliabilityScorePct}%</div>
+                      <div className="text-[10px] text-ink-muted font-normal font-mono">{src.lastTestedLatencyMs || src.expectedLatencyMs}ms</div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Non-Substitution Governance Policy Banner */}
+          <div className="p-3 border border-terracotta/20 bg-terracotta/5 font-mono text-xs text-ink flex items-start gap-2.5">
+            <ShieldAlert className="w-4 h-4 text-terracotta shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-semibold text-terracotta uppercase text-[10px] block">
+                Evidence Governance Policy & Safety Invariant
+              </span>
+              <p className="text-[11px] text-ink-muted font-light leading-relaxed">
+                NEXBUS enforces strict provider transparency: synthetic fixture substitutes are never silently injected for failed real-world transport feeds. Upstream feeds that are offline, blocked by Cloudflare WAF, or lacking credentials remain explicitly marked with their actual operational state.
+              </p>
+            </div>
           </div>
         </div>
 
