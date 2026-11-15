@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/navigation/Navbar';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'motion/react';
+import { ScrollReveal } from '@/components/ui/scroll-reveal';
+import { Magnetic } from '@/components/ui/magnetic';
 import {
   Database,
   GitBranch,
@@ -161,225 +164,248 @@ export default function MethodologyPage() {
 
       <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full space-y-16">
         {/* Editorial Heading */}
-        <div className="max-w-3xl space-y-4">
-          <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-terracotta" />
-            <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
-              SYSTEM METHODOLOGY / COMPUTATIONAL PIPELINE
-            </span>
-          </div>
-          <h1 className="font-serif text-5xl sm:text-7xl text-ink font-normal leading-[0.98]">
-            From ticket tap to urban foresight.
-          </h1>
-          <p className="text-lg text-ink-light font-light leading-relaxed pt-2">
-            The complete 9-stage engineering architecture powering NEXBUS. We strictly categorize every datum into four epistemological tiers: Observed, Estimated, Predicted, or Hypothetical.
-          </p>
+        <ScrollReveal>
+          <div className="max-w-3xl space-y-4">
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-terracotta" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">
+                SYSTEM METHODOLOGY / COMPUTATIONAL PIPELINE
+              </span>
+            </div>
+            <h1 className="font-serif text-5xl sm:text-7xl text-ink font-normal leading-[0.98]">
+              From ticket tap to urban foresight.
+            </h1>
+            <p className="text-lg text-ink-light font-light leading-relaxed pt-2">
+              The complete 9-stage engineering architecture powering NEXBUS. We strictly categorize every datum into four epistemological tiers: Observed, Estimated, Predicted, or Hypothetical.
+            </p>
 
-          {/* Epistemological Tier Legend */}
-          <div className="flex flex-wrap items-center gap-3 pt-4 font-mono text-xs">
-            <span className="px-2.5 py-1 bg-green-100 text-green-900 border border-green-300">
-              ● OBSERVED (Hardware Sensor Pings)
-            </span>
-            <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300">
-              ▲ ESTIMATED (Statistical Imputation)
-            </span>
-            <span className="px-2.5 py-1 bg-blue-100 text-blue-900 border border-blue-300">
-              ◆ PREDICTED (Neural Graph Models)
-            </span>
-            <span className="px-2.5 py-1 bg-purple-100 text-purple-900 border border-purple-300">
-              ★ HYPOTHETICAL (Counterfactual Sims)
-            </span>
+            {/* Epistemological Tier Legend */}
+            <div className="flex flex-wrap items-center gap-3 pt-4 font-mono text-xs">
+              <span className="px-2.5 py-1 bg-[#EBF5EE] text-[#1E5631] border border-[#C3E4CD]">
+                ● OBSERVED (Hardware Sensor Pings)
+              </span>
+              <span className="px-2.5 py-1 bg-[#FBF5E8] text-[#8C6D1F] border border-[#F0DFB3]">
+                ▲ ESTIMATED (Statistical Imputation)
+              </span>
+              <span className="px-2.5 py-1 bg-[#EDF3F9] text-[#1D5288] border border-[#C5DAEE]">
+                ◆ PREDICTED (Neural Graph Models)
+              </span>
+              <span className="px-2.5 py-1 bg-[#F4EEF8] text-[#693A86] border border-[#DFCDEC]">
+                ★ HYPOTHETICAL (Counterfactual Sims)
+              </span>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* =========================================================================
             INTERACTIVE PIPELINE STAGES EXPLORER
            ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Step Index List */}
-          <div className="lg:col-span-5 space-y-2 border border-stone-light bg-parchment/30 p-4">
-            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted block mb-3 px-2">
-              PIPELINE STAGES (01 — 09)
-            </span>
+        <ScrollReveal delay={0.1}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left: Step Index List */}
+            <div className="lg:col-span-5 space-y-2 border border-[#DED5C8] bg-[#FCFAF6] p-4 shadow-sm">
+              <span className="font-mono text-xs uppercase tracking-wider text-ink-muted block mb-3 px-2">
+                PIPELINE STAGES (01 — 09)
+              </span>
 
-            {METHODOLOGY_STAGES.map((stage, idx) => {
-              const isSelected = activeStageIndex === idx;
-              return (
-                <div
-                  key={stage.step}
-                  onClick={() => setActiveStageIndex(idx)}
-                  className={`p-3.5 border cursor-pointer transition-all flex items-center justify-between ${
-                    isSelected
-                      ? 'border-terracotta bg-ivory shadow-sm'
-                      : 'border-stone-light/60 bg-ivory/60 hover:bg-ivory hover:border-stone'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="font-mono text-xs font-semibold text-terracotta">
-                      {stage.step}
+              {METHODOLOGY_STAGES.map((stage, idx) => {
+                const isSelected = activeStageIndex === idx;
+                return (
+                  <div
+                    key={stage.step}
+                    onClick={() => setActiveStageIndex(idx)}
+                    className={`p-3.5 border cursor-pointer transition-all flex items-center justify-between ${
+                      isSelected
+                        ? 'border-terracotta bg-ivory shadow-sm -translate-y-0.5'
+                        : 'border-[#DED5C8]/70 bg-ivory/60 hover:bg-ivory hover:border-stone'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <span className="font-mono text-xs font-semibold text-terracotta">
+                        {stage.step}
+                      </span>
+                      <div>
+                        <h4 className="font-serif text-base text-ink font-normal leading-snug">
+                          {stage.name}
+                        </h4>
+                      </div>
+                    </div>
+                    <span
+                      className={`font-mono text-[10px] px-2 py-0.5 border ${stage.categoryColor}`}
+                    >
+                      {stage.category}
                     </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right: Detailed Stage Inspector */}
+            <div className="lg:col-span-7 border border-[#DED5C8] bg-[#FCFAF6] p-8 shadow-sm space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeStage.step}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
+                >
+                  <div className="flex items-start justify-between border-b border-[#DED5C8] pb-4">
                     <div>
-                      <h4 className="font-serif text-base text-ink font-normal leading-snug">
-                        {stage.name}
-                      </h4>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-xs text-terracotta font-medium">
+                          STAGE {activeStage.step} OF 09
+                        </span>
+                        <span
+                          className={`font-mono text-[10px] px-2 py-0.5 border ${activeStage.categoryColor}`}
+                        >
+                          {activeStage.category} Data Tier
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-3xl font-normal text-ink mt-1">
+                        {activeStage.headline}
+                      </h3>
                     </div>
                   </div>
-                  <span
-                    className={`font-mono text-[10px] px-2 py-0.5 border ${stage.categoryColor}`}
-                  >
-                    {stage.category}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
 
-          {/* Right: Detailed Stage Inspector */}
-          <div className="lg:col-span-7 border border-stone-light bg-ivory p-8 shadow-sm space-y-6">
-            <div className="flex items-start justify-between border-b border-stone-light pb-4">
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-mono text-xs text-terracotta font-medium">
-                    STAGE {activeStage.step} OF 09
-                  </span>
-                  <span
-                    className={`font-mono text-[10px] px-2 py-0.5 border ${activeStage.categoryColor}`}
-                  >
-                    {activeStage.category} Data Tier
-                  </span>
-                </div>
-                <h3 className="font-serif text-3xl font-normal text-ink mt-1">
-                  {activeStage.headline}
-                </h3>
-              </div>
-            </div>
+                  <p className="text-sm text-ink-light leading-relaxed font-light">
+                    {activeStage.description}
+                  </p>
 
-            <p className="text-sm text-ink-light leading-relaxed font-light">
-              {activeStage.description}
-            </p>
+                  {/* Mathematical Model Formula Block */}
+                  <div className="p-4 border border-[#DED5C8] bg-ivory space-y-1">
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                      GOVERNING MATHEMATICAL OPERATOR
+                    </span>
+                    <div className="font-mono text-sm text-ink font-medium overflow-x-auto py-1">
+                      {activeStage.formula}
+                    </div>
+                  </div>
 
-            {/* Mathematical Model Formula Block */}
-            <div className="p-4 border border-stone-light bg-parchment/40 space-y-1">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-                GOVERNING MATHEMATICAL OPERATOR
-              </span>
-              <div className="font-mono text-sm text-ink font-medium overflow-x-auto py-1">
-                {activeStage.formula}
-              </div>
-            </div>
+                  {/* Inputs & Outputs */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 border border-[#DED5C8] bg-ivory space-y-2">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                        DATA INPUTS
+                      </span>
+                      <ul className="space-y-1 text-xs text-ink-light">
+                        {activeStage.inputs.map((inp, i) => (
+                          <li key={i} className="flex items-center space-x-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-stone" />
+                            <span>{inp}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-            {/* Inputs & Outputs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 border border-stone-light bg-ivory space-y-2">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-                  DATA INPUTS
-                </span>
-                <ul className="space-y-1 text-xs text-ink-light">
-                  {activeStage.inputs.map((inp, i) => (
-                    <li key={i} className="flex items-center space-x-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-stone" />
-                      <span>{inp}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                    <div className="p-4 border border-[#DED5C8] bg-ivory space-y-2">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                        DERIVED OUTPUTS
+                      </span>
+                      <ul className="space-y-1 text-xs text-ink-light">
+                        {activeStage.outputs.map((out, i) => (
+                          <li key={i} className="flex items-center space-x-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />
+                            <span className="font-medium text-ink">{out}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
 
-              <div className="p-4 border border-stone-light bg-ivory space-y-2">
-                <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-                  DERIVED OUTPUTS
-                </span>
-                <ul className="space-y-1 text-xs text-ink-light">
-                  {activeStage.outputs.map((out, i) => (
-                    <li key={i} className="flex items-center space-x-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />
-                      <span className="font-medium text-ink">{out}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-stone-light flex items-center justify-between font-mono text-xs text-ink-muted">
-              <span>LATENCY: {activeStage.latency}</span>
-              <span className="text-terracotta">STANDARDS: GTFS-RT / W3C OPEN DATA</span>
+                  <div className="pt-2 border-t border-[#DED5C8] flex items-center justify-between font-mono text-xs text-ink-muted">
+                    <span>LATENCY: {activeStage.latency}</span>
+                    <span className="text-terracotta">STANDARDS: GTFS-RT / W3C OPEN DATA</span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Global Architecture Diagram */}
-        <section className="border border-stone-light bg-parchment/40 p-8 sm:p-12 space-y-6">
-          <div className="max-w-2xl space-y-2">
-            <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
-              SYSTEM TOPOLOGY
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-ink font-normal">
-              End-to-End Computational Architecture
-            </h2>
-            <p className="text-xs text-ink-muted font-light leading-relaxed">
-              How edge sensors, spatial conflation engines, and deep neural graphs interact across the NEXBUS stack.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono text-xs pt-4">
-            <div className="border border-stone-light bg-ivory p-5 space-y-3">
-              <span className="text-terracotta font-semibold block">01 / EDGE INGESTION</span>
-              <h4 className="font-serif text-lg text-ink font-normal">DTC Hardware</h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
-                4,280 GPS AVL beacons and electronic ticketing ETMs transmit high-frequency telemetry via secure APN cellular networks.
+        <ScrollReveal delay={0.2}>
+          <section className="border border-[#DED5C8] bg-[#FCFAF6] p-8 sm:p-12 space-y-6 shadow-sm">
+            <div className="max-w-2xl space-y-2">
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+                SYSTEM TOPOLOGY
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl text-ink font-normal">
+                End-to-End Computational Architecture
+              </h2>
+              <p className="text-xs text-ink-muted font-light leading-relaxed">
+                How edge sensors, spatial conflation engines, and deep neural graphs interact across the NEXBUS stack.
               </p>
             </div>
 
-            <div className="border border-stone-light bg-ivory p-5 space-y-3">
-              <span className="text-terracotta font-semibold block">02 / SPATIAL GRAPH</span>
-              <h4 className="font-serif text-lg text-ink font-normal">Map Conflation</h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
-                Hidden Markov Models map-match noisy trajectories to high-precision Delhi OSM centerlines and route geometries.
-              </p>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono text-xs pt-4">
+              <div className="border border-[#DED5C8] bg-ivory p-5 space-y-3">
+                <span className="text-terracotta font-semibold block">01 / EDGE INGESTION</span>
+                <h4 className="font-serif text-lg text-ink font-normal">DTC Hardware</h4>
+                <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
+                  4,280 GPS AVL beacons and electronic ticketing ETMs transmit high-frequency telemetry via secure APN cellular networks.
+                </p>
+              </div>
 
-            <div className="border border-stone-light bg-ivory p-5 space-y-3">
-              <span className="text-terracotta font-semibold block">03 / INFERENCE ENGINE</span>
-              <h4 className="font-serif text-lg text-ink font-normal">ST-GNN Predictor</h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
-                Graph neural network computes multi-horizon crowding forecasts and Bayesian confidence bounds with &lt;140ms latency.
-              </p>
-            </div>
+              <div className="border border-[#DED5C8] bg-ivory p-5 space-y-3">
+                <span className="text-terracotta font-semibold block">02 / SPATIAL GRAPH</span>
+                <h4 className="font-serif text-lg text-ink font-normal">Map Conflation</h4>
+                <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
+                  Hidden Markov Models map-match noisy trajectories to high-precision Delhi OSM centerlines and route geometries.
+                </p>
+              </div>
 
-            <div className="border border-stone-light bg-ivory p-5 space-y-3">
-              <span className="text-terracotta font-semibold block">04 / APPLICATION LAYER</span>
-              <h4 className="font-serif text-lg text-ink font-normal">3D Digital Twin</h4>
-              <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
-                Hardware-accelerated Three.js viewport provides interactive exploration, multi-criteria routing, and policy simulations.
-              </p>
+              <div className="border border-[#DED5C8] bg-ivory p-5 space-y-3">
+                <span className="text-terracotta font-semibold block">03 / INFERENCE ENGINE</span>
+                <h4 className="font-serif text-lg text-ink font-normal">ST-GNN Predictor</h4>
+                <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
+                  Graph neural network computes multi-horizon crowding forecasts and Bayesian confidence bounds with &lt;140ms latency.
+                </p>
+              </div>
+
+              <div className="border border-[#DED5C8] bg-ivory p-5 space-y-3">
+                <span className="text-terracotta font-semibold block">04 / APPLICATION LAYER</span>
+                <h4 className="font-serif text-lg text-ink font-normal">3D Digital Twin</h4>
+                <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
+                  Hardware-accelerated Three.js viewport provides interactive exploration, multi-criteria routing, and policy simulations.
+                </p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </ScrollReveal>
 
         {/* Navigation to Platform */}
-        <div className="border border-stone-light p-8 bg-ivory flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="font-serif text-2xl text-ink font-normal">
-              Experience the methodology in action
-            </h3>
-            <p className="text-xs text-ink-muted mt-1 font-light">
-              Explore Delhi&apos;s real-time digital twin or run a counterfactual policy simulation.
-            </p>
+        <ScrollReveal delay={0.25}>
+          <div className="border border-[#DED5C8] p-8 bg-[#FCFAF6] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="font-serif text-2xl text-ink font-normal">
+                Experience the methodology in action
+              </h3>
+              <p className="text-xs text-ink-muted mt-1 font-light">
+                Explore Delhi&apos;s real-time digital twin or run a counterfactual policy simulation.
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Magnetic intensity={0.2}>
+                <Link
+                  href="/twin"
+                  className="px-5 py-2.5 bg-ink text-ivory text-xs font-mono uppercase tracking-wider hover:bg-terracotta transition-colors shadow-sm inline-block"
+                >
+                  Launch Twin
+                </Link>
+              </Magnetic>
+              <Magnetic intensity={0.2}>
+                <Link
+                  href="/simulate"
+                  className="px-5 py-2.5 border border-ink text-ink text-xs font-mono uppercase tracking-wider hover:bg-parchment transition-colors inline-block"
+                >
+                  Simulate Network
+                </Link>
+              </Magnetic>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/twin"
-              className="px-5 py-2.5 bg-ink text-ivory text-xs font-mono uppercase tracking-wider hover:bg-terracotta transition-colors"
-            >
-              Launch Twin
-            </Link>
-            <Link
-              href="/simulate"
-              className="px-5 py-2.5 border border-ink text-ink text-xs font-mono uppercase tracking-wider hover:bg-parchment transition-colors"
-            >
-              Simulate Network
-            </Link>
-          </div>
-        </div>
+        </ScrollReveal>
       </main>
     </div>
   );
