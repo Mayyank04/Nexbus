@@ -413,6 +413,17 @@ async function runTests() {
     assert(false, `Phase 14 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 15 Controlled Field Execution, Data Auditing & Validation Harness ---');
+  try {
+    const phase15Output = execSync('node scripts/test-phase15-certification.mjs', { encoding: 'utf8' });
+    assert(
+      phase15Output.includes('PHASE 15 CERTIFICATION SUITE: ALL 17 TESTS PASSED'),
+      'Phase 15 independent research validation & certification (evidence registry, source manifest, record provenance, journey reproduction, headway dual regimes, cluster bootstrap width ratio, OD conservation, screenline holdouts, ML target disclosure, accessibility ground surveys, DCF 20-yr, WTW emissions, fieldwork state transitions, ethics pending, dashboard labels, privacy controls, read-only safety) passes completely (17/17 tests)'
+    );
+  } catch (err) {
+    assert(false, `Phase 15 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
