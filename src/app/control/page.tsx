@@ -569,8 +569,8 @@ export default function AnalyticsControlPage() {
                       <div className="text-[10px] text-ink-muted/80">{p.updateFrequency}</div>
                     </td>
                     <td className="py-3 px-3 text-center">
-                      <span className="px-2 py-0.5 text-[9px] bg-green-100 text-green-900 border border-green-300">
-                        {p.validationStatus}
+                      <span className="px-2 py-0.5 text-[9px] bg-green-100 text-green-900 border border-green-300 font-mono">
+                        {p.integrationStatus}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right">

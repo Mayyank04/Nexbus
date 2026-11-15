@@ -1,5 +1,6 @@
 // Automated Platform Verification Test Suite for NEXBUS
 import http from 'http';
+import { execSync } from 'child_process';
 
 const BASE_URL = 'http://localhost:3000';
 
@@ -228,6 +229,48 @@ async function runTests() {
     badJourney.status === 400 && badJourney.json?.success === false,
     'POST /api/journey/plan rejects malformed JSON with HTTP 400'
   );
+
+  // 12. Production Health & Reliability Telemetry
+  console.log('\n--- Testing System Health & Telemetry API ---');
+  const healthApi = await fetchUrl('/api/health');
+  assert(
+    healthApi.status === 200 && healthApi.json?.status === 'healthy',
+    'GET /api/health reports healthy system status'
+  );
+  assert(
+    typeof healthApi.json?.uptimeSeconds === 'number' && healthApi.json?.uptimeSeconds >= 0,
+    'Health telemetry reports non-negative process uptime'
+  );
+  assert(
+    healthApi.json?.datasets?.registeredSourcesCount >= 6 && healthApi.json?.datasets?.networkIntegrity === 'verified',
+    `Health check verifies all datasets (Found: ${healthApi.json?.datasets?.registeredSourcesCount} registered sources, integrity: ${healthApi.json?.datasets?.networkIntegrity})`
+  );
+  assert(
+    healthApi.headers.get('cache-control')?.includes('no-store'),
+    'Health endpoint enforces no-store cache control'
+  );
+
+  // 13. ML Reproducibility & Simulation Scientific Scripts
+  console.log('\n--- Executing Independent Scientific Verification Harnesses ---');
+  try {
+    const mlOutput = execSync('node scripts/reproduce-ml-eval.mjs', { encoding: 'utf8' });
+    assert(
+      mlOutput.includes('CERTIFICATION: ML Evaluation Results Independently Reproduced.'),
+      'ML reproducibility harness reproduces exact benchmark metrics (HA, AR-Ridge, ST-GNN Surrogate)'
+    );
+  } catch (err) {
+    assert(false, `ML reproducibility harness failed: ${err.message}`);
+  }
+
+  try {
+    const simOutput = execSync('node scripts/validate-simulation.mjs', { encoding: 'utf8' });
+    assert(
+      simOutput.includes('SIMULATION AUDIT SUMMARY: 11 PASSED, 0 FAILED'),
+      'Simulation validation harness confirms Little\'s Law, elasticity, emissions & boundary safety'
+    );
+  } catch (err) {
+    assert(false, `Simulation validation harness failed: ${err.message}`);
+  }
 
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
