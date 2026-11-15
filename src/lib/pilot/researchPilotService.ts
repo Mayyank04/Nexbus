@@ -42,6 +42,14 @@ export interface PilotProgressMetrics {
   irbProtocolNumber: string;
   zeroPiiIncidentsRecorded: number;
   meanHeadwayAdherenceCorrelationR: number;
+  provenanceBreakdown: {
+    demonstrationFixturesCount: number;
+    benchmarkSimulationCount: number;
+    verifiedFieldObservationsCount: number;
+    verifiedFieldCompletionPct: number;
+    dataIntegrityStatus: 'BENCHMARK_DEMONSTRATION_CALIBRATED' | 'FIELD_VERIFIED';
+    epistemologicalDisclosure: string;
+  };
 }
 
 export interface ResearchPilotProtocol {
@@ -180,6 +188,15 @@ class ResearchPilotService {
         irbProtocolNumber: 'IRB-2026-NEXBUS-MOB-004',
         zeroPiiIncidentsRecorded: 0,
         meanHeadwayAdherenceCorrelationR: 0.88,
+        provenanceBreakdown: {
+          demonstrationFixturesCount: 4,
+          benchmarkSimulationCount: 184,
+          verifiedFieldObservationsCount: 0,
+          verifiedFieldCompletionPct: 0.0,
+          dataIntegrityStatus: 'BENCHMARK_DEMONSTRATION_CALIBRATED',
+          epistemologicalDisclosure:
+            'Independent Audit Note: 188 observations represent benchmark simulation and demonstration fixtures used for protocol testing. Real-world verified field observations are segregated and tracked under verifiedFieldObservationsCount.',
+        },
       },
       ethicsAndPrivacyFramework: {
         irbApprovalDate: '2026-10-12',
@@ -210,11 +227,20 @@ class ResearchPilotService {
     return JSON.parse(JSON.stringify(this.protocol));
   }
 
-  public recordPilotObservationProgress(countIncrement = 1) {
+  public recordPilotObservationProgress(countIncrement = 1, isVerifiedField = false) {
     this.protocol.progress.currentCompletedObservations += countIncrement;
     this.protocol.progress.completionPct = Number(
       ((this.protocol.progress.currentCompletedObservations / this.protocol.progress.targetTotalObservations) * 100).toFixed(1)
     );
+    if (isVerifiedField) {
+      this.protocol.progress.provenanceBreakdown.verifiedFieldObservationsCount += countIncrement;
+      this.protocol.progress.provenanceBreakdown.verifiedFieldCompletionPct = Number(
+        ((this.protocol.progress.provenanceBreakdown.verifiedFieldObservationsCount / this.protocol.progress.targetTotalObservations) * 100).toFixed(1)
+      );
+      if (this.protocol.progress.provenanceBreakdown.verifiedFieldObservationsCount > 0) {
+        this.protocol.progress.provenanceBreakdown.dataIntegrityStatus = 'FIELD_VERIFIED';
+      }
+    }
     if (this.protocol.progress.currentCompletedObservations >= this.protocol.progress.targetTotalObservations) {
       this.protocol.progress.pilotStatus = 'DATA_SYNTHESIS';
     }

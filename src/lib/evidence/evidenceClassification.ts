@@ -12,6 +12,15 @@ export type EvidenceClassification =
   | 'SYNTHETIC'
   | 'UNAVAILABLE';
 
+export type CollectionStatus =
+  | 'VERIFIED_FIELD_OBSERVATION'
+  | 'VERIFIED_EXTERNAL_RECORD'
+  | 'MANUALLY_ENTERED_UNVERIFIED'
+  | 'IMPORTED_HISTORICAL_RECORD'
+  | 'SYNTHETIC_TEST_RECORD'
+  | 'DEMONSTRATION_FIXTURE'
+  | 'INVALID_RECORD';
+
 export type TransportMode = 'BUS' | 'METRO' | 'WALK' | 'INTERCHANGE_TRANSFER' | 'AUTO_FEEDER';
 
 export interface ObservationMetadata {

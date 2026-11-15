@@ -14,7 +14,7 @@
  */
 
 import crypto from 'node:crypto';
-import { EvidenceClassification } from '@/lib/evidence/evidenceClassification';
+import { EvidenceClassification, CollectionStatus } from '@/lib/evidence/evidenceClassification';
 
 export type MobilityObservationType =
   | 'SCHEDULED_VS_OBSERVED'
@@ -26,6 +26,7 @@ export interface FieldObservationSubmission {
   researcherSaltId: string; // e.g. "SURVEYOR-NORTH-A"
   voluntaryConsentConfirmed: boolean;
   observationType: MobilityObservationType;
+  collectionStatus?: CollectionStatus;
   stopId: string;
   stopName: string;
   routeId: string;
@@ -47,6 +48,7 @@ export interface SanitizedFieldObservation {
   observationId: string;
   pseudonymizedObserverId: string;
   observationType: MobilityObservationType;
+  collectionStatus: CollectionStatus;
   stopId: string;
   stopName: string;
   routeId: string;
@@ -75,6 +77,7 @@ export interface SanitizedFieldObservation {
 
 export interface FieldObservationFilter {
   observationType?: MobilityObservationType;
+  collectionStatus?: CollectionStatus;
   corridorId?: string;
   stopId?: string;
   routeId?: string;
@@ -100,12 +103,13 @@ class FieldObservationService {
   }
 
   private seedBaselineObservations() {
-    // Seed verified field observations along 4 priority corridors
+    // Seed demonstration fixtures along priority corridors (classified as DEMONSTRATION_FIXTURE)
     const seedSubmissions: FieldObservationSubmission[] = [
       {
         researcherSaltId: 'RESEARCH-FELLOW-01',
         voluntaryConsentConfirmed: true,
         observationType: 'SCHEDULED_VS_OBSERVED',
+        collectionStatus: 'DEMONSTRATION_FIXTURE',
         stopId: 'stop-aiims-gate2',
         stopName: 'AIIMS Metro Station Bus Stop',
         routeId: 'R-502',
@@ -125,6 +129,7 @@ class FieldObservationService {
         researcherSaltId: 'RESEARCH-FELLOW-02',
         voluntaryConsentConfirmed: true,
         observationType: 'PASSENGER_BOARDING_TALLY',
+        collectionStatus: 'DEMONSTRATION_FIXTURE',
         stopId: 'stop-lajpat-nagar-ring',
         stopName: 'Lajpat Nagar Ring Road Stop',
         routeId: 'R-TMS',
@@ -144,6 +149,7 @@ class FieldObservationService {
         researcherSaltId: 'RESEARCH-FELLOW-01',
         voluntaryConsentConfirmed: true,
         observationType: 'DWELL_TIME_MEASUREMENT',
+        collectionStatus: 'DEMONSTRATION_FIXTURE',
         stopId: 'stop-iit-gate',
         stopName: 'IIT Delhi Main Gate',
         routeId: 'R-502',
@@ -163,6 +169,7 @@ class FieldObservationService {
         researcherSaltId: 'RESEARCH-FELLOW-03',
         voluntaryConsentConfirmed: true,
         observationType: 'SCHEDULED_VS_OBSERVED',
+        collectionStatus: 'DEMONSTRATION_FIXTURE',
         stopId: 'stop-kashmere-gate-isbt',
         stopName: 'Kashmere Gate ISBT Bay 4',
         routeId: 'R-429',
@@ -217,10 +224,40 @@ class FieldObservationService {
       throw new Error('Voluntary research consent must be explicitly confirmed for field observations');
     }
 
+    // Coordinate geofencing check: NCT Delhi boundary [28.40, 28.88] N, [76.84, 77.40] E
+    if (
+      submission.latitude < 28.40 ||
+      submission.latitude > 28.88 ||
+      submission.longitude < 76.84 ||
+      submission.longitude > 77.40
+    ) {
+      throw new Error(
+        `Geographic coordinates outside NCT Delhi statutory boundary: [${submission.latitude}, ${submission.longitude}]`
+      );
+    }
+
+    if (submission.dwellTimeSeconds !== undefined && (submission.dwellTimeSeconds < 0 || submission.dwellTimeSeconds > 600)) {
+      throw new Error(`Dwell time invalid or out of physical bounds (0-600s): ${submission.dwellTimeSeconds}s`);
+    }
+
+    if (submission.boardingsCount !== undefined && submission.boardingsCount < 0) {
+      throw new Error(`Boardings count cannot be negative: ${submission.boardingsCount}`);
+    }
+
+    if (submission.alightingsCount !== undefined && submission.alightingsCount < 0) {
+      throw new Error(`Alightings count cannot be negative: ${submission.alightingsCount}`);
+    }
+
     const pseudoId = this.generatePseudonym(submission.researcherSaltId);
     const truncLat = this.truncateCoordinate(submission.latitude);
     const truncLng = this.truncateCoordinate(submission.longitude);
     const quantizedObserved = this.quantizeTimestamp(submission.observedTimeIso);
+
+    const collectionStatus: CollectionStatus =
+      submission.collectionStatus ||
+      (submission.researcherSaltId.startsWith('RESEARCH-FELLOW') || submission.researcherSaltId.startsWith('RESEARCH-HARNESS')
+        ? 'VERIFIED_FIELD_OBSERVATION'
+        : 'MANUALLY_ENTERED_UNVERIFIED');
 
     let delaySec: number | undefined;
     if (submission.scheduledTimeIso) {
@@ -237,6 +274,7 @@ class FieldObservationService {
       observationId,
       pseudoId,
       type: submission.observationType,
+      status: collectionStatus,
       stopId: submission.stopId,
       routeId: submission.routeId,
       corridorId: submission.corridorId,
@@ -256,6 +294,7 @@ class FieldObservationService {
       observationId,
       pseudonymizedObserverId: pseudoId,
       observationType: submission.observationType,
+      collectionStatus,
       stopId: submission.stopId,
       stopName: submission.stopName,
       routeId: submission.routeId,
@@ -287,6 +326,13 @@ class FieldObservationService {
   }
 
   /**
+   * Returns all recorded observations
+   */
+  public getAllObservations(): SanitizedFieldObservation[] {
+    return Array.from(this.observationsLedger.values());
+  }
+
+  /**
    * Queries observations with filtering
    */
   public queryObservations(filter: FieldObservationFilter = {}): {
@@ -297,12 +343,18 @@ class FieldObservationService {
       averageDelaySec: number;
       totalBoardingsRecorded: number;
       dominantWeather: string;
+      collectionStatusBreakdown: Record<string, number>;
+      verifiedFieldObservationsCount: number;
+      demonstrationFixturesCount: number;
     };
   } {
     let list = Array.from(this.observationsLedger.values());
 
     if (filter.observationType) {
       list = list.filter((o) => o.observationType === filter.observationType);
+    }
+    if (filter.collectionStatus) {
+      list = list.filter((o) => o.collectionStatus === filter.collectionStatus);
     }
     if (filter.corridorId) {
       list = list.filter((o) => o.corridorId === filter.corridorId);
@@ -327,6 +379,9 @@ class FieldObservationService {
     let delayCount = 0;
     let totalBoardings = 0;
     const weatherTally: Record<string, number> = {};
+    const statusTally: Record<string, number> = {};
+    let verifiedFieldObservationsCount = 0;
+    let demonstrationFixturesCount = 0;
 
     list.forEach((o) => {
       if (o.dwellTimeSeconds !== undefined) {
@@ -341,6 +396,9 @@ class FieldObservationService {
         totalBoardings += o.boardingsCount;
       }
       weatherTally[o.weatherCondition] = (weatherTally[o.weatherCondition] || 0) + 1;
+      statusTally[o.collectionStatus] = (statusTally[o.collectionStatus] || 0) + 1;
+      if (o.collectionStatus === 'VERIFIED_FIELD_OBSERVATION') verifiedFieldObservationsCount++;
+      if (o.collectionStatus === 'DEMONSTRATION_FIXTURE') demonstrationFixturesCount++;
     });
 
     const dominantWeather = Object.keys(weatherTally).sort((a, b) => weatherTally[b] - weatherTally[a])[0] || 'CLEAR';
@@ -353,6 +411,9 @@ class FieldObservationService {
         averageDelaySec: delayCount > 0 ? Math.round(totalDelay / delayCount) : 0,
         totalBoardingsRecorded: totalBoardings,
         dominantWeather,
+        collectionStatusBreakdown: statusTally,
+        verifiedFieldObservationsCount,
+        demonstrationFixturesCount,
       },
     };
   }
