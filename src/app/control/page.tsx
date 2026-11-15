@@ -34,6 +34,7 @@ import { SOURCE_CAPABILITY_REGISTRY } from '@/data/sourceCapabilityRegistry';
 import Phase12ResearchPilotPanel from '@/components/research/Phase12ResearchPilotPanel';
 import Phase13ResearchDashboard from '@/components/research/Phase13ResearchDashboard';
 import Phase14BenchmarkDashboard from '@/components/research/Phase14BenchmarkDashboard';
+import Phase15ResearchValidationPanel from '@/components/research/Phase15ResearchValidationPanel';
 
 interface SummaryData {
   metrics: {
@@ -2016,6 +2017,9 @@ export default function AnalyticsControlPage() {
 
         {/* PHASE 14 INDEPENDENT BENCHMARKING & REPRODUCTION CONSOLE */}
         <Phase14BenchmarkDashboard />
+
+        {/* PHASE 15 CONTROLLED FIELD EXECUTION, AUDITING & VALIDATION PANEL */}
+        <Phase15ResearchValidationPanel />
 
         {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
