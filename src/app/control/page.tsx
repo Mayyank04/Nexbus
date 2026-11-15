@@ -33,6 +33,7 @@ import { Magnetic } from '@/components/ui/magnetic';
 import { SOURCE_CAPABILITY_REGISTRY } from '@/data/sourceCapabilityRegistry';
 import Phase12ResearchPilotPanel from '@/components/research/Phase12ResearchPilotPanel';
 import Phase13ResearchDashboard from '@/components/research/Phase13ResearchDashboard';
+import Phase14BenchmarkDashboard from '@/components/research/Phase14BenchmarkDashboard';
 
 interface SummaryData {
   metrics: {
@@ -2012,6 +2013,9 @@ export default function AnalyticsControlPage() {
 
         {/* PHASE 13 SCIENTIFIC VALIDATION & EMPIRICAL RESEARCH CONSOLE */}
         <Phase13ResearchDashboard />
+
+        {/* PHASE 14 INDEPENDENT BENCHMARKING & REPRODUCTION CONSOLE */}
+        <Phase14BenchmarkDashboard />
 
         {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
