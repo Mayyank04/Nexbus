@@ -1,34 +1,70 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import { DELHI_CORRIDORS } from '@/data/delhiTransitData';
 import {
-  DELHI_CORRIDORS,
-  DELHI_STOPS,
-  DELHI_ROUTES,
-  HOURLY_FLOW_DATA,
-} from '@/data/delhiTransitData';
-import {
-  Activity,
-  ArrowUpRight,
   TrendingUp,
-  ShieldCheck,
+  Activity,
   Calendar,
-  Filter,
-  BarChart3,
   Layers,
   Clock,
+  ShieldCheck,
   Compass,
+  ArrowUpRight,
+  Filter,
 } from 'lucide-react';
 
-export default function AnalyticsControlPage() {
-  const [selectedCorridorId, setSelectedCorridorId] = useState<string>('all');
-  const [timeRange, setTimeRange] = useState<'today' | '7days' | '30days'>('today');
+interface SummaryData {
+  metrics: {
+    totalDailyPassengers: number;
+    networkPunctualityPct: number;
+    forecastFidelityPct: number;
+    activeElectricFleet: number;
+    totalConnectedBuses: number;
+    totalMonitoredStops: number;
+  };
+  temporalDemand: {
+    weekday: { hour: string; load: number; passengers: number; confidence: number }[];
+    weekend: { hour: string; load: number; passengers: number; confidence: number }[];
+  };
+  corridorRankings: typeof DELHI_CORRIDORS;
+  dwellBottlenecks: {
+    stopId: string;
+    name: string;
+    zone: string;
+    dailyFootfall: number;
+    avgDwellTimeSeconds: number;
+    severity: string;
+  }[];
+  systemHealth: {
+    avlBeaconSyncPct: number;
+    gtfsRtFeedLatencySeconds: number;
+    etmFareSyncRatePct: number;
+    odMatrixValidationScore: number;
+  };
+}
 
-  const corridors =
-    selectedCorridorId === 'all'
-      ? DELHI_CORRIDORS
-      : DELHI_CORRIDORS.filter((c) => c.id === selectedCorridorId);
+export default function AnalyticsControlPage() {
+  const [data, setData] = useState<SummaryData | null>(null);
+  const [dayType, setDayType] = useState<'weekday' | 'weekend'>('weekday');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetch('/api/analytics/summary')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) setData(json.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching analytics:', err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const flowData =
+    data?.temporalDemand[dayType] || [];
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#1F1D1A] selection:bg-terracotta selection:text-ivory flex flex-col">
@@ -41,39 +77,41 @@ export default function AnalyticsControlPage() {
             <div className="flex items-center space-x-2">
               <span className="w-2 h-2 rounded-full bg-terracotta" />
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#736C62]">
-                SYSTEM 04 / TRANSPORT INTELLIGENCE
+                AUTHORITY PLATFORM / TRANSPORT OBSERVATORY
               </span>
             </div>
             <h1 className="font-serif text-5xl sm:text-6xl text-[#1F1D1A] font-normal leading-[1.05]">
               Executive Mobility Observatory
             </h1>
             <p className="text-base text-[#4A463F] font-light leading-relaxed">
-              Synthesized empirical analytics from 3,840 connected transit vehicles, 420 ETM fare points, and multi-sensor ridership telemetry across Delhi NCT.
+              Empirical transit analytics synthesized from {data?.metrics.totalConnectedBuses.toLocaleString() || '3,840'} connected DTC transponders, ETM fare punches, and multi-sensor ridership telemetry.
             </p>
           </div>
 
-          {/* Time & Filter Controls */}
+          {/* Weekday vs Weekend Filter */}
           <div className="flex items-center space-x-3">
+            <span className="font-mono text-[10px] uppercase text-[#736C62]">PATTERN:</span>
             <div className="flex border border-[#E2DBD0] bg-white font-mono text-xs">
-              {(
-                [
-                  { id: 'today', label: 'Today (Live)' },
-                  { id: '7days', label: 'Past 7 Days' },
-                  { id: '30days', label: 'Monthly Trend' },
-                ] as const
-              ).map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTimeRange(t.id)}
-                  className={`px-3 py-2 border-r last:border-r-0 border-[#E2DBD0] transition-colors ${
-                    timeRange === t.id
-                      ? 'bg-[#B84C32] text-white font-medium'
-                      : 'text-[#736C62] hover:text-[#1F1D1A]'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
+              <button
+                onClick={() => setDayType('weekday')}
+                className={`px-3 py-2 border-r border-[#E2DBD0] transition-colors ${
+                  dayType === 'weekday'
+                    ? 'bg-[#B84C32] text-white font-medium'
+                    : 'text-[#736C62] hover:text-[#1F1D1A]'
+                }`}
+              >
+                Weekday Commute
+              </button>
+              <button
+                onClick={() => setDayType('weekend')}
+                className={`px-3 py-2 transition-colors ${
+                  dayType === 'weekend'
+                    ? 'bg-[#B84C32] text-white font-medium'
+                    : 'text-[#736C62] hover:text-[#1F1D1A]'
+                }`}
+              >
+                Weekend Pattern
+              </button>
             </div>
           </div>
         </div>
@@ -82,10 +120,11 @@ export default function AnalyticsControlPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="border border-[#E2DBD0] bg-white p-6 space-y-2">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#736C62] block">
-              DAILY RIDERSHIP VOLUME
+              TOTAL DAILY BOARDINGS
             </span>
             <div className="font-serif text-4xl text-[#1F1D1A] font-normal">
-              4.28M <span className="text-sm font-mono text-[#736C62]">PAX</span>
+              {data ? (data.metrics.totalDailyPassengers / 1000000).toFixed(2) : '4.28'}M{' '}
+              <span className="text-sm font-mono text-[#736C62]">PAX</span>
             </div>
             <div className="flex items-center text-xs text-green-700 font-mono pt-1">
               <TrendingUp className="w-3.5 h-3.5 mr-1" />
@@ -98,10 +137,10 @@ export default function AnalyticsControlPage() {
               NETWORK ON-TIME RATE
             </span>
             <div className="font-serif text-4xl text-[#B84C32] font-normal">
-              81.4%
+              {data ? data.metrics.networkPunctualityPct : 81.4}%
             </div>
             <div className="text-xs text-[#736C62] font-mono pt-1">
-              Schedule headway variance &lt;3.5m
+              Headway variance &lt;3.5 minutes
             </div>
           </div>
 
@@ -110,7 +149,7 @@ export default function AnalyticsControlPage() {
               AI FORECAST FIDELITY
             </span>
             <div className="font-serif text-4xl text-[#1F1D1A] font-normal">
-              94.8%
+              {data ? data.metrics.forecastFidelityPct : 94.8}%
             </div>
             <div className="text-xs text-[#736C62] font-mono pt-1">
               Calibrated across 45-min lookahead
@@ -119,10 +158,10 @@ export default function AnalyticsControlPage() {
 
           <div className="border border-[#E2DBD0] bg-white p-6 space-y-2">
             <span className="font-mono text-[10px] uppercase tracking-wider text-[#736C62] block">
-              ACTIVE ELECTRIC FLEET
+              ELECTRIFIED FLEET
             </span>
             <div className="font-serif text-4xl text-[#2A5C8A] font-normal">
-              1,640
+              {data ? data.metrics.activeElectricFleet.toLocaleString() : '1,640'}
             </div>
             <div className="text-xs text-[#736C62] font-mono pt-1">
               42.7% total DTC fleet electrified
@@ -135,7 +174,7 @@ export default function AnalyticsControlPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#E2DBD0] pb-4 gap-4">
             <div>
               <span className="font-mono text-xs uppercase tracking-wider text-[#B84C32]">
-                TEMPORAL DISPERSION
+                TEMPORAL DISPERSION PROFILE ({dayType.toUpperCase()})
               </span>
               <h3 className="font-serif text-2xl text-[#1F1D1A] font-normal mt-0.5">
                 Hourly System Boardings & Crowding Thresholds
@@ -160,7 +199,7 @@ export default function AnalyticsControlPage() {
           {/* Flow Chart */}
           <div className="space-y-3">
             <div className="h-64 flex items-end justify-between gap-2 border-b border-[#E2DBD0] pb-3">
-              {HOURLY_FLOW_DATA.map((d) => (
+              {flowData.map((d) => (
                 <div key={d.hour} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                   {/* Tooltip */}
                   <div className="opacity-0 group-hover:opacity-100 absolute -top-12 bg-[#24211D] text-[#F5F0E6] font-mono text-[10px] p-2 whitespace-nowrap z-20 pointer-events-none transition-opacity shadow-sm">
@@ -271,9 +310,9 @@ export default function AnalyticsControlPage() {
             </p>
 
             <div className="space-y-3 pt-2">
-              {DELHI_STOPS.slice(0, 4).map((stop) => (
+              {(data?.dwellBottlenecks || []).map((stop) => (
                 <div
-                  key={stop.id}
+                  key={stop.stopId}
                   className="p-3.5 border border-[#E2DBD0] bg-[#FAF7F2] flex items-center justify-between"
                 >
                   <div>
@@ -281,17 +320,17 @@ export default function AnalyticsControlPage() {
                       {stop.name}
                     </h4>
                     <span className="text-[10px] font-mono text-[#736C62]">
-                      {stop.zone} Zone • {stop.dailyFootfall.toLocaleString()} daily boardings
+                      {stop.zone} Zone • {stop.dailyFootfall.toLocaleString()} daily boardings • Avg Dwell: {stop.avgDwellTimeSeconds}s
                     </span>
                   </div>
                   <span
                     className={`font-mono text-[10px] uppercase px-2 py-0.5 ${
-                      stop.crowdingLevel === 'critical'
+                      stop.severity === 'critical'
                         ? 'bg-[#B84C32] text-white'
                         : 'bg-[#C89B53] text-white'
                     }`}
                   >
-                    {stop.crowdingLevel}
+                    {stop.severity}
                   </span>
                 </div>
               ))}
@@ -304,7 +343,7 @@ export default function AnalyticsControlPage() {
               INGESTION HEALTH & COVERAGE
             </span>
             <h3 className="font-serif text-2xl text-[#1F1D1A] font-normal">
-              Telemetry Telemetry Pipeline
+              Telemetry Pipeline Telemetry
             </h3>
             <p className="text-xs text-[#736C62] font-light leading-relaxed">
               Real-time audit of vehicle tracking beacons, ticket punch sync, and GTFS-RT feed latency.
@@ -313,19 +352,27 @@ export default function AnalyticsControlPage() {
             <div className="space-y-3 pt-2 font-mono text-xs">
               <div className="flex items-center justify-between p-3 border border-[#E2DBD0]">
                 <span>DTC AVL BEACON SYNC</span>
-                <span className="text-green-700 font-semibold">99.4% (3.2s avg latency)</span>
+                <span className="text-green-700 font-semibold">
+                  {data?.systemHealth.avlBeaconSyncPct || 99.4}% (3.2s avg latency)
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 border border-[#E2DBD0]">
-                <span>DIMTS ORANGE LINE FEED</span>
-                <span className="text-green-700 font-semibold">98.9% (4.1s avg latency)</span>
+                <span>GTFS-RT REFRESH INTERVAL</span>
+                <span className="text-green-700 font-semibold">
+                  {data?.systemHealth.gtfsRtFeedLatencySeconds || 3.2}s Streaming
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 border border-[#E2DBD0]">
-                <span>DELHI METRO INTERCHANGE TAPS</span>
-                <span className="text-green-700 font-semibold">97.6% (Batch / 15m)</span>
+                <span>ETM TICKET PUNCH SYNC RATE</span>
+                <span className="text-green-700 font-semibold">
+                  {data?.systemHealth.etmFareSyncRatePct || 98.7}% Batch
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 border border-[#E2DBD0]">
                 <span>PASSENGER OD MATRIX RECONSTRUCTION</span>
-                <span className="text-[#B84C32] font-semibold">94.8% Validation Index</span>
+                <span className="text-[#B84C32] font-semibold">
+                  {data ? (data.systemHealth.odMatrixValidationScore * 100).toFixed(1) : '94.2'}% Validation Index
+                </span>
               </div>
             </div>
           </div>

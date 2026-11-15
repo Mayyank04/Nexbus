@@ -4,8 +4,22 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/navigation/Navbar';
 import DelhiCityCanvas, { CameraPreset } from '@/components/3d/DelhiCityCanvas';
-import { DELHI_CORRIDORS, DELHI_STOPS, BusStop, TransitCorridor, HOURLY_FLOW_DATA } from '@/data/delhiTransitData';
-import { ArrowUpRight, Compass, Layers, Activity, Clock, ShieldCheck, ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { DELHI_CORRIDORS, DELHI_STOPS, TransitCorridor, BusStop, HOURLY_FLOW_DATA } from '@/data/delhiTransitData';
+import {
+  ArrowUpRight,
+  Compass,
+  Layers,
+  Activity,
+  Clock,
+  ShieldCheck,
+  ChevronDown,
+  Sparkles,
+  Zap,
+  MapPin,
+  TrendingDown,
+  Users,
+  Cpu,
+} from 'lucide-react';
 
 export default function HomePage() {
   const [activePreset, setActivePreset] = useState<CameraPreset>('overview');
@@ -17,13 +31,13 @@ export default function HomePage() {
       <Navbar />
 
       {/* =========================================================================
-          HERO SECTION — ART-DIRECTED EDITORIAL COMPOSITION (55-65% 3D FOCUS)
+          HERO SECTION — ART-DIRECTED EDITORIAL COMPOSITION (62% 3D FOCUS)
          ========================================================================= */}
       <section className="relative w-full border-b border-stone-light min-h-[calc(100vh-4.5rem)] flex flex-col justify-between overflow-hidden">
-        {/* Subtle grid coordinates background */}
+        {/* Architectural grain overlay */}
         <div className="absolute inset-0 bg-grain pointer-events-none opacity-60" />
 
-        <div className="max-w-7xl mx-auto px-6 w-full pt-10 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-grow">
+        <div className="max-w-7xl mx-auto px-6 w-full pt-8 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-grow">
           {/* Left Editorial Narrative (38% width on desktop) */}
           <div className="lg:col-span-5 flex flex-col justify-between z-10 py-4">
             <div className="space-y-6">
@@ -41,7 +55,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base sm:text-lg text-ink-light leading-relaxed max-w-md pt-2 font-light">
-                Understanding how people move through Delhi. Explore passenger flows, discover crowded corridors and imagine a better-connected city.
+                Understand how people move through Delhi. Explore passenger flows, discover crowded corridors and imagine a better-connected transport network.
               </p>
 
               {/* Action Buttons */}
@@ -50,7 +64,7 @@ export default function HomePage() {
                   href="/twin"
                   className="inline-flex items-center space-x-2 px-6 py-3.5 bg-ink text-ivory text-sm tracking-wide font-medium hover:bg-terracotta transition-colors"
                 >
-                  <span>Explore the city</span>
+                  <span>Explore the City</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </Link>
 
@@ -58,12 +72,12 @@ export default function HomePage() {
                   href="/journey"
                   className="inline-flex items-center space-x-2 px-6 py-3.5 border border-ink text-ink text-sm tracking-wide font-medium hover:bg-parchment transition-colors"
                 >
-                  <span>Plan your journey</span>
+                  <span>Plan a Journey</span>
                 </Link>
               </div>
             </div>
 
-            {/* Architectural Camera Viewfinder Presets */}
+            {/* Viewfinder Perspective Controls */}
             <div className="pt-8 border-t border-stone-light mt-8 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
@@ -110,7 +124,7 @@ export default function HomePage() {
               className="w-full h-full min-h-[520px] lg:min-h-[640px]"
             />
 
-            {/* Editorial Architectural Interface Annotations (Restrained, not floating SaaS cards) */}
+            {/* Editorial Architectural Interface Annotations */}
             <div className="absolute top-4 left-4 pointer-events-none">
               <div className="bg-ivory/90 border border-stone/40 px-3.5 py-2 backdrop-blur-sm shadow-sm space-y-0.5">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-ink-muted">
@@ -125,7 +139,7 @@ export default function HomePage() {
             <div className="absolute top-4 right-4 pointer-events-none">
               <div className="bg-ivory/90 border border-stone/40 px-3.5 py-2 backdrop-blur-sm shadow-sm text-right space-y-0.5">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-ink-muted">
-                  PASSENGER FLOW DENSITY
+                  PASSENGER FLOW (09:00 IST)
                 </div>
                 <div className="font-mono text-xs font-semibold text-terracotta">
                   48,200 PAX / HOUR
@@ -157,8 +171,8 @@ export default function HomePage() {
                     <span className="font-medium text-ink">{selectedCorridor?.busesPerHour}</span>
                   </div>
                   <div>
-                    <span className="text-ink-muted block text-[9px]">AVG SPEED</span>
-                    <span className="font-medium text-ink">{selectedCorridor?.averageSpeedKmH} km/h</span>
+                    <span className="text-ink-muted block text-[9px]">TIME PERIOD</span>
+                    <span className="font-medium text-ink">PEAK MORNING</span>
                   </div>
                 </div>
               </div>
@@ -195,14 +209,14 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SECTION 01 — THE CITY (Spatial Depth & Urban Fabric)
+          01 — A CITY IN MOTION (Introduce the transport network)
          ========================================================================= */}
       <section className="py-24 border-b border-stone-light bg-parchment/30 relative">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-4 space-y-4">
               <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                SECTION 01 / THE SPATIAL SCALE
+                01 / A CITY IN MOTION
               </span>
               <h2 className="font-serif text-4xl sm:text-5xl text-ink leading-tight font-normal">
                 A city of 32 million souls, carved into radial arteries.
@@ -243,21 +257,21 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SECTION 02 — THE MOVEMENT (Arterial Flow & Route Geometry)
+          02 — UNDERSTAND THE FLOW (Show passenger movement & reconstructed demand)
          ========================================================================= */}
       <section className="py-24 border-b border-stone-light bg-ivory">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-xl space-y-3">
               <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                SECTION 02 / ARTERIAL CONDUITS
+                02 / UNDERSTAND THE FLOW
               </span>
               <h2 className="font-serif text-4xl sm:text-5xl text-ink leading-tight font-normal">
                 Corridors that breathe with the morning rush.
               </h2>
             </div>
             <p className="text-sm text-ink-muted max-w-sm font-light leading-relaxed">
-              Every route has an operational pulse. Here we map the high-frequency arterial conduits reconstructed from millions of automated automated fare collections and GPS telemetry pings.
+              Every route has an operational pulse. Here we map the high-frequency arterial conduits reconstructed from millions of automated fare collections and GPS telemetry pings.
             </p>
           </div>
 
@@ -314,150 +328,55 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SECTION 03 — THE PEOPLE (Reconstructing Human Movement)
+          03 — PREDICT THE PRESSURE (Show how crowding predictions work)
          ========================================================================= */}
       <section className="py-24 border-b border-stone-light bg-parchment/40">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-6">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                SECTION 03 / THE HUMAN ELEMENT
-              </span>
-              <h2 className="font-serif text-4xl sm:text-5xl text-ink leading-tight font-normal">
-                Turning ticket taps into living urban empathy.
-              </h2>
-              <p className="text-ink-light text-base leading-relaxed font-light">
-                Public transit is not an abstract mechanical pipeline. It is a mother traveling from Shakarpur to AIIMS for morning dialysis, or a student transferring at Dhaula Kuan to South Campus.
-              </p>
-              <p className="text-ink-light text-base leading-relaxed font-light">
-                NEXBUS ingests anonymized electronic ticketing machine (ETM) transactions, bus GPS trajectories, and metro interchange tap-outs to synthesize authentic Origin-Destination matrices without invading passenger privacy.
-              </p>
-
-              <div className="border-l-2 border-terracotta pl-4 py-1 space-y-1">
-                <span className="font-mono text-xs text-ink-muted uppercase tracking-wider block">
-                  METHODOLOGY
-                </span>
-                <p className="font-serif italic text-lg text-ink">
-                  &ldquo;We don’t track individuals. We reveal the collective pulse of Delhi.&rdquo;
-                </p>
-              </div>
-            </div>
-
-            <div className="lg:col-span-7 bg-ivory border border-stone-light p-8 shadow-sm space-y-6">
-              <div className="flex items-center justify-between border-b border-stone-light pb-4">
-                <div>
-                  <span className="font-mono text-[11px] text-ink-muted uppercase tracking-wider">
-                    DELHI HOURLY LOAD PROFILE
-                  </span>
-                  <h4 className="font-serif text-2xl text-ink font-normal mt-0.5">
-                    Metropolitan Commute Distribution
-                  </h4>
-                </div>
-                <div className="font-mono text-xs text-terracotta px-3 py-1 bg-terracotta/10">
-                  PEAK: 18:00 (242K PAX)
-                </div>
-              </div>
-
-              {/* Editorial Bar Chart */}
-              <div className="space-y-2 pt-2">
-                <div className="h-44 flex items-end justify-between gap-1 border-b border-stone-light pb-2">
-                  {HOURLY_FLOW_DATA.slice(0, 14).map((d) => (
-                    <div key={d.hour} className="flex-1 flex flex-col items-center group relative">
-                      <div
-                        className="w-full transition-all group-hover:bg-terracotta"
-                        style={{
-                          height: `${(d.load / 100) * 140}px`,
-                          backgroundColor: d.load > 85 ? '#B84C32' : d.load > 65 ? '#C89B53' : '#A69A89',
-                        }}
-                      />
-                      <div className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-ink text-ivory font-mono text-[9px] px-1.5 py-0.5 whitespace-nowrap z-20 pointer-events-none transition-opacity">
-                        {d.passengers.toLocaleString()} pax
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-between font-mono text-[10px] text-ink-muted pt-1">
-                  <span>06:00 (DAWN SHIFT)</span>
-                  <span>12:00 (MIDDAY)</span>
-                  <span>18:00 (EVENING PEAK)</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-stone-light text-center">
-                <div>
-                  <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                    DAILY BOARDINGS
-                  </span>
-                  <span className="font-serif text-2xl text-ink font-normal">4.28M</span>
-                </div>
-                <div>
-                  <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                    INTERCHANGE RATE
-                  </span>
-                  <span className="font-serif text-2xl text-ink font-normal">38.4%</span>
-                </div>
-                <div>
-                  <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                    AVG TRIP DISTANCE
-                  </span>
-                  <span className="font-serif text-2xl text-ink font-normal">11.6 KM</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 04 — THE PREDICTION (Forecasting Urban Crowding)
-         ========================================================================= */}
-      <section className="py-24 border-b border-stone-light bg-ivory">
-        <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
             <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
-              SECTION 04 / FORESIGHT ENGINE
+              03 / PREDICT THE PRESSURE
             </span>
             <h2 className="font-serif text-4xl sm:text-5xl text-ink font-normal">
               Anticipating congestion before the bottleneck forms.
             </h2>
             <p className="text-ink-light text-base font-light leading-relaxed">
-              By coupling recurrent temporal graphs with real-time GPS fleet lag, our predictive model detects overcrowding up to 45 minutes ahead with 94% validated fidelity.
+              By coupling spatio-temporal graph neural networks with live ETM ticketing machine tap streams, NEXBUS identifies passenger crowding surges up to 45 minutes ahead.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="border border-stone-light p-8 bg-parchment/30 space-y-4">
-              <div className="w-10 h-10 border border-stone/40 bg-ivory flex items-center justify-center font-mono text-sm text-terracotta">
+            <div className="border border-stone-light p-8 bg-ivory space-y-4 shadow-sm">
+              <div className="w-10 h-10 border border-stone/40 bg-parchment/40 flex items-center justify-center font-mono text-sm text-terracotta">
                 01
               </div>
               <h3 className="font-serif text-2xl text-ink font-normal">
-                Multi-Hop Graph Neural Nets
+                Multi-Hop Graph Convolutions
               </h3>
               <p className="text-sm text-ink-light font-light leading-relaxed">
-                Nodes represent bus stops; edges represent dynamic travel times influenced by weather, construction, and traffic bottlenecks across ITO and Dhaula Kuan.
+                Bus stops are nodes; road networks are edges. The model propagates spatial demand outward from high-dwell stations like Kashmere Gate and AIIMS.
               </p>
-              <div className="pt-2 font-mono text-xs text-ink-muted">
+              <div className="pt-2 font-mono text-xs text-ink-muted border-t border-stone-light">
                 LATENCY: &lt;140ms INFERENCE
               </div>
             </div>
 
-            <div className="border border-stone-light p-8 bg-parchment/30 space-y-4">
-              <div className="w-10 h-10 border border-stone/40 bg-ivory flex items-center justify-center font-mono text-sm text-terracotta">
+            <div className="border border-stone-light p-8 bg-ivory space-y-4 shadow-sm">
+              <div className="w-10 h-10 border border-stone/40 bg-parchment/40 flex items-center justify-center font-mono text-sm text-terracotta">
                 02
               </div>
               <h3 className="font-serif text-2xl text-ink font-normal">
-                Probabilistic Load Bounds
+                Bayesian Confidence Bounds
               </h3>
               <p className="text-sm text-ink-light font-light leading-relaxed">
-                Rather than point estimates, we compute 80% and 95% Bayesian confidence intervals so transit managers know whether a crowd surge is an outlier or a sustained deficit.
+                Rather than single-point guesses, we provide calibrated 80% and 95% Bayesian credible intervals so authorities understand real forecast certainty.
               </p>
-              <div className="pt-2 font-mono text-xs text-ink-muted">
-                CALIBRATION: 94.2% ACCURACY
+              <div className="pt-2 font-mono text-xs text-ink-muted border-t border-stone-light">
+                CALIBRATION: 94.8% VALIDATION SCORE
               </div>
             </div>
 
-            <div className="border border-stone-light p-8 bg-parchment/30 space-y-4">
-              <div className="w-10 h-10 border border-stone/40 bg-ivory flex items-center justify-center font-mono text-sm text-terracotta">
+            <div className="border border-stone-light p-8 bg-ivory space-y-4 shadow-sm">
+              <div className="w-10 h-10 border border-stone/40 bg-parchment/40 flex items-center justify-center font-mono text-sm text-terracotta">
                 03
               </div>
               <h3 className="font-serif text-2xl text-ink font-normal">
@@ -466,7 +385,7 @@ export default function HomePage() {
               <p className="text-sm text-ink-light font-light leading-relaxed">
                 Automated alerts triggered when segment passenger capacity factor breaches 120%, giving depot managers time to dispatch supplementary short-loop shuttles.
               </p>
-              <div className="pt-2 font-mono text-xs text-ink-muted">
+              <div className="pt-2 font-mono text-xs text-ink-muted border-t border-stone-light">
                 ALERT WINDOW: 35–50 MINS
               </div>
             </div>
@@ -475,23 +394,105 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SECTION 05 — THE POSSIBILITIES (Intervention Simulation)
+          04 — EXPLORE THE JOURNEY (Introduce crowd-aware travel planning)
+         ========================================================================= */}
+      <section className="py-24 border-b border-stone-light bg-ivory">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-5 space-y-6">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
+                04 / EXPLORE THE JOURNEY
+              </span>
+              <h2 className="font-serif text-4xl sm:text-5xl text-ink leading-tight font-normal">
+                Crowd-aware routing tailored to how you travel.
+              </h2>
+              <p className="text-ink-light text-base leading-relaxed font-light">
+                Ordinary map apps only optimize for raw travel minutes, cramming passengers into overcrowded standing-room buses.
+              </p>
+              <p className="text-ink-light text-base leading-relaxed font-light">
+                NEXBUS computes Pareto-optimal itineraries across three distinct passenger priorities: <strong>Fastest</strong> (speed optimized), <strong>Balanced</strong> (reliable interchanges), and <strong>Comfort First</strong> (guaranteed seated capacity in AC electric buses).
+              </p>
+
+              <Link
+                href="/journey"
+                className="inline-flex items-center space-x-2 px-6 py-3.5 bg-ink text-ivory text-sm font-medium hover:bg-terracotta transition-colors"
+              >
+                <span>Try the Journey Planner</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="lg:col-span-7 border border-stone-light bg-parchment/30 p-8 space-y-4">
+              <div className="flex items-center justify-between border-b border-stone-light pb-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+                  SAMPLE TRIP: AIIMS → CONNAUGHT PLACE
+                </span>
+                <span className="font-mono text-xs text-terracotta">3 RECOMMENDATION TIERS</span>
+              </div>
+
+              <div className="space-y-3 font-mono text-xs">
+                <div className="p-4 bg-ivory border border-stone-light flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-amber-900 bg-amber-100 px-2 py-0.5 border border-amber-300">
+                      FASTEST
+                    </span>
+                    <h4 className="font-serif text-lg text-ink font-normal mt-1">Route 502 Radial Express</h4>
+                    <p className="text-ink-muted text-[11px] font-sans">Direct link • 6 stops • 84% cabin crowd</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-serif text-2xl text-ink">26 MIN</span>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-ivory border border-stone-light flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-green-900 bg-green-100 px-2 py-0.5 border border-green-300">
+                      BALANCED
+                    </span>
+                    <h4 className="font-serif text-lg text-ink font-normal mt-1">TMS Sewa + Janpath Feeder</h4>
+                    <p className="text-ink-muted text-[11px] font-sans">1 sheltered transfer at Moolchand • 62% cabin crowd</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-serif text-2xl text-ink">34 MIN</span>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-ivory border border-stone-light flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-blue-900 bg-blue-100 px-2 py-0.5 border border-blue-300">
+                      COMFORT FIRST
+                    </span>
+                    <h4 className="font-serif text-lg text-ink font-normal mt-1">Electric Premium AC Shuttle</h4>
+                    <p className="text-ink-muted text-[11px] font-sans">94% seat availability • Terminal staging • 100% AC</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-serif text-2xl text-ink">38 MIN</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          05 — REIMAGINE THE NETWORK (Introduce hypothetical interventions)
          ========================================================================= */}
       <section className="py-24 border-b border-stone-light bg-parchment/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-6">
               <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta">
-                SECTION 05 / URBAN EXPERIMENTATION
+                05 / REIMAGINE THE NETWORK
               </span>
               <h2 className="font-serif text-4xl sm:text-5xl text-ink leading-tight font-normal">
-                Test the hypothetical before spending a single rupee.
+                Test the hypothetical before spending public funds.
               </h2>
               <p className="text-ink-light text-base leading-relaxed font-light">
                 What happens if Delhi deploys 20 additional electric feeder buses from Saket to AIIMS? What if headway along the Ring Road is compressed from 12 minutes to 6 minutes during evening rush?
               </p>
               <p className="text-ink-light text-base leading-relaxed font-light">
-                The NEXBUS simulation engine runs synchronized counterfactual micro-simulations, calculating commuter delay savings, vehicle occupancy equalization, and tailpipe emission reductions.
+                The NEXBUS simulation laboratory runs synchronized counterfactual micro-simulations, calculating commuter delay savings, vehicle occupancy equalization, and tailpipe emission reductions.
               </p>
 
               <Link
@@ -566,14 +567,85 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          SECTION 06 — EXPLORE NEXBUS (Gateway to Interactive Platform)
+          06 — THE INTELLIGENCE BEHIND IT (Technical methodology & data provenance)
          ========================================================================= */}
-      <section className="py-28 bg-ivory relative">
+      <section className="py-24 border-b border-stone-light bg-ivory">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="border border-stone-light p-10 sm:p-16 bg-parchment/40 relative overflow-hidden">
+          <div className="max-w-2xl mx-auto text-center space-y-3 mb-16">
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
+              06 / THE INTELLIGENCE BEHIND IT
+            </span>
+            <h2 className="font-serif text-4xl sm:text-5xl text-ink font-normal">
+              Scientific rigor over black-box guesswork.
+            </h2>
+            <p className="text-ink-light text-base font-light leading-relaxed">
+              Every data point in NEXBUS is classified into four strict epistemological tiers to maintain complete auditability and public trust.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 font-mono text-xs">
+            <div className="border border-green-300 bg-green-50/50 p-6 space-y-2">
+              <span className="text-green-900 font-bold block text-[10px] uppercase">
+                ● TIER 01: OBSERVED
+              </span>
+              <h4 className="font-serif text-xl text-ink font-normal">Hardware Beacons</h4>
+              <p className="font-sans text-xs text-ink-muted leading-relaxed font-light">
+                Direct GPS telemetry pings every 5s from 3,840 buses and 4.28M conductor ETM smartcard punches.
+              </p>
+            </div>
+
+            <div className="border border-amber-300 bg-amber-50/50 p-6 space-y-2">
+              <span className="text-amber-900 font-bold block text-[10px] uppercase">
+                ▲ TIER 02: ESTIMATED
+              </span>
+              <h4 className="font-serif text-xl text-ink font-normal">Trip Chaining</h4>
+              <p className="font-sans text-xs text-ink-muted leading-relaxed font-light">
+                Inferring alighting drop-offs and stop dwell times via probabilistic origin-destination clustering.
+              </p>
+            </div>
+
+            <div className="border border-blue-300 bg-blue-50/50 p-6 space-y-2">
+              <span className="text-blue-900 font-bold block text-[10px] uppercase">
+                ◆ TIER 03: PREDICTED
+              </span>
+              <h4 className="font-serif text-xl text-ink font-normal">Neural Forecasts</h4>
+              <p className="font-sans text-xs text-ink-muted leading-relaxed font-light">
+                Spatio-Temporal Graph Neural Networks computing 45-minute lookahead crowding with 95% Bayesian bounds.
+              </p>
+            </div>
+
+            <div className="border border-purple-300 bg-purple-50/50 p-6 space-y-2">
+              <span className="text-purple-900 font-bold block text-[10px] uppercase">
+                ★ TIER 04: HYPOTHETICAL
+              </span>
+              <h4 className="font-serif text-xl text-ink font-normal">Micro-Simulation</h4>
+              <p className="font-sans text-xs text-ink-muted leading-relaxed font-light">
+                Synthetic counterfactual scenarios testing headway adjustments and new electric bus routes.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/methodology"
+              className="inline-flex items-center space-x-1.5 font-mono text-xs text-terracotta hover:underline uppercase tracking-wider"
+            >
+              <span>Read the Full 9-Stage Technical Methodology Dossier</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          07 — EXPLORE NEXBUS (A strong final CTA)
+         ========================================================================= */}
+      <section className="py-28 bg-parchment/40 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="border border-stone-light p-10 sm:p-16 bg-ivory relative overflow-hidden shadow-sm">
             <div className="max-w-2xl space-y-6">
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
-                SECTION 06 / ENTER THE PLATFORM
+                07 / ENTER THE PLATFORM
               </span>
               <h2 className="font-serif text-5xl sm:text-6xl text-ink leading-none font-normal">
                 Step into Delhi&apos;s living digital twin.
@@ -609,7 +681,7 @@ export default function HomePage() {
                   </div>
                   <h4 className="font-serif text-2xl text-ink font-normal">Journey Planner</h4>
                   <p className="text-xs text-ink-muted mt-1 font-light">
-                    Crowd-aware route recommendations with horizontal journey timeline steps.
+                    Fastest, Balanced, and Comfort First routing with 3D trajectory alignment.
                   </p>
                 </Link>
 
@@ -621,9 +693,9 @@ export default function HomePage() {
                     <span className="font-mono text-xs text-ink-muted">03 / POLICY</span>
                     <ArrowUpRight className="w-4 h-4 text-terracotta" />
                   </div>
-                  <h4 className="font-serif text-2xl text-ink font-normal">Simulation</h4>
+                  <h4 className="font-serif text-2xl text-ink font-normal">Simulation Lab</h4>
                   <p className="text-xs text-ink-muted mt-1 font-light">
-                    Split-screen counterfactual network testing with live impact metrics.
+                    Synchronized counterfactual network testing with live impact metrics.
                   </p>
                 </Link>
 
@@ -635,9 +707,9 @@ export default function HomePage() {
                     <span className="font-mono text-xs text-ink-muted">04 / INTELLIGENCE</span>
                     <ArrowUpRight className="w-4 h-4 text-terracotta" />
                   </div>
-                  <h4 className="font-serif text-2xl text-ink font-normal">Control Analytics</h4>
+                  <h4 className="font-serif text-2xl text-ink font-normal">Executive Control</h4>
                   <p className="text-xs text-ink-muted mt-1 font-light">
-                    Executive dashboards, corridor crowding indices, and fleet reliability scores.
+                    Authority dashboards, corridor crowding indices, and fleet reliability scores.
                   </p>
                 </Link>
               </div>
@@ -663,14 +735,14 @@ export default function HomePage() {
             <span className="text-terracotta uppercase tracking-wider block mb-2">PLATFORM</span>
             <div><Link href="/twin" className="hover:text-terracotta">Digital Twin</Link></div>
             <div><Link href="/journey" className="hover:text-terracotta">Journey Planner</Link></div>
-            <div><Link href="/simulate" className="hover:text-terracotta">Simulation Engine</Link></div>
-            <div><Link href="/control" className="hover:text-terracotta">Control Analytics</Link></div>
+            <div><Link href="/simulate" className="hover:text-terracotta">Simulation Lab</Link></div>
+            <div><Link href="/control" className="hover:text-terracotta">Intelligence</Link></div>
           </div>
 
           <div className="md:col-span-2 space-y-2 font-mono text-xs">
-            <span className="text-terracotta uppercase tracking-wider block mb-2">SYSTEM</span>
-            <div><Link href="/about" className="hover:text-terracotta">Methodology</Link></div>
-            <div><span className="text-ink-muted">API Contracts</span></div>
+            <span className="text-terracotta uppercase tracking-wider block mb-2">SCIENCE</span>
+            <div><Link href="/methodology" className="hover:text-terracotta">Methodology</Link></div>
+            <div><Link href="/about" className="hover:text-terracotta">Manifesto</Link></div>
             <div><span className="text-ink-muted">GTFS-RT Feeds</span></div>
             <div><span className="text-ink-muted">Privacy Model</span></div>
           </div>

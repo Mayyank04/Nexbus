@@ -1,148 +1,95 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
 import DelhiCityCanvas from '@/components/3d/DelhiCityCanvas';
-import { DELHI_STOPS, DELHI_CORRIDORS, BusStop } from '@/data/delhiTransitData';
+import { DELHI_STOPS } from '@/data/delhiTransitData';
+import {
+  computeJourneyPlans,
+  JourneyPlanOption,
+} from '@/lib/api';
 import {
   MapPin,
   ArrowRight,
   Clock,
   Users,
-  Compass,
-  CornerDownRight,
   ShieldCheck,
+  Calendar,
+  Sparkles,
+  Zap,
   CheckCircle2,
   AlertCircle,
-  Sparkles,
+  Armchair,
+  Route as RouteIcon,
 } from 'lucide-react';
-
-interface JourneyOption {
-  id: string;
-  routeName: string;
-  routeCode: string;
-  durationMin: number;
-  transfers: number;
-  departureTime: string;
-  arrivalTime: string;
-  crowding: 'Low' | 'Moderate' | 'High';
-  crowdingScore: number; // 0-100
-  confidence: number;
-  segments: {
-    type: 'walk' | 'bus' | 'transfer';
-    title: string;
-    detail: string;
-    durationMin: number;
-    corridorId?: string;
-  }[];
-}
-
-const PRESET_JOURNEYS: Record<string, JourneyOption[]> = {
-  'aiims-cp': [
-    {
-      id: 'opt-1',
-      routeName: 'Direct Route 502 (Electric AC)',
-      routeCode: '502 EXP',
-      durationMin: 26,
-      transfers: 0,
-      departureTime: '09:12',
-      arrivalTime: '09:38',
-      crowding: 'Moderate',
-      crowdingScore: 68,
-      confidence: 96,
-      segments: [
-        { type: 'walk', title: 'Walk to AIIMS Main Gate Shelter', detail: '140 m • 2 min', durationMin: 2 },
-        {
-          type: 'bus',
-          title: 'Board Route 502 toward Old Delhi',
-          detail: 'Aurobindo Marg Corridor • 6 stops • 22 min',
-          durationMin: 22,
-          corridorId: 'corridor-radial-south',
-        },
-        { type: 'walk', title: 'Arrive at Connaught Place Regal Circle', detail: '80 m • 2 min', durationMin: 2 },
-      ],
-    },
-    {
-      id: 'opt-2',
-      routeName: 'Ring Road TMS + Janpath Feeder',
-      routeCode: 'TMS-11',
-      durationMin: 34,
-      transfers: 1,
-      departureTime: '09:15',
-      arrivalTime: '09:49',
-      crowding: 'Low',
-      crowdingScore: 42,
-      confidence: 94,
-      segments: [
-        { type: 'bus', title: 'Ring Road Arterial to Moolchand', detail: '3 stops • 11 min', durationMin: 11, corridorId: 'corridor-ring-road' },
-        { type: 'transfer', title: 'Interchange at Moolchand Underpass', detail: 'Sheltered transfer • 4 min', durationMin: 4 },
-        { type: 'bus', title: 'Board 419 to Connaught Place', detail: '5 stops • 19 min', durationMin: 19, corridorId: 'corridor-radial-south' },
-      ],
-    },
-  ],
-  'kashmere-nehru': [
-    {
-      id: 'opt-3',
-      routeName: 'Outer Ring Rapid Bypass',
-      routeCode: 'TMS-CL',
-      durationMin: 48,
-      transfers: 0,
-      departureTime: '09:20',
-      arrivalTime: '10:08',
-      crowding: 'High',
-      crowdingScore: 88,
-      confidence: 92,
-      segments: [
-        { type: 'walk', title: 'ISBT Platform 4', detail: '50 m • 1 min', durationMin: 1 },
-        {
-          type: 'bus',
-          title: 'Board TMS Clockwise Ring Sewa',
-          detail: 'Ring Road Arterial • 14 stops • 45 min',
-          durationMin: 45,
-          corridorId: 'corridor-ring-road',
-        },
-        { type: 'walk', title: 'Arrive Nehru Place Terminal', detail: '120 m • 2 min', durationMin: 2 },
-      ],
-    },
-  ],
-};
 
 export default function JourneyPlannerPage() {
   const [originStop, setOriginStop] = useState<string>('stop-aiims');
   const [destinationStop, setDestinationStop] = useState<string>('stop-cp-regal');
-  const [selectedOptionId, setSelectedOptionId] = useState<string>('opt-1');
+  const [departureDate, setDepartureDate] = useState<string>('2026-11-15');
+  const [departureTime, setDepartureTime] = useState<string>('09:15');
 
-  const origin = DELHI_STOPS.find((s) => s.id === originStop) || DELHI_STOPS[1];
-  const destination = DELHI_STOPS.find((s) => s.id === destinationStop) || DELHI_STOPS[0];
+  useEffect(() => {
+    // Set actual date on mount in client
+    setDepartureDate(new Date().toISOString().split('T')[0]);
+  }, []);
 
-  // Lookup options or fallback
-  const journeyPairKey = `${originStop.replace('stop-', '')}-${destinationStop.replace('stop-', '')}`;
-  const options = PRESET_JOURNEYS['aiims-cp'];
-  const activeOption = options.find((o) => o.id === selectedOptionId) || options[0];
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [journeyOptions, setJourneyOptions] = useState<JourneyPlanOption[]>([]);
+  const [selectedOptionId, setSelectedOptionId] = useState<string>('fastest');
+  const [selectedSegmentIdx, setSelectedSegmentIdx] = useState<number | null>(null);
+
+  // Fetch real journey plans from API
+  const handleFetchPlans = async () => {
+    setIsLoading(true);
+    const result = await computeJourneyPlans(
+      originStop,
+      destinationStop,
+      departureDate,
+      departureTime
+    );
+    if (result && result.plans) {
+      setJourneyOptions(result.plans);
+      setSelectedOptionId(result.plans[0]?.id || 'fastest');
+      setSelectedSegmentIdx(null);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    handleFetchPlans();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [originStop, destinationStop]);
+
+  const activeOption =
+    journeyOptions.find((o) => o.id === selectedOptionId) || journeyOptions[0];
 
   return (
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-ivory flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
         {/* Editorial Heading */}
-        <div className="mb-10 max-w-2xl">
-          <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
-            JOURNEY INTELLIGENCE / PREDICTIVE ROUTING
-          </span>
-          <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal mt-2 leading-[1.05]">
+        <div className="max-w-2xl space-y-2">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-terracotta" />
+            <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
+              JOURNEY PLANNER / MULTI-CRITERIA TRANSIT ENGINE
+            </span>
+          </div>
+          <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
             Find your way across the city.
           </h1>
-          <p className="text-base text-ink-light mt-3 font-light leading-relaxed">
-            Multi-leg journeys calculated with real-time seat availability heuristics, historical transfer delays, and 3D spatial alignment.
+          <p className="text-base text-ink-light font-light leading-relaxed">
+            Multi-criteria journey optimization analyzing velocity, interchange friction, and predicted passenger crowding across Delhi&apos;s bus grid.
           </p>
         </div>
 
-        {/* Origin / Destination Formulation Bar */}
-        <div className="border border-stone-light bg-parchment/40 p-6 mb-8">
+        {/* Origin / Destination / Date / Time Form Bar */}
+        <div className="border border-stone-light bg-parchment/40 p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            {/* Origin */}
-            <div className="md:col-span-5 bg-ivory border border-stone-light p-3.5 space-y-1">
+            {/* Origin Stop */}
+            <div className="md:col-span-4 bg-ivory border border-stone-light p-3 space-y-1">
               <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
                 <MapPin className="w-3 h-3 text-terracotta" />
                 ORIGIN STOP
@@ -161,14 +108,14 @@ export default function JourneyPlannerPage() {
             </div>
 
             {/* Direction Arrow */}
-            <div className="md:col-span-2 flex justify-center">
-              <div className="w-9 h-9 rounded-full border border-stone-light bg-ivory flex items-center justify-center text-ink-muted">
+            <div className="md:col-span-1 flex justify-center">
+              <div className="w-8 h-8 rounded-full border border-stone-light bg-ivory flex items-center justify-center text-ink-muted">
                 <ArrowRight className="w-4 h-4 text-terracotta" />
               </div>
             </div>
 
-            {/* Destination */}
-            <div className="md:col-span-5 bg-ivory border border-stone-light p-3.5 space-y-1">
+            {/* Destination Stop */}
+            <div className="md:col-span-4 bg-ivory border border-stone-light p-3 space-y-1">
               <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
                 <MapPin className="w-3 h-3 text-gold" />
                 DESTINATION STOP
@@ -185,57 +132,108 @@ export default function JourneyPlannerPage() {
                 ))}
               </select>
             </div>
+
+            {/* Date & Time */}
+            <div className="md:col-span-3 grid grid-cols-2 gap-2">
+              <div className="bg-ivory border border-stone-light p-2.5 space-y-1">
+                <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted flex items-center gap-1">
+                  <Calendar className="w-2.5 h-2.5 text-stone" />
+                  DATE
+                </span>
+                <input
+                  type="date"
+                  value={departureDate}
+                  onChange={(e) => setDepartureDate(e.target.value)}
+                  className="w-full bg-transparent font-mono text-xs text-ink focus:outline-none"
+                />
+              </div>
+
+              <div className="bg-ivory border border-stone-light p-2.5 space-y-1">
+                <span className="font-mono text-[9px] uppercase tracking-wider text-ink-muted flex items-center gap-1">
+                  <Clock className="w-2.5 h-2.5 text-stone" />
+                  DEPARTURE
+                </span>
+                <input
+                  type="time"
+                  value={departureTime}
+                  onChange={(e) => setDepartureTime(e.target.value)}
+                  className="w-full bg-transparent font-mono text-xs text-ink focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Quick Presets */}
-          <div className="mt-4 pt-4 border-t border-stone-light/70 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted mr-2">
-              FREQUENT COMMUTES:
-            </span>
+          {/* Quick Presets & Re-Compute Button */}
+          <div className="pt-3 border-t border-stone-light/60 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted mr-1">
+                TRANSIT PAIRS:
+              </span>
+              <button
+                onClick={() => {
+                  setOriginStop('stop-aiims');
+                  setDestinationStop('stop-cp-regal');
+                }}
+                className="font-mono text-xs px-2.5 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
+              >
+                AIIMS → Connaught Place
+              </button>
+              <button
+                onClick={() => {
+                  setOriginStop('stop-kashmere-gate');
+                  setDestinationStop('stop-nehru-place');
+                }}
+                className="font-mono text-xs px-2.5 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
+              >
+                Kashmere Gate → Nehru Place
+              </button>
+              <button
+                onClick={() => {
+                  setOriginStop('stop-dhaula-kuan');
+                  setDestinationStop('stop-anand-vihar');
+                }}
+                className="font-mono text-xs px-2.5 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
+              >
+                Dhaula Kuan → Anand Vihar
+              </button>
+            </div>
+
             <button
-              onClick={() => {
-                setOriginStop('stop-aiims');
-                setDestinationStop('stop-cp-regal');
-              }}
-              className="font-mono text-xs px-3 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
+              onClick={handleFetchPlans}
+              disabled={isLoading}
+              className="px-5 py-2 bg-ink text-ivory font-mono text-xs uppercase tracking-wider hover:bg-terracotta transition-colors disabled:opacity-50"
             >
-              AIIMS → Connaught Place
-            </button>
-            <button
-              onClick={() => {
-                setOriginStop('stop-kashmere-gate');
-                setDestinationStop('stop-nehru-place');
-              }}
-              className="font-mono text-xs px-3 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
-            >
-              Kashmere Gate → Nehru Place
-            </button>
-            <button
-              onClick={() => {
-                setOriginStop('stop-dhaula-kuan');
-                setDestinationStop('stop-anand-vihar');
-              }}
-              className="font-mono text-xs px-3 py-1 bg-ivory border border-stone/40 hover:border-terracotta text-ink"
-            >
-              Dhaula Kuan → Anand Vihar
+              {isLoading ? 'Computing RAPTOR…' : 'Update Itineraries'}
             </button>
           </div>
         </div>
 
-        {/* Layout: Options & 3D Spatial Trajectory */}
+        {/* Recommendations & 3D Route Inspection */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Journey Options List */}
+          {/* Left: The 3 Core Recommendation Types */}
           <div className="lg:col-span-5 space-y-4">
-            <span className="font-mono text-xs uppercase tracking-wider text-ink-muted block">
-              RECOMMENDED TRAJECTORIES ({options.length})
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+                PARETO-OPTIMAL RECOMMENDATIONS (3)
+              </span>
+              <span className="font-mono text-[10px] text-terracotta">
+                RAPTOR ALGORITHM v2.1
+              </span>
+            </div>
 
-            {options.map((opt) => {
+            {journeyOptions.map((opt) => {
               const isSelected = selectedOptionId === opt.id;
+              const isFastest = opt.type === 'FASTEST';
+              const isBalanced = opt.type === 'BALANCED';
+              const isComfort = opt.type === 'COMFORT FIRST';
+
               return (
                 <div
                   key={opt.id}
-                  onClick={() => setSelectedOptionId(opt.id)}
+                  onClick={() => {
+                    setSelectedOptionId(opt.id);
+                    setSelectedSegmentIdx(null);
+                  }}
                   className={`border p-5 cursor-pointer transition-all ${
                     isSelected
                       ? 'border-terracotta bg-ivory shadow-sm ring-1 ring-terracotta/20'
@@ -244,23 +242,34 @@ export default function JourneyPlannerPage() {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="font-mono text-xs text-terracotta font-medium">
-                        {opt.routeCode}
-                      </span>
-                      <h3 className="font-serif text-xl text-ink font-normal mt-0.5">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`font-mono text-[10px] uppercase font-semibold px-2 py-0.5 border ${
+                            isFastest
+                              ? 'bg-amber-100 text-amber-900 border-amber-300'
+                              : isBalanced
+                              ? 'bg-green-100 text-green-900 border-green-300'
+                              : 'bg-blue-100 text-blue-900 border-blue-300'
+                          }`}
+                        >
+                          {opt.type} • {opt.tag}
+                        </span>
+                      </div>
+                      <h3 className="font-serif text-xl text-ink font-normal mt-1.5">
                         {opt.routeName}
                       </h3>
                     </div>
-                    <div className="text-right">
-                      <span className="font-serif text-2xl text-ink font-normal">
+
+                    <div className="text-right shrink-0">
+                      <span className="font-serif text-3xl text-ink font-normal">
                         {opt.durationMin}
                       </span>
                       <span className="text-xs font-mono text-ink-muted ml-1">MIN</span>
                     </div>
                   </div>
 
-                  {/* Horizontal Journey Timeline Summary */}
-                  <div className="my-4 py-2 border-y border-stone-light flex items-center space-x-2 font-mono text-xs text-ink-light">
+                  {/* Horizontal Journey Timeline */}
+                  <div className="my-3 py-2 border-y border-stone-light/60 flex items-center space-x-2 font-mono text-xs">
                     <span className="font-semibold text-ink">{opt.departureTime}</span>
                     <div className="flex-1 h-[2px] bg-stone-light relative flex items-center">
                       <div
@@ -271,15 +280,16 @@ export default function JourneyPlannerPage() {
                     <span className="font-semibold text-ink">{opt.arrivalTime}</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 font-mono text-[11px] text-ink-muted">
+                  {/* Operational Telemetry Grid */}
+                  <div className="grid grid-cols-3 gap-2 font-mono text-[11px] text-ink-muted mb-3">
                     <div>
-                      <span>TRANSFERS: </span>
+                      <span className="block text-[9px]">TRANSFERS</span>
                       <span className="font-medium text-ink">
-                        {opt.transfers === 0 ? 'Direct' : `${opt.transfers} Transfer`}
+                        {opt.transfers === 0 ? '0 (Direct)' : `${opt.transfers} Transfer`}
                       </span>
                     </div>
                     <div>
-                      <span>CROWDING: </span>
+                      <span className="block text-[9px]">CROWDING</span>
                       <span
                         className={`font-medium ${
                           opt.crowding === 'Low'
@@ -289,48 +299,76 @@ export default function JourneyPlannerPage() {
                             : 'text-terracotta'
                         }`}
                       >
-                        {opt.crowding}
+                        {opt.crowding} ({opt.crowdingScore}%)
                       </span>
                     </div>
-                    <div className="text-right">
-                      <span>CONFIDENCE: </span>
-                      <span className="font-medium text-ink">{opt.confidence}%</span>
+                    <div>
+                      <span className="block text-[9px]">SEAT PROBABILITY</span>
+                      <span className="font-medium text-ink">{opt.seatProbability}</span>
                     </div>
+                  </div>
+
+                  {/* "Why this route" Explanation */}
+                  <div className="p-2.5 bg-parchment/40 border border-stone-light/70 text-xs text-ink-light font-light leading-relaxed">
+                    <strong className="font-mono text-[10px] text-ink uppercase tracking-wider block mb-0.5">
+                      WHY THIS RECOMMENDATION:
+                    </strong>
+                    {opt.recommendationReason}
                   </div>
                 </div>
               );
             })}
 
-            {/* Detailed Timeline Breakdown for Active Option */}
-            <div className="border border-stone-light bg-ivory p-5 space-y-4">
-              <span className="font-mono text-xs uppercase tracking-wider text-ink-muted block border-b border-stone-light pb-2">
-                STEP-BY-STEP ITINERARY
-              </span>
+            {/* Step-by-Step Itinerary Breakdown */}
+            {activeOption && (
+              <div className="border border-stone-light bg-ivory p-5 space-y-4">
+                <div className="flex items-center justify-between border-b border-stone-light pb-2">
+                  <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+                    STEP-BY-STEP ITINERARY
+                  </span>
+                  <span className="font-mono text-[11px] text-terracotta">
+                    {activeOption.segments.length} LEGS
+                  </span>
+                </div>
 
-              <div className="space-y-4">
-                {activeOption.segments.map((seg, sIdx) => (
-                  <div key={sIdx} className="flex items-start space-x-3 text-xs">
-                    <div className="mt-0.5">
-                      <div className="w-5 h-5 rounded-full border border-stone-light bg-parchment flex items-center justify-center font-mono text-[10px] text-ink">
-                        0{sIdx + 1}
+                <div className="space-y-3">
+                  {activeOption.segments.map((seg, sIdx) => (
+                    <div
+                      key={sIdx}
+                      onClick={() => setSelectedSegmentIdx(sIdx)}
+                      className={`p-2.5 border cursor-pointer transition-all flex items-start space-x-3 text-xs ${
+                        selectedSegmentIdx === sIdx
+                          ? 'border-terracotta bg-parchment/50'
+                          : 'border-stone-light/50 bg-ivory hover:border-stone'
+                      }`}
+                    >
+                      <div className="mt-0.5 shrink-0">
+                        <div className="w-5 h-5 rounded-full border border-stone-light bg-parchment flex items-center justify-center font-mono text-[10px] text-ink">
+                          0{sIdx + 1}
+                        </div>
                       </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-ink text-sm">{seg.title}</h4>
+                        <p className="text-ink-muted font-light mt-0.5">{seg.detail}</p>
+                        {seg.fleetType && (
+                          <span className="inline-block mt-1 font-mono text-[10px] px-2 py-0.5 bg-parchment border border-stone/30 text-ink-muted">
+                            FLEET: {seg.fleetType}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-mono text-[11px] text-ink-muted shrink-0">
+                        {seg.durationMin} min
+                      </span>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-medium text-ink text-sm">{seg.title}</h4>
-                      <p className="text-ink-muted font-light mt-0.5">{seg.detail}</p>
-                    </div>
-                    <span className="font-mono text-[11px] text-ink-muted shrink-0">
-                      {seg.durationMin} min
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right: 3D Trajectory Viewer */}
-          <div className="lg:col-span-7 border border-stone-light bg-parchment/30 relative min-h-[540px] flex flex-col justify-between">
-            <div className="p-4 border-b border-stone-light bg-ivory/80 backdrop-blur-sm flex items-center justify-between z-10">
+          <div className="lg:col-span-7 border border-stone-light bg-parchment/30 relative min-h-[580px] flex flex-col justify-between">
+            <div className="p-4 border-b border-stone-light bg-ivory/85 backdrop-blur-sm flex items-center justify-between z-10">
               <div className="flex items-center space-x-2">
                 <span className="w-2 h-2 rounded-full bg-terracotta" />
                 <span className="font-mono text-xs text-ink tracking-wider uppercase">
@@ -338,11 +376,11 @@ export default function JourneyPlannerPage() {
                 </span>
               </div>
               <span className="font-mono text-[11px] text-ink-muted">
-                LIVE TRAJECTORY SIMULATION
+                LIVE TRAJECTORY ALIGNMENT
               </span>
             </div>
 
-            <div className="flex-1 w-full min-h-[460px] relative">
+            <div className="flex-1 w-full min-h-[480px] relative">
               <DelhiCityCanvas
                 preset="journey"
                 activeCorridorId="corridor-radial-south"
@@ -352,13 +390,13 @@ export default function JourneyPlannerPage() {
               />
 
               <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-                <div className="bg-ivory/95 border border-stone-light p-3.5 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="bg-ivory/95 border border-stone-light p-4 backdrop-blur-sm shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="font-mono text-xs text-ink">
-                    <span className="text-terracotta uppercase">ACTIVE LEG: </span>
-                    <span>AIIMS → CONNAUGHT PLACE (AUROBINDO MARG AXIS)</span>
+                    <span className="text-terracotta uppercase">ACTIVE SELECTION: </span>
+                    <span>{activeOption?.routeName} ({activeOption?.type})</span>
                   </div>
                   <div className="font-mono text-xs text-ink-muted">
-                    ESTIMATED BOARDING IN: 4 MIN
+                    TOTAL TRIP ESTIMATE: {activeOption?.durationMin} MIN
                   </div>
                 </div>
               </div>

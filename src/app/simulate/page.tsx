@@ -1,58 +1,65 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
 import DelhiCityCanvas from '@/components/3d/DelhiCityCanvas';
-import { DELHI_CORRIDORS, TransitCorridor } from '@/data/delhiTransitData';
+import { DELHI_CORRIDORS } from '@/data/delhiTransitData';
 import {
-  SlidersHorizontal,
+  runSimulationEvaluation,
+  SimulationResultResponse,
+} from '@/lib/api';
+import {
   RotateCcw,
   Play,
-  CheckCircle,
   HelpCircle,
-  ArrowRight,
   TrendingDown,
   TrendingUp,
   Leaf,
   Clock,
   ShieldAlert,
+  Users,
+  Compass,
+  ArrowRight,
 } from 'lucide-react';
 
-export default function SimulationPage() {
+export default function SimulationLabPage() {
   const [selectedCorridorId, setSelectedCorridorId] = useState<string>('corridor-ring-road');
   const [additionalBuses, setAdditionalBuses] = useState<number>(12);
   const [targetHeadway, setTargetHeadway] = useState<number>(6); // minutes
   const [signalPriority, setSignalPriority] = useState<boolean>(true);
+  const [timeWindow, setTimeWindow] = useState<string>('evening_peak');
+
   const [isSimulating, setIsSimulating] = useState<boolean>(false);
-  const [hasRun, setHasRun] = useState<boolean>(true);
+  const [simulationData, setSimulationData] = useState<SimulationResultResponse['scenario'] | null>(null);
 
   const selectedCorridor =
     DELHI_CORRIDORS.find((c) => c.id === selectedCorridorId) || DELHI_CORRIDORS[0];
 
-  // Dynamic calibrated simulation outputs based on parameters
-  const baselineWaitMin = 14.2;
-  const simulatedWaitMin = Math.max(4.2, +(baselineWaitMin * (targetHeadway / 12)).toFixed(1));
-  const waitReductionPct = Math.round(((baselineWaitMin - simulatedWaitMin) / baselineWaitMin) * 100);
-
-  const baselineCrowdPct = 146;
-  const simulatedCrowdPct = Math.max(68, Math.round(baselineCrowdPct - additionalBuses * 5.2));
-  const crowdReductionPoints = baselineCrowdPct - simulatedCrowdPct;
-
-  const co2SavingsTonsMonth = +(additionalBuses * 7.4).toFixed(1);
-  const throughputGainPaxHour = additionalBuses * 280;
-
-  const handleRunSimulation = () => {
+  const handleRunSimulation = async () => {
     setIsSimulating(true);
-    setTimeout(() => {
-      setIsSimulating(false);
-      setHasRun(true);
-    }, 450);
+    const result = await runSimulationEvaluation(
+      selectedCorridorId,
+      additionalBuses,
+      targetHeadway,
+      signalPriority
+    );
+    if (result && result.scenario) {
+      setSimulationData(result.scenario);
+    }
+    setIsSimulating(false);
   };
+
+  useEffect(() => {
+    handleRunSimulation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCorridorId]);
 
   const handleReset = () => {
     setAdditionalBuses(12);
     setTargetHeadway(6);
     setSignalPriority(true);
+    setTimeWindow('evening_peak');
+    handleRunSimulation();
   };
 
   return (
@@ -63,14 +70,17 @@ export default function SimulationPage() {
         {/* Editorial Heading */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-stone-light pb-8">
           <div className="max-w-2xl space-y-2">
-            <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
-              SCENARIO ENGINE / COUNTERFACTUAL EXPERIMENTS
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-terracotta" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
+                SIMULATION LAB / COUNTERFACTUAL INTERVENTIONS
+              </span>
+            </div>
             <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
-              Network Simulation
+              Scenario Comparison
             </h1>
             <p className="text-base text-ink-light font-light leading-relaxed">
-              Test transit interventions across Delhi’s arterial corridors. Evaluate headway adjustments, electric fleet injection, and signal preemption.
+              Test transit interventions across Delhi’s arterial corridors. Evaluate headway compression, electric fleet injection, and signal preemption with agent-based micro-simulation.
             </p>
           </div>
 
@@ -89,17 +99,17 @@ export default function SimulationPage() {
               className="inline-flex items-center space-x-2 px-6 py-2.5 bg-ink text-ivory text-xs font-mono uppercase tracking-wider hover:bg-terracotta transition-colors disabled:opacity-50"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              <span>{isSimulating ? 'Computing Iterations…' : 'Run Simulation'}</span>
+              <span>{isSimulating ? 'Computing Model…' : 'Run Simulation'}</span>
             </button>
           </div>
         </div>
 
         {/* Parameter Workbench */}
         <div className="border border-stone-light bg-parchment/40 p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Corridor Selection */}
+          {/* Target Corridor */}
           <div className="space-y-1.5">
             <label className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              TARGET CORRIDOR
+              CORRIDOR TO INTERVENE
             </label>
             <select
               value={selectedCorridorId}
@@ -114,7 +124,7 @@ export default function SimulationPage() {
             </select>
           </div>
 
-          {/* Additional Fleet Additions */}
+          {/* Additional Fleet */}
           <div className="space-y-1.5">
             <div className="flex justify-between font-mono text-[10px] text-ink-muted">
               <span>ADDITIONAL FLEET</span>
@@ -130,9 +140,9 @@ export default function SimulationPage() {
               className="w-full accent-[#B84C32] cursor-pointer mt-2"
             />
             <div className="flex justify-between font-mono text-[9px] text-ink-muted">
-              <span>+0</span>
-              <span>+12</span>
-              <span>+24 Electric</span>
+              <span>+0 (Baseline)</span>
+              <span>+12 EV</span>
+              <span>+24 EV Fleet</span>
             </div>
           </div>
 
@@ -153,7 +163,7 @@ export default function SimulationPage() {
             />
             <div className="flex justify-between font-mono text-[9px] text-ink-muted">
               <span>4m (High Freq)</span>
-              <span>15m (Baseline)</span>
+              <span>12m (Baseline)</span>
             </div>
           </div>
 
@@ -170,7 +180,7 @@ export default function SimulationPage() {
                   : 'border-stone-light bg-ivory text-ink-muted'
               }`}
             >
-              <span>{signalPriority ? 'ACTIVE (TRANSIT PREEMPTION)' : 'INACTIVE (STANDARD SIGNALS)'}</span>
+              <span>{signalPriority ? 'ACTIVE (PREEMPTION)' : 'OFF (STANDARD SIGNALS)'}</span>
               <span className="w-2 h-2 rounded-full bg-terracotta" />
             </button>
           </div>
@@ -180,12 +190,12 @@ export default function SimulationPage() {
             SPLIT-SCREEN SYNCHRONIZED 3D VIEWS: CURRENT VS HYPOTHETICAL
            ========================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          {/* View 1: Current Network Baseline */}
+          {/* Baseline Network View */}
           <div className="border border-stone-light bg-ivory flex flex-col justify-between overflow-hidden shadow-sm">
             <div className="p-4 border-b border-stone-light bg-parchment/30 flex items-center justify-between">
               <div>
                 <span className="font-mono text-[10px] uppercase tracking-widest text-ink-muted">
-                  SCENARIO A / BASELINE STATUS
+                  SCENARIO A / OBSERVED BASELINE
                 </span>
                 <h3 className="font-serif text-xl font-normal text-ink">
                   Current Schedule & Fleet
@@ -209,25 +219,29 @@ export default function SimulationPage() {
 
               <div className="absolute bottom-3 left-3 bg-ivory/95 border border-stone-light p-2.5 font-mono text-xs space-y-1">
                 <div className="text-ink-muted text-[10px]">AVG WAIT TIME</div>
-                <div className="font-serif text-lg text-ink">{baselineWaitMin} min</div>
+                <div className="font-serif text-lg text-ink">
+                  {simulationData ? `${simulationData.baseline.averageWaitTimeMinutes} min` : '14.2 min'}
+                </div>
               </div>
 
               <div className="absolute bottom-3 right-3 bg-ivory/95 border border-stone-light p-2.5 font-mono text-xs text-right space-y-1">
-                <div className="text-ink-muted text-[10px]">PEAK CROWDING FACTOR</div>
-                <div className="font-serif text-lg text-terracotta">{baselineCrowdPct}%</div>
+                <div className="text-ink-muted text-[10px]">PEAK CROWD LOAD</div>
+                <div className="font-serif text-lg text-terracotta">
+                  {simulationData ? `${simulationData.baseline.passengerLoadPercentage}%` : '146%'}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* View 2: Hypothetical Network Simulation */}
+          {/* Hypothetical Network View */}
           <div className="border border-stone-light bg-ivory flex flex-col justify-between overflow-hidden shadow-sm">
             <div className="p-4 border-b border-stone-light bg-terracotta/10 flex items-center justify-between">
               <div>
                 <span className="font-mono text-[10px] uppercase tracking-widest text-terracotta">
-                  SCENARIO B / SYNCHRONIZED COUNTERFACTUAL
+                  SCENARIO B / COUNTERFACTUAL MODEL
                 </span>
                 <h3 className="font-serif text-xl font-normal text-ink">
-                  Hypothetical Intervention
+                  Simulated Intervention
                 </h3>
               </div>
               <span className="font-mono text-xs px-2 py-0.5 bg-terracotta text-ivory font-mono">
@@ -249,97 +263,123 @@ export default function SimulationPage() {
               <div className="absolute bottom-3 left-3 bg-ivory/95 border border-stone-light p-2.5 font-mono text-xs space-y-1">
                 <div className="text-ink-muted text-[10px]">PROJECTED WAIT TIME</div>
                 <div className="font-serif text-lg text-terracotta">
-                  {simulatedWaitMin} min (-{waitReductionPct}%)
+                  {simulationData
+                    ? `${simulationData.simulated.averageWaitTimeMinutes} min (${simulationData.deltas.waitTimeDeltaPct}%)`
+                    : '6.2 min (-56%)'}
                 </div>
               </div>
 
               <div className="absolute bottom-3 right-3 bg-ivory/95 border border-stone-light p-2.5 font-mono text-xs text-right space-y-1">
-                <div className="text-ink-muted text-[10px]">PROJECTED CROWDING FACTOR</div>
+                <div className="text-ink-muted text-[10px]">PROJECTED CROWD LOAD</div>
                 <div className="font-serif text-lg text-green-700">
-                  {simulatedCrowdPct}% (-{crowdReductionPoints}%)
+                  {simulationData
+                    ? `${simulationData.simulated.passengerLoadPercentage}% (-${simulationData.deltas.crowdingReliefPoints} pts)`
+                    : '84% (-62 pts)'}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Calculated Impact Metrics */}
-        <div className="border border-stone-light bg-ivory p-8">
-          <div className="flex items-center justify-between border-b border-stone-light pb-4 mb-6">
-            <div>
-              <span className="font-mono text-xs text-terracotta uppercase tracking-wider">
-                COMPUTATIONAL SYNTHESIS
+        {/* Calculated Impact Metrics & Segment Redistribution */}
+        {simulationData && (
+          <div className="border border-stone-light bg-ivory p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-stone-light pb-4">
+              <div>
+                <span className="font-mono text-xs text-terracotta uppercase tracking-wider">
+                  MATHEMATICAL SYNTHESIS
+                </span>
+                <h3 className="font-serif text-2xl font-normal text-ink mt-0.5">
+                  Calculated Consequences for {selectedCorridor.name}
+                </h3>
+              </div>
+              <span className="font-mono text-xs text-ink-muted">
+                UNCERTAINTY BOUND: ±{simulationData.uncertaintyBoundPct}%
               </span>
-              <h3 className="font-serif text-2xl font-normal text-ink mt-0.5">
-                Calculated Consequences for {selectedCorridor.name}
-              </h3>
             </div>
-            <span className="font-mono text-xs text-ink-muted">
-              MODEL ENGINE: MATSIM-DELHI v2.4
-            </span>
+
+            {/* Impact Metric Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
+                <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                  COMMUTER PLATFORM DELAY
+                </span>
+                <div className="font-serif text-4xl text-ink font-normal">
+                  {simulationData.deltas.waitTimeDeltaPct}%
+                </div>
+                <p className="text-xs text-ink-muted font-light leading-relaxed">
+                  Average passenger platform wait compressed from {simulationData.baseline.averageWaitTimeMinutes}m to {simulationData.simulated.averageWaitTimeMinutes}m.
+                </p>
+              </div>
+
+              <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
+                <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                  CROWDING RELIEF
+                </span>
+                <div className="font-serif text-4xl text-terracotta font-normal">
+                  -{simulationData.deltas.crowdingReliefPoints} pts
+                </div>
+                <p className="text-xs text-ink-muted font-light leading-relaxed">
+                  Cabin occupancy reduced from {simulationData.baseline.passengerLoadPercentage}% crush load to {simulationData.simulated.passengerLoadPercentage}% seated equilibrium.
+                </p>
+              </div>
+
+              <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
+                <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                  UNALLOCATED DEMAND RELIEF
+                </span>
+                <div className="font-serif text-4xl text-ink font-normal">
+                  -{simulationData.deltas.unallocatedDemandReductionPct}%
+                </div>
+                <p className="text-xs text-ink-muted font-light leading-relaxed">
+                  Commuters unable to board due to full buses falls from {simulationData.baseline.unallocatedDemandPaxPerHour} to {simulationData.simulated.unallocatedDemandPaxPerHour} pax/hr.
+                </p>
+              </div>
+
+              <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
+                <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                  NET CO2 & NOX AVOIDED
+                </span>
+                <div className="font-serif text-4xl text-green-700 font-normal">
+                  {simulationData.environmentalImpact.monthlyCo2OffsetTons} T/mo
+                </div>
+                <p className="text-xs text-ink-muted font-light leading-relaxed">
+                  Displacing {simulationData.environmentalImpact.dieselCngReplacedKmDaily.toLocaleString()} km of combustion bus runs daily with zero-emission electric miles.
+                </p>
+              </div>
+            </div>
+
+            {/* Affected Corridors & Network Spillover */}
+            <div className="border border-stone-light bg-parchment/30 p-5 space-y-2">
+              <span className="font-mono text-xs uppercase tracking-wider text-ink block">
+                AFFECTED CORRIDORS & NETWORK SPILLOVER
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                {simulationData.affectedCorridors.map((c, i) => (
+                  <div key={i} className="p-3 bg-ivory border border-stone-light/70 flex justify-between items-center text-xs font-mono">
+                    <span className="text-ink font-sans">{c.name}</span>
+                    <span className="text-green-700 font-medium">+{c.spilloverReliefPct}% Spillover Relief</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Explicit Model Assumptions Disclosure */}
+            <div className="pt-4 border-t border-stone-light flex items-start space-x-3 text-xs text-ink-muted">
+              <HelpCircle className="w-4 h-4 text-stone shrink-0 mt-0.5" />
+              <div className="space-y-1 font-light leading-relaxed">
+                <strong className="font-mono text-ink uppercase text-[10px] tracking-wider block">
+                  EXPLICIT MODEL ASSUMPTIONS & LINEAGE:
+                </strong>
+                <ul className="list-disc pl-4 space-y-0.5">
+                  {simulationData.modelAssumptions.map((assump, aIdx) => (
+                    <li key={aIdx}>{assump}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
-              <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                COMMUTER PLATFORM DELAY
-              </span>
-              <div className="font-serif text-3xl text-ink font-normal">
-                -{waitReductionPct}%
-              </div>
-              <p className="text-xs text-ink-muted font-light leading-relaxed">
-                Saving approx 38,000 commuter hours daily across {selectedCorridor.stops.length} major stations.
-              </p>
-            </div>
-
-            <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
-              <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                OVERCROWDING RELIEF
-              </span>
-              <div className="font-serif text-3xl text-terracotta font-normal">
-                -{crowdReductionPoints} pts
-              </div>
-              <p className="text-xs text-ink-muted font-light leading-relaxed">
-                Cabin occupancy compressed from crush load (146%) down to seated-equilibrium ({simulatedCrowdPct}%).
-              </p>
-            </div>
-
-            <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
-              <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                HOURLY THROUGHPUT GAIN
-              </span>
-              <div className="font-serif text-3xl text-ink font-normal">
-                +{throughputGainPaxHour.toLocaleString()}
-              </div>
-              <p className="text-xs text-ink-muted font-light leading-relaxed">
-                Additional seated capacity absorbed from parallel private two-wheeler and auto-rickshaw trips.
-              </p>
-            </div>
-
-            <div className="border border-stone-light p-5 bg-parchment/20 space-y-1.5">
-              <span className="font-mono text-[10px] text-ink-muted uppercase block">
-                CARBON & PM2.5 OFFSET
-              </span>
-              <div className="font-serif text-3xl text-green-700 font-normal">
-                {co2SavingsTonsMonth} T/mo
-              </div>
-              <p className="text-xs text-ink-muted font-light leading-relaxed">
-                Estimated net zero tailpipe emissions on replaced diesel/CNG kilometers along the arterial.
-              </p>
-            </div>
-          </div>
-
-          {/* Model Assumptions Disclosure */}
-          <div className="mt-8 pt-6 border-t border-stone-light flex items-start space-x-3 text-xs text-ink-muted">
-            <HelpCircle className="w-4 h-4 text-stone shrink-0 mt-0.5" />
-            <div className="font-light leading-relaxed">
-              <strong className="font-mono text-ink uppercase text-[10px] tracking-wider mr-2">
-                ASSUMPTIONS & METHODOLOGY:
-              </strong>
-              Assumes 82% fleet operational readiness at Rajghat and Rohini depots; average passenger transfer elasticity of 0.42; passenger dwell time calculated at 1.8 seconds per boarding using dual contactless validators.
-            </div>
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );
