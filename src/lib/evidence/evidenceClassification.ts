@@ -10,7 +10,29 @@ export type EvidenceClassification =
   | 'ESTIMATED'
   | 'SIMULATED'
   | 'SYNTHETIC'
-  | 'UNAVAILABLE';
+  | 'UNAVAILABLE'
+  | 'AUTH_REQUIRED';
+
+export type ObservationLifecycleState =
+  | 'PLANNED'
+  | 'COLLECTED'
+  | 'SUBMITTED'
+  | 'VALIDATED'
+  | 'VERIFIED'
+  | 'REJECTED'
+  | 'QUARANTINED'
+  | 'SIMULATED'
+  | 'SYNTHETIC';
+
+export type FieldworkProjectStatus =
+  | 'BLOCKED_PENDING_AUTHORIZATION'
+  | 'READY_FOR_FIELDWORK'
+  | 'FIELDWORK_IN_PROGRESS'
+  | 'FIELDWORK_COMPLETED_PENDING_AUDIT'
+  | 'INDEPENDENTLY_VERIFIED'
+  | 'INSUFFICIENT_EVIDENCE';
+
+export type EthicsApprovalStatus = 'PENDING' | 'UNVERIFIED' | 'APPROVED' | 'EXEMPT';
 
 export type CollectionStatus =
   | 'VERIFIED_FIELD_OBSERVATION'

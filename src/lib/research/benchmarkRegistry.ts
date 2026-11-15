@@ -301,6 +301,7 @@ export class BenchmarkRegistryService {
       SIMULATED: 0,
       SYNTHETIC: 0,
       UNAVAILABLE: 0,
+      AUTH_REQUIRED: 0,
     };
 
     let connected = 0;

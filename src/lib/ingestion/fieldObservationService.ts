@@ -14,7 +14,13 @@
  */
 
 import crypto from 'node:crypto';
-import { EvidenceClassification, CollectionStatus } from '@/lib/evidence/evidenceClassification';
+import {
+  EvidenceClassification,
+  CollectionStatus,
+  ObservationLifecycleState,
+  FieldworkProjectStatus,
+  EthicsApprovalStatus,
+} from '@/lib/evidence/evidenceClassification';
 
 export type MobilityObservationType =
   | 'SCHEDULED_VS_OBSERVED'
@@ -79,6 +85,13 @@ export interface SanitizedFieldObservation {
   transferTimeMinutes?: number;
   barrierType?: 'STAIRS_NO_RAMP' | 'BROKEN_PAVEMENT' | 'MISSING_TACTILE' | 'ROAD_ENCROACHMENT' | 'NONE';
   evidenceClassification: EvidenceClassification;
+  lifecycleState: ObservationLifecycleState;
+  exclusionReason?: string;
+  verificationAudit?: {
+    verifiedBy?: string;
+    verifiedAt?: string;
+    verificationMethod?: string;
+  };
   sha256Digest: string;
   receivedAt: string;
   privacyComplianceAudit: {
@@ -267,11 +280,31 @@ class FieldObservationService {
     const truncLng = this.truncateCoordinate(submission.longitude);
     const quantizedObserved = this.quantizeTimestamp(submission.observedTimeIso);
 
+    // Duplicate detection guard: same stop, quantized time and vehicle registration
+    for (const existing of this.observationsLedger.values()) {
+      if (
+        existing.stopId === submission.stopId &&
+        existing.quantizedObservedTimeIso === quantizedObserved &&
+        existing.vehicleRegistrationMasked === submission.vehicleRegistrationMasked
+      ) {
+        throw new Error(
+          `Duplicate observation detected at ${submission.stopId} for vehicle ${submission.vehicleRegistrationMasked} at ${quantizedObserved}`
+        );
+      }
+    }
+
     const collectionStatus: CollectionStatus =
       submission.collectionStatus ||
       (submission.researcherSaltId.startsWith('RESEARCH-FELLOW') || submission.researcherSaltId.startsWith('RESEARCH-HARNESS')
         ? 'VERIFIED_FIELD_OBSERVATION'
         : 'MANUALLY_ENTERED_UNVERIFIED');
+
+    const lifecycleState: ObservationLifecycleState =
+      submission.collectionStatus === 'SYNTHETIC_TEST_RECORD'
+        ? 'SYNTHETIC'
+        : submission.collectionStatus === 'DEMONSTRATION_FIXTURE'
+        ? 'VALIDATED'
+        : 'SUBMITTED';
 
     let delaySec: number | undefined;
     if (submission.scheduledTimeIso) {
@@ -329,6 +362,7 @@ class FieldObservationService {
       transferTimeMinutes: submission.transferTimeMinutes,
       barrierType: submission.barrierType,
       evidenceClassification: 'OBSERVED',
+      lifecycleState,
       sha256Digest: sha256,
       receivedAt: new Date().toISOString(),
       privacyComplianceAudit: {
@@ -433,6 +467,99 @@ class FieldObservationService {
         verifiedFieldObservationsCount,
         demonstrationFixturesCount,
       },
+    };
+  }
+
+  /**
+   * Transitions observation lifecycle state with strict verification guards
+   */
+  public transitionLifecycleState(
+    observationId: string,
+    targetState: ObservationLifecycleState,
+    options: {
+      verifierMethod?: string;
+      verifierSignature?: string;
+      exclusionReason?: string;
+    } = {}
+  ): { success: boolean; error?: string; observation?: SanitizedFieldObservation } {
+    const obs = this.observationsLedger.get(observationId);
+    if (!obs) {
+      return { success: false, error: `Observation ${observationId} not found` };
+    }
+
+    if (targetState === 'VERIFIED') {
+      // Anti-fabrication check: synthetic/simulated records cannot be promoted to VERIFIED
+      if (
+        obs.lifecycleState === 'SYNTHETIC' ||
+        obs.lifecycleState === 'SIMULATED' ||
+        obs.evidenceClassification === 'SYNTHETIC' ||
+        obs.evidenceClassification === 'SIMULATED' ||
+        obs.collectionStatus === 'SYNTHETIC_TEST_RECORD'
+      ) {
+        return {
+          success: false,
+          error: 'Disallowed transition: Synthetic or simulated records cannot be promoted to VERIFIED',
+        };
+      }
+      // Require documented verification method & signature
+      if (!options.verifierMethod || !options.verifierSignature) {
+        return {
+          success: false,
+          error: 'Transition to VERIFIED requires documented verifierMethod and verifierSignature',
+        };
+      }
+      obs.lifecycleState = 'VERIFIED';
+      obs.collectionStatus = 'VERIFIED_FIELD_OBSERVATION';
+      obs.evidenceClassification = 'OBSERVED';
+      obs.verificationAudit = {
+        verifiedBy: options.verifierSignature,
+        verifiedAt: new Date().toISOString(),
+        verificationMethod: options.verifierMethod,
+      };
+      return { success: true, observation: obs };
+    }
+
+    if (targetState === 'REJECTED') {
+      obs.lifecycleState = 'REJECTED';
+      obs.collectionStatus = 'INVALID_RECORD';
+      obs.exclusionReason = options.exclusionReason || 'Audit exclusion criterion triggered';
+      return { success: true, observation: obs };
+    }
+
+    if (targetState === 'QUARANTINED') {
+      obs.lifecycleState = 'QUARANTINED';
+      obs.exclusionReason = options.exclusionReason || 'Quarantined for observational anomaly investigation';
+      return { success: true, observation: obs };
+    }
+
+    obs.lifecycleState = targetState;
+    return { success: true, observation: obs };
+  }
+
+  /**
+   * Rejects an observation with documented exclusion code
+   */
+  public rejectObservation(observationId: string, reasonCode: string, description: string): boolean {
+    const res = this.transitionLifecycleState(observationId, 'REJECTED', {
+      exclusionReason: `[${reasonCode}] ${description}`,
+    });
+    return res.success;
+  }
+
+  /**
+   * Retrieves overall fieldwork execution and ethics governance status
+   */
+  public getFieldworkStatus(): {
+    executionStatus: FieldworkProjectStatus;
+    ethicsStatus: EthicsApprovalStatus;
+    authorizedCheckpoints: number;
+    activeCorridor: string;
+  } {
+    return {
+      executionStatus: 'READY_FOR_FIELDWORK',
+      ethicsStatus: 'PENDING',
+      authorizedCheckpoints: 5,
+      activeCorridor: 'corridor-aurobindo-marg',
     };
   }
 }

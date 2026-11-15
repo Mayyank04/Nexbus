@@ -34,11 +34,13 @@ export interface PilotScheduleSlot {
 
 export interface PilotProgressMetrics {
   pilotStatus: 'PREPARATION' | 'PREPARED_FOR_FIELDWORK' | 'ACTIVE_FIELD_COLLECTION' | 'DATA_SYNTHESIS' | 'COMPLETED' | 'BLOCKED';
+  fieldworkExecutionStatus: 'BLOCKED_PENDING_AUTHORIZATION' | 'READY_FOR_FIELDWORK' | 'FIELDWORK_IN_PROGRESS' | 'FIELDWORK_COMPLETED_PENDING_AUDIT' | 'INDEPENDENTLY_VERIFIED' | 'INSUFFICIENT_EVIDENCE';
   targetTotalObservations: number;
   currentCompletedObservations: number;
   completionPct: number;
   checkpointsActiveCount: number;
   ethicsReviewApproved: boolean;
+  ethicsApprovalStatus: 'PENDING' | 'UNVERIFIED' | 'APPROVED' | 'EXEMPT';
   irbProtocolNumber: string;
   zeroPiiIncidentsRecorded: number;
   meanHeadwayAdherenceCorrelationR: number;
@@ -211,11 +213,13 @@ class ResearchPilotService {
       ],
       progress: {
         pilotStatus: 'PREPARED_FOR_FIELDWORK',
+        fieldworkExecutionStatus: 'READY_FOR_FIELDWORK',
         targetTotalObservations: 240,
         currentCompletedObservations: 188,
         completionPct: 78.3,
         checkpointsActiveCount: 5,
         ethicsReviewApproved: true,
+        ethicsApprovalStatus: 'PENDING',
         irbProtocolNumber: 'IRB-2026-NEXBUS-MOB-004',
         zeroPiiIncidentsRecorded: 0,
         meanHeadwayAdherenceCorrelationR: 0.88,
