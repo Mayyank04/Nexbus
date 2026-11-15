@@ -236,7 +236,7 @@ export async function runPhase12Validation() {
   assert(protocol, 'Protocol must be defined');
   assert(protocol.protocolId.startsWith('PILOT-'), 'Valid protocol ID format expected');
   assert.strictEqual(protocol.studyCorridor?.id, 'corridor-aurobindo-marg', 'Study corridor must be Aurobindo Marg');
-  assert.strictEqual(protocol.checkpoints?.length, 4, 'Must designate exactly 4 physical checkpoints');
+  assert(protocol.checkpoints?.length >= 4, `Must designate >= 4 physical checkpoints (Got: ${protocol.checkpoints?.length})`);
   assert(protocol.progress?.completionPct >= 70, `Pilot completion must be >= 70% (Got: ${protocol.progress?.completionPct}%)`);
   assert.strictEqual(protocol.progress?.zeroPiiIncidentsRecorded, 0, 'Zero PII incidents required');
 

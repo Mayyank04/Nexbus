@@ -402,6 +402,17 @@ async function runTests() {
     assert(false, `Phase 13 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 14 Independent Scientific Reproduction & Benchmarking Harness ---');
+  try {
+    const phase14Output = execSync('node scripts/test-phase14-certification.mjs', { encoding: 'utf8' });
+    assert(
+      phase14Output.includes('PHASE 14 SCIENTIFIC VALIDATION & CERTIFICATION: ALL 12 TESTS PASSED'),
+      'Phase 14 independent reproduction & benchmarking (statistical arithmetic EWT, 8 external feeds, 5 checkpoints & 9 counters, journey-time baselines, dual arrival regimes, RITES OD GEH, dual-axis ML holdout, physical accessibility, DCF 4.07x, 100% reproduction package, /control dashboard, read-only safety) passes completely (12/12 tests)'
+    );
+  } catch (err) {
+    assert(false, `Phase 14 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
