@@ -380,6 +380,17 @@ async function runTests() {
     assert(false, `Phase 11 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 12 Real-World Evidence & Empirical Calibration Harness ---');
+  try {
+    const phase12Output = execSync('node scripts/test-phase12-evidence.mjs', { encoding: 'utf8' });
+    assert(
+      phase12Output.includes('PHASE 12 COMPREHENSIVE EVIDENCE & CALIBRATION HARNESS: ALL 8 TESTS PASSED'),
+      'Phase 12 evidence acquisition (8 providers, SHA-256 archival, 256-stop network, field observations, demand calibration, ML lifecycle, wheelchair routing, WTW emissions, research pilot) passes completely'
+    );
+  } catch (err) {
+    assert(false, `Phase 12 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
