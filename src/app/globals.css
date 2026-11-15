@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+  --font-sans: var(--font-manrope), Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", Menlo, monospace;
+
+  --color-ivory: #F5F0E6;
+  --color-parchment: #EDE4D5;
+  --color-ink: #24211D;
+  --color-ink-light: #4A463F;
+  --color-ink-muted: #736C62;
+  --color-terracotta: #B84C32;
+  --color-terracotta-dark: #963B25;
+  --color-terracotta-light: #F4EAE7;
+  --color-stone: #A69A89;
+  --color-stone-light: #E7E2D9;
+  --color-gold: #C89B53;
+  --color-canvas-soft: #FAF7F2;
+  --color-border-subtle: #E2DBD0;
+  --color-border-card: #ECE5DA;
+  --color-cyan-transit: #2A5C8A;
+}
+
+:root {
+  --background: #F5F0E6;
+  --foreground: #24211D;
+}
+
+* {
+  border-color: #E2DBD0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Subtle architectural grain overlay */
+.bg-grain {
+  background-image: radial-gradient(rgba(36, 33, 29, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Editorial selection */
+::selection {
+  background-color: #B84C32;
+  color: #F5F0E6;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EDE4D5;
+}
+::-webkit-scrollbar-thumb {
+  background: #A69A89;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #736C62;
+}
