@@ -110,13 +110,15 @@ export async function POST(request: NextRequest) {
       msg.includes('bounds') ||
       msg.includes('negative') ||
       msg.includes('invalid') ||
-      msg.includes('Voluntary');
+      msg.includes('Voluntary') ||
+      msg.includes('Duplicate');
+    const status = msg.includes('Duplicate') ? 409 : isValidation ? 400 : 500;
     return NextResponse.json(
       {
         error: isValidation ? 'Validation failure' : 'Failed to record field observation',
         details: msg,
       },
-      { status: isValidation ? 400 : 500 }
+      { status }
     );
   }
 }

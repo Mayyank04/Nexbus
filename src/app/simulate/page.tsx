@@ -95,33 +95,33 @@ export default function SimulationLabPage() {
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-10 w-full space-y-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 w-full space-y-8">
         {/* Phase 10 Simulation Mode Tab Switcher */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-divider pb-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-divider pb-4">
+          <div className="flex flex-col sm:flex-row border border-divider p-0.5 bg-surface-white gap-1 w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('corridor_counterfactual')}
-              className={`font-mono text-xs py-2 px-4 border transition-colors ${
+              className={`font-mono text-xs py-2 px-3 border transition-colors text-center ${
                 activeTab === 'corridor_counterfactual'
                   ? 'border-terracotta bg-terracotta text-surface-white font-medium'
-                  : 'border-divider bg-surface-white text-ink-muted hover:text-ink'
+                  : 'border-transparent bg-transparent text-ink-secondary hover:text-ink'
               }`}
             >
               CORRIDOR MICRO-SIMULATION
             </button>
             <button
               onClick={() => setActiveTab('institutional_interventions')}
-              className={`font-mono text-xs py-2 px-4 border transition-colors ${
+              className={`font-mono text-xs py-2 px-3 border transition-colors text-center ${
                 activeTab === 'institutional_interventions'
                   ? 'border-terracotta bg-terracotta text-surface-white font-medium'
-                  : 'border-divider bg-surface-white text-ink-muted hover:text-ink'
+                  : 'border-transparent bg-transparent text-ink-secondary hover:text-ink'
               }`}
             >
-              INSTITUTIONAL SCENARIO PLANNING (CAPITAL PORTFOLIO)
+              INSTITUTIONAL PORTFOLIO PLANNING
             </button>
           </div>
 
-          <div className="font-mono text-[10px] text-amber-800 bg-amber-50 px-2.5 py-1 border border-amber-200">
+          <div className="font-mono text-[10px] text-amber-800 bg-amber-50 px-2.5 py-1 border border-amber-200 shrink-0">
             ▲ SIMULATED COUNTERFACTUAL • ADVISORY DECISION SUPPORT
           </div>
         </div>
@@ -130,14 +130,14 @@ export default function SimulationLabPage() {
           <>
             {/* Editorial Heading */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-divider pb-8">
-              <div className="max-w-2xl space-y-2">
-                <span className="font-mono text-xs uppercase tracking-[0.25em] text-terracotta">
+              <div className="max-w-2xl space-y-2 min-w-0 w-full">
+                <span className="font-mono text-xs uppercase tracking-[0.2em] text-terracotta block truncate">
                   SCENARIO LAB / COUNTERFACTUAL EXPERIMENTS
                 </span>
-                <h1 className="font-serif text-5xl sm:text-6xl text-ink font-normal leading-[1.05]">
+                <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-ink font-normal leading-[1.05] tracking-tight break-words">
                   What if the network worked differently?
                 </h1>
-                <p className="text-base text-ink-muted font-light leading-relaxed">
+                <p className="text-sm sm:text-base text-ink-secondary font-normal leading-relaxed break-words">
                   Test transit interventions across Delhi’s arterial corridors. Evaluate headway compression, electric fleet injection, and signal preemption with agent-based micro-simulation.
                 </p>
               </div>

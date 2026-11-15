@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hydrowatch Zürich — Amt für Abfall, Wasser, Energie und Luft (AWEL)</title>
+  <meta name="description" content="Hydrometrisches Informationssystem und Limnologische Telemetrie des Kantons Zürich. Echtzeitüberwachung von Zürichsee, Limmat und Grundwasserhorizonten.">
+  <style>
+    :root {
+      --color-granite-ink: #1A202C;
+      --color-glacial-basin: #F0F4F8;
+      --color-alpine-lake: #006699;
+      --color-alpine-lake-hover: #004c73;
+      --color-potable-green: #2F855A;
+      --color-potable-green-bg: #E6F4EA;
+      --color-advisory-amber: #D69E2E;
+      --color-advisory-amber-bg: #FEFCBF;
+      --color-alert-red: #E53E3E;
+      --color-alert-red-bg: #FED7D7;
+      --color-surface-pure: #FFFFFF;
+      --color-surface-muted: #E2E8F0;
+      --color-border-subtle: #CBD5E0;
+      --color-border-strong: #718096;
+      --color-text-secondary: #4A5568;
+      --color-text-muted: #718096;
+      
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace;
+      
+      --spacing-unit: 8px;
+      --radius-sm: 2px;
+      --radius-md: 4px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-glacial-basin);
+      color: var(--color-granite-ink);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Accessibility Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 16px;
+      background: var(--color-alpine-lake);
+      color: #FFFFFF;
+      padding: 8px 16px;
+      z-index: 1000;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: top 0.15s ease-in-out;
+    }
+    .skip-link:focus {
+      top: 16px;
+      outline: 3px solid var(--color-granite-ink);
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus States */
+    a:focus-visible, button:focus-visible, select:focus-visible {
+      outline: 2px solid var(--color-alpine-lake);
+      outline-offset: 2px;
+    }
+
+    /* Header & Cantonal Utility Banner */
+    .header-canton {
+      background-color: var(--color-surface-pure);
+      border-bottom: 2px solid var(--color-granite-ink);
+      padding: 12px 24px;
+    }
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .canton-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .canton-emblem {
+      width: 32px;
+      height: 38px;
+      background: linear-gradient(135deg, #006699 50%, #FFFFFF 50%);
+      border: 1px solid var(--color-granite-ink);
+      flex-shrink: 0;
+      aria-hidden: true;
+    }
+    .canton-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--color-granite-ink);
+      line-height: 1.2;
+    }
+    .canton-subtitle {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      font-weight: 400;
+    }
+
+    .telemetry-meta-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--color-potable-green);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-potable-green);
+    }
+
+    /* Station Navigation / Switcher Strip */
+    .station-nav {
+      background-color: var(--color-granite-ink);
+      color: #FFFFFF;
+      padding: 0 24px;
+    }
+    .station-nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow-x: auto;
+    }
+    .station-tabs {
+      display: flex;
+      list-style: none;
+      gap: 2px;
+    }
+    .station-tab-btn {
+      background: transparent;
+      border: none;
+      color: #CBD5E0;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: background-color 0.1s ease, color 0.1s ease;
+    }
+    .station-tab-btn:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+    .station-tab-btn[aria-selected="true"] {
+      color: #FFFFFF;
+      background-color: rgba(255, 255, 255, 0.12);
+      border-bottom: 3px solid var(--color-alpine-lake);
+      font-weight: 600;
+    }
+    .station-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      opacity: 0.75;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Main Container */
+    .main-layout {
+      max-width: 1440px;
+      margin: 24px auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Station Status Overview Banner */
+    .station-banner {
+      background: var(--color-surface-pure);
+      border: 1px solid var(--color-border-subtle);
+      border-left: 4px solid var(--color-alpine-lake);
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .station-banner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .station-banner {
+        grid-template-columns: 1fr;
+      }
+    }
+    .banner-station-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-granite-ink);
+      letter-spacing: -0.01em;
+    }
+    .banner-station-info p {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+    .metric-badge {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .metric-badge-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+    .metric-badge-value {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-granite-ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .metric-badge-unit {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-left: 2px;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-granite-ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-alpine-lake);
+    }
+    .action-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-action {
+      background: var(--color-surface-pure);
+      border: 1px solid var(--color-border-subtle);
+      color: var(--color-granite-ink);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-action:hover {
+      background: var(--color-surface-muted);
+      border-color: var(--color-border-strong);
+    }
+
+    /* Two-Column Telemetry Grid */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 62% 38%;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1180px) {
+      .telemetry-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Structured Data Table */
+    .table-container {
+      background: var(--color-surface-pure);
+      border: 1px solid var(--color-border-subtle);
+      overflow-x: auto;
+    }
+    .telemetry-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+    .telemetry-table caption {
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--color-surface-muted);
+      border-bottom: 1px solid var(--color-border-subtle);
+      color: var(--color-granite-ink);
+    }
+    .telemetry-table th {
+      background: #F7FAFC;
+      color: var(--color-text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--color-border-subtle);
+      white-space: nowrap;
+    }
+    .telemetry-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+    .telemetry-table th:last-child,
+    .telemetry-table td:last-child {
+      text-align: right;
+      padding-right: 16px;
+    }
+    .telemetry-table tbody tr:hover {
+      background-color: #F8FAFC;
+    }
+    .param-name {
+      font-weight: 600;
+      color: var(--color-granite-ink);
+      display: block;
+    }
+    .param-desc {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+    }
+    .param-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-granite-ink);
+    }
+    .param-unit {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-left: 2px;
+    }
+    .param-threshold {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+    .param-trend {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .trend-stable { color: var(--color-text-secondary); }
+    .trend-up { color: var(--color-alpine-lake); }
+    .trend-down { color: var(--color-advisory-amber); }
+
+    .tag-status {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.03em;
+    }
+    .status-ok {
+      background-color: var(--color-potable-green-bg);
+      color: var(--color-potable-green);
+      border: 1px solid #C6F6D5;
+    }
+    .status-warn {
+      background-color: var(--color-advisory-amber-bg);
+      color: #975A16;
+      border: 1px solid #FEEBC8;
+    }
+    .status-alert {
+      background-color: var(--color-alert-red-bg);
+      color: #9B2C2C;
+      border: 1px solid #FED7D7;
+    }
+
+    /* Bathymetric Depth & Stratification Profile */
+    .profile-panel {
+      background: var(--color-surface-pure);
+      border: 1px solid var(--color-border-subtle);
+      padding: 0;
+    }
+    .profile-header {
+      padding: 12px 16px;
+      background: var(--color-surface-muted);
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-header h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-granite-ink);
+    }
+    .profile-station-depth {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-text-secondary);
+    }
+    .profile-body {
+      padding: 16px;
+    }
+    .depth-gradient-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      font-family: var(--font-mono);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--color-border-subtle);
+    }
+    
+    .depth-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .depth-layer-item {
+      border: 1px solid var(--color-border-subtle);
+      padding: 12px;
+      background: #FAFCFE;
+    }
+    .depth-layer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .layer-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--color-granite-ink);
+    }
+    .layer-depth-range {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--color-alpine-lake);
+      font-weight: 600;
+    }
+    .layer-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--color-surface-pure);
+      border: 1px solid #EDF2F7;
+      padding: 8px;
+    }
+    .layer-metric-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      font-family: var(--font-sans);
+    }
+    .layer-metric-num {
+      font-weight: 700;
+      color: var(--color-granite-ink);
+    }
+
+    /* Limnological Event Audit Log */
+    .event-log-panel {
+      background: var(--color-surface-pure);
+      border: 1px solid var(--color-border-subtle);
+    }
+    .event-log-header {
+      padding: 12px 16px;
+      background: var(--color-surface-muted);
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .event-log-header h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-granite-ink);
+    }
+    .event-list {
+      list-style: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .event-item {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: grid;
+      grid-template-columns: 160px 80px 1fr 120px;
+      gap: 16px;
+      align-items: center;
+    }
+    .event-item:last-child {
+      border-bottom: none;
+    }
+    .event-time {
+      color: var(--color-text-muted);
+    }
+    .event-station {
+      font-weight: 600;
+      color: var(--color-granite-ink);
+    }
+    .event-desc {
+      font-family: var(--font-sans);
+      color: var(--color-text-secondary);
+    }
+    .event-status {
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .event-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+      .event-status {
+        text-align: left;
+      }
+    }
+
+    /* Cantonal Footer */
+    .canton-footer {
+      background-color: var(--color-granite-ink);
+      color: #CBD5E0;
+      border-top: 2px solid var(--color-alpine-lake);
+      padding: 32px 24px;
+      margin-top: 48px;
+      font-size: 12px;
+    }
+    .footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 768px) {
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+    .footer-authority-name {
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .footer-address {
+      font-style: normal;
+      line-height: 1.6;
+      color: #A0AEC0;
+    }
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .footer-links-list a {
+      color: #CBD5E0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .footer-links-list a:hover {
+      color: #FFFFFF;
+    }
+    .footer-legal {
+      max-width: 1440px;
+      margin: 24px auto 0;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      color: #718096;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    /* High contrast & reduced motion overrides */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Direkt zum Hauptinhalt springen (Skip to Telemetry)</a>
+
+  <!-- Top Cantonal Authority Header -->
+  <header class="header-canton">
+    <div class="header-inner">
+      <div class="canton-identity">
+        <div class="canton-emblem" role="img" aria-label="Wappen Kanton Zürich"></div>
+        <div>
+          <div class="canton-title">Kanton Zürich — Baudirektion</div>
+          <div class="canton-subtitle">AWEL — Amt für Abfall, Wasser, Energie und Luft | Sektion Oberflächengewässerschutz</div>
+        </div>
+      </div>
+      <div class="telemetry-meta-bar" aria-label="Systemstatus und Zeitstempel">
+        <span class="status-indicator" role="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>TELEMETRIE AKTIV (5/5 STATIONEN ONLINE)</span>
+        </span>
+        <span class="time-display" aria-label="Letzte Aktualisierung">
+          LETZTE ABFRAGE: <time datetime="2026-11-15T19:00:00+01:00" id="live-timestamp">15.11.2026 19:00:00 CET</time>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Station Switcher Strip -->
+  <nav class="station-nav" aria-label="Hydrometrische Stationen Auswahl">
+    <div class="station-nav-inner">
+      <ul class="station-tabs" role="tablist">
+        <li role="presentation">
+          <button role="tab" id="tab-zh-see" aria-selected="true" aria-controls="station-panel" class="station-tab-btn">
+            <span class="station-code">ZH-01</span>
+            <span>Zürichsee Tiefenbrunnen (Boje)</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button role="tab" id="tab-zh-quai" aria-selected="false" aria-controls="station-panel" class="station-tab-btn" tabindex="-1">
+            <span class="station-code">ZH-02</span>
+            <span>Limmat Quaibrücke (Abfluss)</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button role="tab" id="tab-zh-letten" aria-selected="false" aria-controls="station-panel" class="station-tab-btn" tabindex="-1">
+            <span class="station-code">ZH-03</span>
+            <span>Oberer Letten (Flussbad Pegel)</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button role="tab" id="tab-sihl" aria-selected="false" aria-controls="station-panel" class="station-tab-btn" tabindex="-1">
+            <span class="station-code">ZH-04</span>
+            <span>Sihl Sihlbrugg (Zufluss)</span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button role="tab" id="tab-gw-uetli" aria-selected="false" aria-controls="station-panel" class="station-tab-btn" tabindex="-1">
+            <span class="station-code">GW-08</span>
+            <span>Uetliberg Tiefengrundwasser Fassung 4</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content Layout -->
+  <main id="main-content" class="main-layout" role="region" aria-label="Telemetrie Dashboard">
+    
+    <!-- Station Header & Quick Metrics Banner -->
+    <header class="station-banner">
+      <div class="banner-station-info">
+        <h1>Zürichsee Tiefenbrunnen — Boje AWEL-ZH01</h1>
+        <p>Geokoordinaten: 47°21'18.4"N 8°33'29.2"E | Seespiegel: 405.92 m ü. M. | Wassertiefe Messort: 136.0 m</p>
+      </div>
+      <div class="metric-badge">
+        <span class="metric-badge-label">Wassertemperatur (0.5m)</span>
+        <span class="metric-badge-value">12.4<span class="metric-badge-unit">°C</span></span>
+      </div>
+      <div class="metric-badge">
+        <span class="metric-badge-label">Gelöster Sauerstoff (O₂)</span>
+        <span class="metric-badge-value">9.8<span class="metric-badge-unit">mg/L</span></span>
+      </div>
+      <div class="metric-badge">
+        <span class="metric-badge-label">Secchi-Sichttiefe</span>
+        <span class="metric-badge-value">4.20<span class="metric-badge-unit">m</span></span>
+      </div>
+    </header>
+
+    <!-- Operational Action Controls -->
+    <div class="action-bar">
+      <div class="section-title">Echtzeit-Telemetrie & Wasserqualitäts-Parameter</div>
+      <div class="action-controls">
+        <button type="button" class="btn-action" id="btn-export-csv" aria-label="Telemetriedaten als CSV exportieren">
+          <span>↓ CSV-Export (Letzte 24h)</span>
+        </button>
+        <button type="button" class="btn-action" id="btn-refresh" aria-label="Telemetriedaten manuell abfragen">
+          <span>⟳ Aktualisieren</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Operational Split: Table vs Depth Profile -->
+    <div class="telemetry-grid">
+      
+      <!-- Primary Water Quality Parameter Table -->
+      <section class="table-container" aria-labelledby="table-caption-telemetry">
+        <table class="telemetry-table">
+          <caption id="table-caption-telemetry">Messwerte Oberflächen- & Epilimnion-Sensorcluster (Tiefe 0.5m – 2.0m)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Parameter</th>
+              <th scope="col">Aktueller Messwert</th>
+              <th scope="col">GSchV Richtwert</th>
+              <th scope="col">24h Tendenz</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Wassertemperatur</span>
+                <span class="param-desc">PT100 Präzisions-Thermistor</span>
+              </th>
+              <td><span class="param-value">12.42</span><span class="param-unit">°C</span></td>
+              <td><span class="param-threshold">&lt; 25.0 °C</span></td>
+              <td><span class="param-trend trend-stable">± 0.18 °C</span></td>
+              <td><span class="tag-status status-ok">Konform</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Gelöster Sauerstoff (O₂)</span>
+                <span class="param-desc">Optische Fluoreszenz-Sonde</span>
+              </th>
+              <td><span class="param-value">9.84</span><span class="param-unit">mg/L (94%)</span></td>
+              <td><span class="param-threshold">&gt; 6.0 mg/L</span></td>
+              <td><span class="param-trend trend-stable">+ 0.05 mg/L</span></td>
+              <td><span class="tag-status status-ok">Optimal</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">pH-Wert</span>
+                <span class="param-desc">Glaselektroden-Kombinationskette</span>
+              </th>
+              <td><span class="param-value">8.12</span><span class="param-unit">pH</span></td>
+              <td><span class="param-threshold">6.5 – 8.5</span></td>
+              <td><span class="param-trend trend-stable">0.00</span></td>
+              <td><span class="tag-status status-ok">Konform</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Trübung (Turbidität)</span>
+                <span class="param-desc">90° Streulichtmessung ISO 7027</span>
+              </th>
+              <td><span class="param-value">0.78</span><span class="param-unit">FNU</span></td>
+              <td><span class="param-threshold">&lt; 1.50 FNU</span></td>
+              <td><span class="param-trend trend-up">+ 0.04 FNU</span></td>
+              <td><span class="tag-status status-ok">Klarwasser</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Elektrische Leitfähigkeit (20 °C)</span>
+                <span class="param-desc">4-Elektroden-Messzelle</span>
+              </th>
+              <td><span class="param-value">228.4</span><span class="param-unit">µS/cm</span></td>
+              <td><span class="param-threshold">&lt; 400 µS/cm</span></td>
+              <td><span class="param-trend trend-stable">- 1.2 µS/cm</span></td>
+              <td><span class="tag-status status-ok">Konform</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Chlorophyll-a</span>
+                <span class="param-desc">In-vivo Algenfluoreszenz</span>
+              </th>
+              <td><span class="param-value">2.14</span><span class="param-unit">µg/L</span></td>
+              <td><span class="param-threshold">&lt; 10.0 µg/L</span></td>
+              <td><span class="param-trend trend-stable">- 0.10 µg/L</span></td>
+              <td><span class="tag-status status-ok">Oligotroph</span></td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <span class="param-name">Escherichia coli</span>
+                <span class="param-desc">Canton-Labor Zürich (24h Probe)</span>
+              </th>
+              <td><span class="param-value">&lt; 10</span><span class="param-unit">KBE / 100ml</span></td>
+              <td><span class="param-threshold">&lt; 100 KBE (Klasse A)</span></td>
+              <td><span class="param-trend trend-stable">Konstant</span></td>
+              <td><span class="tag-status status-ok">Trinkwasserqualität</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Limnological Depth Profile Panel (Operate / Read) -->
+      <section class="profile-panel" aria-labelledby="profile-heading">
+        <div class="profile-header">
+          <h2 id="profile-heading">Tiefenprofil & Thermische Schichtung</h2>
+          <span class="profile-station-depth">Messstation Tiefe: 0m – 136m</span>
+        </div>
+        <div class="profile-body">
+          <div class="depth-gradient-legend">
+            <span>SCHICHT / TIEFENHORIZONT</span>
+            <span>TEMP / SAUERSTOFF</span>
+          </div>
+
+          <div class="depth-layers">
+            <!-- Epilimnion -->
+            <article class="depth-layer-item">
+              <div class="depth-layer-header">
+                <span class="layer-name">Epilimnion (Deckschicht)</span>
+                <span class="layer-depth-range">0 m – 12 m</span>
+              </div>
+              <div class="layer-metrics">
+                <div>
+                  <div class="layer-metric-title">Mittel-Temp</div>
+                  <div class="layer-metric-num">12.1 °C</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">O₂ Sättigung</div>
+                  <div class="layer-metric-num">95.2 %</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">Zustand</div>
+                  <div class="layer-metric-num" style="color: var(--color-potable-green);">Vollzirkuliert</div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Metalimnion / Thermocline -->
+            <article class="depth-layer-item">
+              <div class="depth-layer-header">
+                <span class="layer-name">Metalimnion (Sprungschicht)</span>
+                <span class="layer-depth-range">12 m – 24 m</span>
+              </div>
+              <div class="layer-metrics">
+                <div>
+                  <div class="layer-metric-title">Gradient</div>
+                  <div class="layer-metric-num">-0.55 °C/m</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">O₂ Minimum</div>
+                  <div class="layer-metric-num">7.8 mg/L</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">Stabilität</div>
+                  <div class="layer-metric-num" style="color: var(--color-alpine-lake);">Stabil</div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Hypolimnion -->
+            <article class="depth-layer-item">
+              <div class="depth-layer-header">
+                <span class="layer-name">Hypolimnion (Tiefenschicht)</span>
+                <span class="layer-depth-range">24 m – 136 m (Grund)</span>
+              </div>
+              <div class="layer-metrics">
+                <div>
+                  <div class="layer-metric-title">Boden-Temp</div>
+                  <div class="layer-metric-num">4.2 °C</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">O₂ Zehrung</div>
+                  <div class="layer-metric-num">6.4 mg/L</div>
+                </div>
+                <div>
+                  <div class="layer-metric-title">AWEL Befund</div>
+                  <div class="layer-metric-num" style="color: var(--color-potable-green);">Ausreichend</div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Limnological Event Audit Log -->
+    <section class="event-log-panel" aria-labelledby="event-log-title">
+      <div class="event-log-header">
+        <h2 id="event-log-title">Hydrometrisches Ereignis- & Kalibrierprotokoll (Letzte 24 Stunden)</h2>
+        <span style="font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary);">ISO 17025 Protokoll</span>
+      </div>
+      <ol class="event-list">
+        <li class="event-item">
+          <time datetime="2026-11-15T18:00:00+01:00" class="event-time">15.11 18:00:00</time>
+          <span class="event-station">ZH-01</span>
+          <span class="event-desc">Automatische Spülung und Kalibrierprüfung der optischen Trübungssonde abgeschlossen. Drift: &lt; 0.01 FNU.</span>
+          <span class="event-status"><span class="tag-status status-ok">Verifiziert</span></span>
+        </li>
+        <li class="event-item">
+          <time datetime="2026-11-15T14:22:15+01:00" class="event-time">15.11 14:22:15</time>
+          <span class="event-station">ZH-02</span>
+          <span class="event-desc">Pegelanstieg Limmat Quaibrücke um +1.4 cm/h registriert infolge Schleusenregelung am Wehr Platzspitz.</span>
+          <span class="event-status"><span class="tag-status status-ok">Regulär</span></span>
+        </li>
+        <li class="event-item">
+          <time datetime="2026-11-15T09:15:00+01:00" class="event-time">15.11 09:15:00</time>
+          <span class="event-station">GW-08</span>
+          <span class="event-desc">Routinemässige Schöpfprobe Uetliberg Fassung 4 entnommen für Schwermetall- und Pestizid-Screening.</span>
+          <span class="event-status"><span class="tag-status status-ok">In Labor</span></span>
+        </li>
+      </ol>
+    </section>
+
+  </main>
+
+  <!-- Cantonal Official Footer -->
+  <footer class="canton-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-authority-name">Baudirektion Kanton Zürich — AWEL</div>
+        <address class="footer-address">
+          Amt für Abfall, Wasser, Energie und Luft<br>
+          Abteilung Gewässerschutz<br>
+          Walchetor, Neumühlequai 10<br>
+          CH-8090 Zürich, Schweiz
+        </address>
+      </div>
+      <div>
+        <div class="footer-authority-name">Gesetzliche Grundlagen</div>
+        <ul class="footer-links-list">
+          <li><a href="#gschg">Gewässerschutzgesetz (GSchG 814.20)</a></li>
+          <li><a href="#gschv">Gewässerschutzverordnung (GSchV 814.201)</a></li>
+          <li><a href="#opendata">Open Data Portal Kanton Zürich</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-authority-name">Betriebsdaten</div>
+        <ul class="footer-links-list">
+          <li>System: Hydrowatch ZH v4.2.0</li>
+          <li>Geodaten: Swisstopo / GIS-ZH</li>
+          <li>Messnetz: WVZ / Eawag / AWEL</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <span>© 2026 Baudirektion Kanton Zürich. Alle Rechte vorbehalten.</span>
+      <span>Klassifizierung: Öffentliche Umweltdaten nach BGÖ</span>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching accessible behavior
+    const tabs = document.querySelectorAll('[role="tab"]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.setAttribute('aria-selected', 'false');
+          t.setAttribute('tabindex', '-1');
+        });
+        tab.setAttribute('aria-selected', 'true');
+        tab.removeAttribute('tabindex');
+        tab.focus();
+      });
+    });
+
+    // Refresh telemetry action button
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('de-CH') + ' ' + now.toLocaleTimeString('de-CH') + ' CET';
+      document.getElementById('live-timestamp').textContent = timeStr;
+    });
+
+    // CSV export feedback
+    document.getElementById('btn-export-csv').addEventListener('click', () => {
+      alert('Telemetrie-Rohdatenexport (CSV) für AWEL Station ZH-01 wird generiert.');
+    });
+  </script>
+</body>
+</html>

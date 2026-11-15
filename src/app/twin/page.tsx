@@ -125,18 +125,18 @@ export default function DigitalTwinPage() {
       {/* =========================================================================
           TOP: CLEAR TITLE, SELECTED GEOGRAPHIC AREA & VIEW TOGGLES
          ========================================================================= */}
-      <div className="bg-surface-white/95 border-b border-divider px-6 py-2.5 flex items-center justify-between text-xs z-30 shrink-0">
-        <div className="flex items-center space-x-3">
-          <span className="font-serif text-lg font-normal text-ink">
+      <div className="bg-surface-white/95 border-b border-divider px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-2 text-xs z-30 shrink-0">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="font-serif text-base sm:text-lg font-normal text-ink">
             Delhi Metropolitan Digital Twin
           </span>
-          <span className="text-divider">|</span>
-          <span className="font-mono text-[11px] text-ink-muted uppercase">
+          <span className="hidden sm:inline text-divider">|</span>
+          <span className="font-mono text-[10px] sm:text-[11px] text-ink-muted uppercase">
             AREA: NCT OF DELHI (28°36&apos;N 77°12&apos;E)
           </span>
         </div>
 
-        <div className="flex items-center space-x-4 font-mono text-[11px]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[10px] sm:text-[11px]">
           <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
             <button
               onClick={() => setViewMode('3D')}
@@ -155,17 +155,17 @@ export default function DigitalTwinPage() {
               2D NADIR
             </button>
           </div>
-          <span className="text-divider">|</span>
+          <span className="hidden sm:inline text-divider">|</span>
           <span className="text-ink-muted">LAYER: <strong className="text-terracotta uppercase">{activeLayer}</strong></span>
-          <span className="text-divider">|</span>
+          <span className="hidden sm:inline text-divider">|</span>
           <span className="text-ink-muted">TIME: <strong className="text-ink">{currentTimeHour.toString().padStart(2, '0')}:00 IST</strong></span>
         </div>
       </div>
 
       {/* Advisory & Analytical Integrity Notice */}
-      <div className="px-6 py-1 bg-amber-500/10 border-b border-amber-500/20 text-[10px] font-mono text-amber-900 flex items-center justify-between z-20">
-        <span>▲ ANALYTICAL DIGITAL TWIN — SIMULATED / ESTIMATED / OBSERVED VISUALIZATION • READ-ONLY + PASSIVE + ADVISORY</span>
-        <span className="uppercase text-[9px] text-amber-800">NO PHYSICAL ACTUATION • PASSIVE TWIN</span>
+      <div className="px-4 sm:px-6 py-1 bg-amber-500/10 border-b border-amber-500/20 text-[9px] sm:text-[10px] font-mono text-amber-900 flex flex-wrap items-center justify-between gap-1 z-20">
+        <span className="truncate max-w-full sm:max-w-none">▲ ANALYTICAL DIGITAL TWIN • READ-ONLY + PASSIVE + ADVISORY</span>
+        <span className="uppercase text-[8px] sm:text-[9px] text-amber-800">NO PHYSICAL ACTUATION • PASSIVE TWIN</span>
       </div>
 
       {/* Main Digital Twin Workbench */}
