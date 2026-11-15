@@ -56,6 +56,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const contentLength = request.headers.get('content-length');
+    if (contentLength && parseInt(contentLength, 10) > 512000) {
+      return NextResponse.json(
+        {
+          error: 'Payload Too Large',
+          details: 'Observation submission exceeds maximum allowed payload ceiling of 500 KB',
+        },
+        { status: 413 }
+      );
+    }
+
     const body: FieldObservationSubmission = await request.json();
 
     if (!body.voluntaryConsentConfirmed) {
