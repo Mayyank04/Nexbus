@@ -224,20 +224,29 @@ export default function DelhiCityCanvas({
     camera.lookAt(currentLookAt.current);
     cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance',
-      alpha: false,
-    });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.06;
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        powerPreference: 'high-performance',
+        alpha: false,
+      });
+      const width = container.clientWidth || 600;
+      const height = container.clientHeight || 500;
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.06;
 
-    container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+      container.appendChild(renderer.domElement);
+      rendererRef.current = renderer;
+    } catch (e) {
+      console.warn('WebGL initialization failed, falling back to 2D vector schematic:', e);
+      setWebglSupported(false);
+      return;
+    }
 
     // 2. Architectural Materials
     const groundMaterial = new THREE.MeshStandardMaterial({
@@ -1095,6 +1104,12 @@ export default function DelhiCityCanvas({
       animationFrameId.current = requestAnimationFrame(animate);
     };
 
+    // Synchronous immediate first frame render
+    try {
+      renderer.render(scene, camera);
+    } catch {
+      // Continue to animation loop
+    }
     animationFrameId.current = requestAnimationFrame(animate);
 
     return () => {
