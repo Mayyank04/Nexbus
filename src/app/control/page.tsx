@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
 import { SOURCE_CAPABILITY_REGISTRY } from '@/data/sourceCapabilityRegistry';
+import Phase12ResearchPilotPanel from '@/components/research/Phase12ResearchPilotPanel';
 
 interface SummaryData {
   metrics: {
@@ -2004,6 +2005,9 @@ export default function AnalyticsControlPage() {
             </div>
           )}
         </div>
+
+        {/* PHASE 12 RESEARCH PILOT & REAL-WORLD EVIDENCE CONSOLE */}
+        <Phase12ResearchPilotPanel />
 
         {/* PHASE 1 DATA PROVENANCE REGISTRY AUDIT */}
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
