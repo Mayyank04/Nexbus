@@ -391,6 +391,17 @@ async function runTests() {
     assert(false, `Phase 12 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 13 Scientific Validation & Certification Harness ---');
+  try {
+    const phase13Output = execSync('node scripts/test-phase13-certification.mjs', { encoding: 'utf8' });
+    assert(
+      phase13Output.includes('PHASE 13 SCIENTIFIC VALIDATION & CERTIFICATION: ALL 10 TESTS PASSED'),
+      'Phase 13 scientific validation (provenance audit, journey-time percentiles, headway Cv=0.34 & EWT, IFI deconstruction, Furness IPF GEH, ST-GNN Bayesian PICP-95, circuity gamma=1.31 equity Gini=0.29, DCF BCR 4.07x, WTW emissions, safety invariant) passes completely (10/10 tests)'
+    );
+  } catch (err) {
+    assert(false, `Phase 13 tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
