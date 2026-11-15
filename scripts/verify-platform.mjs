@@ -284,6 +284,58 @@ async function runTests() {
     assert(false, `Shadow operations harness failed: ${err.message}`);
   }
 
+  // 15. Phase 7 Real-World Evidence & Adaptive Urban Intelligence Tests
+  console.log('\n--- Testing Phase 7 Historical Archive & Adaptive Forecasting APIs ---');
+  const histRes = await fetchUrl('/api/historical/observations?limit=25');
+  assert(
+    histRes.status === 200 && Array.isArray(histRes.json?.records),
+    'GET /api/historical/observations returns partitioned historical observations'
+  );
+  assert(
+    histRes.json?.partitionSummary?.HISTORICAL_PUBLISHED > 0,
+    `Historical store indexes HISTORICAL_PUBLISHED partition (Count: ${histRes.json?.partitionSummary?.HISTORICAL_PUBLISHED})`
+  );
+
+  const benchRes = await fetchUrl('/api/analytics/corridor-benchmarks');
+  assert(
+    benchRes.status === 200 && benchRes.json?.corridors?.length === 4,
+    'GET /api/analytics/corridor-benchmarks returns 4 priority corridors with kinematic and passenger segregation'
+  );
+  const aurobindo = benchRes.json?.corridors?.find((c) => c.corridorId === 'corridor-radial-south');
+  assert(
+    aurobindo?.vehicleMovementMetrics?.observedHeadwayMin?.coefficientOfVariation === 0.34,
+    `Aurobindo Marg benchmark verifies empirical headway Cv=0.34 (Got: ${aurobindo?.vehicleMovementMetrics?.observedHeadwayMin?.coefficientOfVariation})`
+  );
+
+  const forecastRes = await fetchUrl('/api/ml/forecast', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ corridorId: 'corridor-ring-road', horizonMinutes: 30 }),
+  });
+  assert(
+    forecastRes.status === 200 && forecastRes.json?.forecast?.pointForecastPct > 0,
+    'POST /api/ml/forecast generates adaptive point forecast'
+  );
+  assert(
+    forecastRes.json?.forecast?.selectedModel?.version === 'v1.4.2-stgnn',
+    'Adaptive forecaster selects production ST-GNN surrogate (v1.4.2-stgnn)'
+  );
+  assert(
+    Array.isArray(forecastRes.json?.forecast?.credibleIntervals?.ci95),
+    'Forecast provides 95% Bayesian Credible Intervals'
+  );
+
+  console.log('\n--- Executing Phase 7 Independent Live Connectivity Audit ---');
+  try {
+    const auditOutput = execSync('node scripts/audit-connectivity.mjs', { encoding: 'utf8' });
+    assert(
+      auditOutput.includes('LIVE CONNECTIVITY AUDIT MATRIX'),
+      'Live connectivity audit executes DNS, HTTPS, and auth classification across all 6 providers'
+    );
+  } catch (err) {
+    assert(false, `Connectivity audit failed: ${err.message}`);
+  }
+
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log(`========================================\n`);

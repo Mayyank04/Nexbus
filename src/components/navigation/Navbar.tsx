@@ -67,16 +67,18 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center space-x-2 border border-divider px-3 py-1.5 bg-parchment/40">
               <span className="w-1.5 h-1.5 rounded-full bg-terracotta animate-pulse" />
               <span className="font-mono text-[10px] text-ink-muted tracking-tight uppercase">
-                RESEARCH DATASET • 3,840 FLEET
+                {pathname === '/control' || pathname === '/simulate' || pathname === '/methodology'
+                  ? 'AUTHORITY SHADOW MODE'
+                  : 'COMMUTER INTELLIGENCE'}
               </span>
             </div>
 
             <Magnetic intensity={0.25} range={60}>
               <Link
-                href="/twin"
+                href={pathname === '/control' ? '/journey' : '/control'}
                 className="hidden sm:inline-flex items-center justify-center font-mono text-xs uppercase tracking-wider px-4 py-2 border border-ink text-ink bg-ivory hover:bg-ink hover:text-ivory transition-colors"
               >
-                Open City Explorer
+                {pathname === '/control' ? 'Switch to Commuter' : 'Transit Authority Hub'}
               </Link>
             </Magnetic>
 

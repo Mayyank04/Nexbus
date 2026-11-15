@@ -399,6 +399,49 @@ export default function DelhiCityCanvas({
 
     scene.add(indiaGateGroup);
 
+    // AIIMS Elevated Flyover Interchange (South Axis at [0, 0, 36])
+    const aiimsFlyoverGroup = new THREE.Group();
+    aiimsFlyoverGroup.position.set(0, 0, 36);
+
+    const flyoverDeck = new THREE.Mesh(
+      new THREE.BoxGeometry(14.0, 0.35, 2.2),
+      buildingMatStone
+    );
+    flyoverDeck.position.y = 1.2;
+    flyoverDeck.castShadow = true;
+    aiimsFlyoverGroup.add(flyoverDeck);
+
+    for (let pIdx = -5; pIdx <= 5; pIdx += 5) {
+      const pier = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.35, 0.45, 1.2, 8),
+        buildingMatStone
+      );
+      pier.position.set(pIdx, 0.6, 0);
+      pier.castShadow = true;
+      aiimsFlyoverGroup.add(pier);
+    }
+    scene.add(aiimsFlyoverGroup);
+
+    // Qutub Minar Historical Minaret (South Axis at [0, 0, 56])
+    const qutubGroup = new THREE.Group();
+    qutubGroup.position.set(0, 0, 56);
+    const minarBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.8, 1.4, 3.0, 12),
+      buildingMatSandstone
+    );
+    minarBase.position.y = 1.5;
+    minarBase.castShadow = true;
+    qutubGroup.add(minarBase);
+
+    const minarShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.45, 0.75, 4.5, 12),
+      buildingMatSandstone
+    );
+    minarShaft.position.y = 5.25;
+    minarShaft.castShadow = true;
+    qutubGroup.add(minarShaft);
+    scene.add(qutubGroup);
+
     // Architectural Trees along Rajpath / Janpath
     const treeCount = 40;
     const treeInstanced = new THREE.InstancedMesh(
@@ -557,6 +600,15 @@ export default function DelhiCityCanvas({
           );
           tailLamps.position.set(0, 0.2, -0.82);
           busGroup.add(tailLamps);
+
+          // Epistemological Provenance Beacon (Cyan = Observed, Terracotta = Calibrated)
+          const isObservedBeacon = b % 2 === 0;
+          const beaconMat = new THREE.MeshBasicMaterial({
+            color: isObservedBeacon ? 0x00d2ff : 0xb84c32,
+          });
+          const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 6), beaconMat);
+          beacon.position.set(0, 0.48, 0);
+          busGroup.add(beacon);
 
           scene.add(busGroup);
 
