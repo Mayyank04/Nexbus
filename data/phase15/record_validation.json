@@ -1,0 +1,86 @@
+{
+  "validationSchemaVersion": "1.0.0-phase15",
+  "generatedAt": "2026-11-15T18:00:00Z",
+  "operationalInvariant": "READ-ONLY + PASSIVE + ADVISORY",
+  "lifecycleStates": [
+    "PLANNED",
+    "COLLECTED",
+    "SUBMITTED",
+    "VALIDATED",
+    "VERIFIED",
+    "REJECTED",
+    "QUARANTINED",
+    "SIMULATED",
+    "SYNTHETIC"
+  ],
+  "projectFieldworkStates": [
+    "BLOCKED_PENDING_AUTHORIZATION",
+    "READY_FOR_FIELDWORK",
+    "FIELDWORK_IN_PROGRESS",
+    "FIELDWORK_COMPLETED_PENDING_AUDIT",
+    "INDEPENDENTLY_VERIFIED",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "currentProjectState": "READY_FOR_FIELDWORK",
+  "ethicsApprovalStatus": "PENDING",
+  "ethicsProtocolId": "IRB-2026-NEXBUS-MOB-004",
+  "validationRules": {
+    "geographicBounds": {
+      "minLat": 28.40,
+      "maxLat": 28.88,
+      "minLng": 76.84,
+      "maxLng": 77.40,
+      "enforceBounds": true,
+      "rejectionCode": "COORDINATES_OUTSIDE_NCT_DELHI"
+    },
+    "timestampSanity": {
+      "maxFutureSkewSeconds": 30,
+      "maxHistoricalAgeDays": 90,
+      "enforceQuantization": true,
+      "quantizationSeconds": 15,
+      "rejectionCode": "INVALID_OBSERVATION_TIMESTAMP"
+    },
+    "spatialTruncation": {
+      "decimalPlaces": 4,
+      "approxResolutionMeters": 11.1,
+      "enforceTruncation": true,
+      "rejectionCode": "RAW_HIGH_PRECISION_COORDINATES_REJECTED"
+    },
+    "privacyCompliance": {
+      "zeroPiiStorage": true,
+      "allowedFields": [
+        "observationId",
+        "pseudonymizedObserverId",
+        "observationType",
+        "stopId",
+        "corridorId",
+        "truncatedLatitude",
+        "truncatedLongitude",
+        "quantizedObservedTimeIso",
+        "headwayMinutes",
+        "journeyTimeMinutes",
+        "transferTimeMinutes",
+        "crowdingScore",
+        "barrierType",
+        "evidenceClassification"
+      ],
+      "bannedPatterns": [
+        "name", "phone", "aadhaar", "email", "vehicle_plate_full", "photo_url"
+      ],
+      "rejectionCode": "DIRECT_PII_DETECTED_BREACH"
+    },
+    "antiFabricationInvariants": {
+      "noAutomaticVerifiedTransition": true,
+      "requireDocumentedVerificationMethod": true,
+      "disallowSyntheticToObservedPromotion": true,
+      "rejectionCode": "UNAUTHORIZED_EVIDENCE_PROMOTION_ATTEMPT"
+    }
+  },
+  "exclusionCriteria": [
+    { "code": "EXC-01", "description": "Duplicate timestamp-location observation within 15-second window" },
+    { "code": "EXC-02", "description": "Vehicle speed inferred > 90 km/h or dwell time > 15 minutes without incident log" },
+    { "code": "EXC-03", "description": "Missing observer consent confirmation or invalid cryptographic salt" },
+    { "code": "EXC-04", "description": "Coordinates falling outside official NCT Delhi administrative boundaries" },
+    { "code": "EXC-05", "description": "Unverified record attempting transition to VERIFIED without auditor signature" }
+  ]
+}

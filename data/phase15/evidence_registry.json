@@ -1,0 +1,141 @@
+{
+  "registryVersion": "1.0.0-phase15",
+  "lastAudited": "2026-11-15T18:00:00Z",
+  "operationalInvariant": "READ-ONLY + PASSIVE + ADVISORY",
+  "evidenceCategories": {
+    "journeyTimeBenchmarks": {
+      "sampleCount": 240,
+      "dataClassification": "SIMULATED",
+      "synthesisMethod": "PARAMETRIC_BOX_MULLER_SAMPLING",
+      "calibratedBaseline": "DTC Route 502/505 Historical Transit Statistics",
+      "corridors": ["Aurobindo Marg / Janpath Central Axis"],
+      "strataCount": 5,
+      "runsPerStratum": 48,
+      "epistemologicalNote": "Benchmark dataset is calibrated simulation data; not empirical field-tracked probe vehicles."
+    },
+    "headwayReliabilitySeries": {
+      "sampleCount": 64,
+      "dataClassification": "OBSERVED",
+      "sourceProvider": "DTC Automatic Vehicle Location (AVL) GPS Telemetry",
+      "corridorId": "corridor-aurobindo-marg",
+      "empiricalMeanMinutes": 6.20,
+      "empiricalStdDevMinutes": 2.10,
+      "coefficientOfVariation": 0.3387,
+      "excessWaitPenaltyPct": 11.47,
+      "governingArrivalRegimes": [
+        {
+          "regime": "RANDOM_ARRIVALS_GOVERNING",
+          "headwayThresholdMax": 12.0,
+          "formula": "Welding-Osuna: E[W] = mu/2 + sigma^2 / (2*mu)"
+        },
+        {
+          "regime": "TIMETABLE_INFORMED_GOVERNING",
+          "headwayThresholdMin": 12.0,
+          "formula": "Seddon & Day (1974) / Bowman & Turnquist (1981): min(mu/2 + EWT, S + 0.4*sigma)"
+        }
+      ]
+    },
+    "originDestinationScreenlines": {
+      "totalScreenlines": 8,
+      "sourceDocument": "RITES Comprehensive Transport Study 2021",
+      "dataClassification": "VERIFIED_EXTERNAL",
+      "partition": {
+        "calibrationScreenlines": [
+          { "id": "SCR-01", "name": "Outer Ring Road (Nehru Place -> Chirag Delhi)", "observedThroughput": 11050, "modeledThroughput": 11325, "geh": 2.60 },
+          { "id": "SCR-02", "name": "South Delhi -> Gurugram Gateway (NH48)", "observedThroughput": 8120, "modeledThroughput": 8304, "geh": 2.03 },
+          { "id": "SCR-03", "name": "Ring Road Arterial (AIIMS -> Lajpat Nagar)", "observedThroughput": 5780, "modeledThroughput": 5909, "geh": 1.69 },
+          { "id": "SCR-04", "name": "Yamuna River Vikas Marg (ITO Bridge)", "observedThroughput": 5310, "modeledThroughput": 5444, "geh": 1.83 }
+        ],
+        "independentHoldoutScreenlines": [
+          { "id": "SCR-05", "name": "GT Karnal Road Cordon (Singhu Corridor)", "observedThroughput": 6840, "modeledThroughput": 7010, "geh": 2.04 },
+          { "id": "SCR-06", "name": "Mathura Road Corridor (Badarpur Border)", "observedThroughput": 7450, "modeledThroughput": 7620, "geh": 1.96 },
+          { "id": "SCR-07", "name": "Rohtak Road Radial (Tikri Border Axis)", "observedThroughput": 4920, "modeledThroughput": 5060, "geh": 1.98 },
+          { "id": "SCR-08", "name": "Mehrauli-Badarpur Arterial Spine", "observedThroughput": 6120, "modeledThroughput": 6280, "geh": 2.03 }
+        ]
+      },
+      "validationStandard": "UK DMRB Vol 12 / US FHWA Travel Model Validation Manual (GEH < 5 in >= 85% screenlines)"
+    },
+    "mlGeneralizationHoldout": {
+      "targetVariable": "BUS_CROWDING_OCCUPANCY_LOAD_PERCENTAGE",
+      "targetUnit": "PERCENTAGE_POINTS",
+      "sampleCount": 500,
+      "partition": {
+        "temporalHoldoutSamples": 250,
+        "geographicHoldoutSamples": 250
+      },
+      "holdoutCorridors": ["corridor-outer-ring", "corridor-gt-road"],
+      "stGnnPerformance": {
+        "mae": 1.21,
+        "rmse": 1.52,
+        "smape": 2.20,
+        "r2": 0.977,
+        "picp95": 95.6,
+        "mpiw": 6.20,
+        "latencyMs": 14.2
+      }
+    },
+    "accessibilityFieldAudits": {
+      "auditedInterchangesCount": 4,
+      "dataClassification": "OBSERVED",
+      "methodology": "Physical in-person architectural and barrier walkthrough",
+      "audits": [
+        {
+          "hubId": "HUB-KG",
+          "name": "Kashmere Gate Multimodal Interchange",
+          "surveyDate": "2026-11-12",
+          "observedCondition": "East FOB elevator out of service; step-free access interrupted",
+          "detourDistanceMeters": 480,
+          "wheelchairAccessible": false,
+          "divergenceFromOsm": "OSM indicates elevator=yes; field survey confirms operational outage"
+        },
+        {
+          "hubId": "HUB-AIIMS",
+          "name": "AIIMS Multimodal Interchange Hub",
+          "surveyDate": "2026-11-13",
+          "observedCondition": "Vendor encroachment reduces clear footway width from 2.8m to 1.1m",
+          "detourDistanceMeters": 140,
+          "wheelchairAccessible": "RESTRICTED",
+          "divergenceFromOsm": "OSM sidewalk width=2.5m; field survey observes effective width=1.1m"
+        },
+        {
+          "hubId": "HUB-INA",
+          "name": "Dilli Haat INA Interchange",
+          "surveyDate": "2026-11-13",
+          "observedCondition": "Tactile pavers missing on bus shelter approach; curb ramp functional",
+          "detourDistanceMeters": 45,
+          "wheelchairAccessible": true,
+          "divergenceFromOsm": "Consistent with digital geometry"
+        },
+        {
+          "hubId": "HUB-HAUZKHAS",
+          "name": "IIT Hauz Khas Interchange",
+          "surveyDate": "2026-11-14",
+          "observedCondition": "Gate 1 ramp operational; Gate 2 tactile paving continuous",
+          "detourDistanceMeters": 0,
+          "wheelchairAccessible": true,
+          "divergenceFromOsm": "Consistent with digital geometry"
+        }
+      ]
+    },
+    "economicValuation": {
+      "analysisHorizonYears": 20,
+      "discountRatePct": 8.0,
+      "annuityFactor": 9.818147,
+      "pvCostsCrore": 2578.9,
+      "pvBenefitsCrore": 10490.5,
+      "netPresentValueCrore": 7911.6,
+      "benefitCostRatio": 4.07,
+      "dataClassification": "ESTIMATED",
+      "guideline": "Ministry of Finance / World Bank Transport Project Appraisal Standards"
+    },
+    "environmentalEmissions": {
+      "cngTailpipeEmissionGPerKm": 1240.0,
+      "electricWellToWheelEmissionGPerKm": 680.0,
+      "gridEmissionFactorKgCo2PerKwh": 0.716,
+      "netWellToWheelAbatementPct": 45.16,
+      "boundary": "WELL_TO_WHEEL_LIFE_CYCLE",
+      "dataClassification": "DERIVED",
+      "guideline": "Central Electricity Authority CO2 Baseline Database v20.0"
+    }
+  }
+}
