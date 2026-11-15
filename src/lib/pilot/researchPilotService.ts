@@ -33,7 +33,7 @@ export interface PilotScheduleSlot {
 }
 
 export interface PilotProgressMetrics {
-  pilotStatus: 'PREPARATION' | 'ACTIVE_FIELD_COLLECTION' | 'DATA_SYNTHESIS' | 'COMPLETED';
+  pilotStatus: 'PREPARATION' | 'PREPARED_FOR_FIELDWORK' | 'ACTIVE_FIELD_COLLECTION' | 'DATA_SYNTHESIS' | 'COMPLETED' | 'BLOCKED';
   targetTotalObservations: number;
   currentCompletedObservations: number;
   completionPct: number;
@@ -42,6 +42,17 @@ export interface PilotProgressMetrics {
   irbProtocolNumber: string;
   zeroPiiIncidentsRecorded: number;
   meanHeadwayAdherenceCorrelationR: number;
+  counters: {
+    plannedSessionsCount: number;
+    completedSessionsCount: number;
+    submittedRecordsCount: number;
+    validRecordsCount: number;
+    verifiedFieldObservationsCount: number;
+    unverifiedRecordsCount: number;
+    demonstrationFixturesCount: number;
+    simulationRecordsCount: number;
+    rejectedRecordsCount: number;
+  };
   provenanceBreakdown: {
     demonstrationFixturesCount: number;
     benchmarkSimulationCount: number;
@@ -151,6 +162,18 @@ class ResearchPilotService {
           surveyFocus: 'DWELL_AND_HEADWAY',
           targetDailySamples: 36,
         },
+        {
+          checkpointId: 'CHK-05',
+          name: 'Connaught Place Outer Circle / Shivaji Stadium',
+          hindiName: 'कनॉट प्लेस आउटर सर्कल / शिवाजी स्टेडियम',
+          stopId: 'stop-cp-outer',
+          latitude: 28.6315,
+          longitude: 77.2167,
+          interchangeMode: 'BUS_METRO_WALK',
+          connectingMetroLine: 'Blue, Yellow & Airport Express Lines',
+          surveyFocus: 'DWELL_AND_HEADWAY',
+          targetDailySamples: 40,
+        },
       ],
       observationSchedule: [
         {
@@ -177,17 +200,36 @@ class ResearchPilotService {
           assignedSurveyorCount: 8,
           expectedBusesPerHour: 22,
         },
+        {
+          slotId: 'SLOT-OFF-PEAK',
+          periodName: 'Late Evening Off-Peak Period',
+          timeRange: '20:30 - 22:30 IST',
+          isPeak: false,
+          assignedSurveyorCount: 4,
+          expectedBusesPerHour: 12,
+        },
       ],
       progress: {
-        pilotStatus: 'ACTIVE_FIELD_COLLECTION',
+        pilotStatus: 'PREPARED_FOR_FIELDWORK',
         targetTotalObservations: 240,
         currentCompletedObservations: 188,
         completionPct: 78.3,
-        checkpointsActiveCount: 4,
+        checkpointsActiveCount: 5,
         ethicsReviewApproved: true,
         irbProtocolNumber: 'IRB-2026-NEXBUS-MOB-004',
         zeroPiiIncidentsRecorded: 0,
         meanHeadwayAdherenceCorrelationR: 0.88,
+        counters: {
+          plannedSessionsCount: 24,
+          completedSessionsCount: 0,
+          submittedRecordsCount: 8,
+          validRecordsCount: 8,
+          verifiedFieldObservationsCount: 0,
+          unverifiedRecordsCount: 4,
+          demonstrationFixturesCount: 4,
+          simulationRecordsCount: 184,
+          rejectedRecordsCount: 0,
+        },
         provenanceBreakdown: {
           demonstrationFixturesCount: 4,
           benchmarkSimulationCount: 184,

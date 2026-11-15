@@ -57,6 +57,7 @@ export default function Phase12ResearchPilotPanel() {
       'CHK-02': { stopId: 'stop-iit-gate', stopName: 'IIT Delhi Main Gate', lat: 28.5450, lng: 77.1925 },
       'CHK-03': { stopId: 'stop-ina-colony', stopName: 'INA Market / Dilli Haat', lat: 28.5750, lng: 77.2085 },
       'CHK-04': { stopId: 'stop-mehrauli-term', stopName: 'Mehrauli Bus Terminal', lat: 28.5180, lng: 77.1850 },
+      'CHK-05': { stopId: 'stop-cp-outer', stopName: 'Connaught Place Outer Circle / Shivaji Stadium', lat: 28.6315, lng: 77.2167 },
     };
 
     const target = checkpointMeta[selectedCheckpoint] || checkpointMeta['CHK-01'];
@@ -378,24 +379,42 @@ export default function Phase12ResearchPilotPanel() {
               {pilotProtocol.progress.provenanceBreakdown?.epistemologicalDisclosure ||
                 'Independent Audit Note: 188 observations represent benchmark simulation and demonstration fixtures used for protocol testing. Real-world verified field observations are segregated and tracked under verifiedFieldObservationsCount.'}
             </p>
-            <div className="grid grid-cols-3 gap-3 pt-2 border-t border-divider text-center font-mono">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 pt-2 border-t border-divider text-center font-mono text-[11px]">
               <div className="p-2 bg-ivory border border-divider">
-                <div className="text-[10px] text-ink-muted uppercase">Demonstration Fixtures</div>
-                <div className="text-lg font-serif text-ink mt-0.5">
-                  {pilotProtocol.progress.provenanceBreakdown?.demonstrationFixturesCount ?? 4}
-                </div>
+                <div className="text-[9px] text-ink-muted uppercase">Planned Sessions</div>
+                <div className="text-base font-serif text-ink mt-0.5">{pilotProtocol.progress.counters?.plannedSessionsCount ?? 24}</div>
               </div>
               <div className="p-2 bg-ivory border border-divider">
-                <div className="text-[10px] text-ink-muted uppercase">Simulation Benchmark</div>
-                <div className="text-lg font-serif text-ink mt-0.5">
-                  {pilotProtocol.progress.provenanceBreakdown?.benchmarkSimulationCount ?? 184}
-                </div>
+                <div className="text-[9px] text-ink-muted uppercase">Completed Sessions</div>
+                <div className="text-base font-serif text-ink mt-0.5">{pilotProtocol.progress.counters?.completedSessionsCount ?? 0}</div>
               </div>
               <div className="p-2 bg-ivory border border-divider">
-                <div className="text-[10px] text-ink-muted uppercase">Verified Ground Truth</div>
-                <div className="text-lg font-serif text-terracotta font-medium mt-0.5">
-                  {pilotProtocol.progress.provenanceBreakdown?.verifiedFieldObservationsCount ?? 0}
-                </div>
+                <div className="text-[9px] text-ink-muted uppercase">Submitted Records</div>
+                <div className="text-base font-serif text-ink mt-0.5">{pilotProtocol.progress.counters?.submittedRecordsCount ?? 8}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Valid Records</div>
+                <div className="text-base font-serif text-green-700 mt-0.5">{pilotProtocol.progress.counters?.validRecordsCount ?? 8}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Verified Field</div>
+                <div className="text-base font-serif text-terracotta font-medium mt-0.5">{pilotProtocol.progress.counters?.verifiedFieldObservationsCount ?? 0}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Unverified Records</div>
+                <div className="text-base font-serif text-amber-700 mt-0.5">{pilotProtocol.progress.counters?.unverifiedRecordsCount ?? 4}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Demo Fixtures</div>
+                <div className="text-base font-serif text-ink mt-0.5">{pilotProtocol.progress.counters?.demonstrationFixturesCount ?? 4}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Simulation Benchmark</div>
+                <div className="text-base font-serif text-ink mt-0.5">{pilotProtocol.progress.counters?.simulationRecordsCount ?? 184}</div>
+              </div>
+              <div className="p-2 bg-ivory border border-divider">
+                <div className="text-[9px] text-ink-muted uppercase">Rejected Records</div>
+                <div className="text-base font-serif text-red-700 mt-0.5">{pilotProtocol.progress.counters?.rejectedRecordsCount ?? 0}</div>
               </div>
             </div>
           </div>
@@ -502,6 +521,7 @@ export default function Phase12ResearchPilotPanel() {
                 <option value="CHK-02">CHK-02: IIT Delhi Main Gate / Hauz Khas</option>
                 <option value="CHK-03">CHK-03: INA Market / Dilli Haat Interchange</option>
                 <option value="CHK-04">CHK-04: Mehrauli Bus Terminal Gateway</option>
+                <option value="CHK-05">CHK-05: Connaught Place Outer Circle / Shivaji Stadium</option>
               </select>
             </div>
 

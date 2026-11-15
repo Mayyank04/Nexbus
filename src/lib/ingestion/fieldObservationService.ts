@@ -20,7 +20,13 @@ export type MobilityObservationType =
   | 'SCHEDULED_VS_OBSERVED'
   | 'VEHICLE_AVL_PING'
   | 'PASSENGER_BOARDING_TALLY'
-  | 'DWELL_TIME_MEASUREMENT';
+  | 'DWELL_TIME_MEASUREMENT'
+  | 'BUS_ARRIVAL_DEPARTURE'
+  | 'HEADWAY_MEASUREMENT'
+  | 'JOURNEY_TIME_RUN'
+  | 'INTERCHANGE_TRANSFER_TIME'
+  | 'PEDESTRIAN_ROUTE_SURVEY'
+  | 'ACCESSIBILITY_BARRIER_OBSERVATION';
 
 export interface FieldObservationSubmission {
   researcherSaltId: string; // e.g. "SURVEYOR-NORTH-A"
@@ -41,6 +47,10 @@ export interface FieldObservationSubmission {
   alightingsCount?: number;
   crowdingScore: 1 | 2 | 3 | 4 | 5; // 1: Low, 3: Full seated, 5: Crush load
   weatherCondition: 'CLEAR' | 'HEATWAVE' | 'RAIN_WATERLOGGED' | 'HAZE_POLLUTION';
+  headwayMinutes?: number;
+  journeyTimeMinutes?: number;
+  transferTimeMinutes?: number;
+  barrierType?: 'STAIRS_NO_RAMP' | 'BROKEN_PAVEMENT' | 'MISSING_TACTILE' | 'ROAD_ENCROACHMENT' | 'NONE';
   notes?: string;
 }
 
@@ -64,6 +74,10 @@ export interface SanitizedFieldObservation {
   alightingsCount?: number;
   crowdingScore: 1 | 2 | 3 | 4 | 5;
   weatherCondition: 'CLEAR' | 'HEATWAVE' | 'RAIN_WATERLOGGED' | 'HAZE_POLLUTION';
+  headwayMinutes?: number;
+  journeyTimeMinutes?: number;
+  transferTimeMinutes?: number;
+  barrierType?: 'STAIRS_NO_RAMP' | 'BROKEN_PAVEMENT' | 'MISSING_TACTILE' | 'ROAD_ENCROACHMENT' | 'NONE';
   evidenceClassification: EvidenceClassification;
   sha256Digest: string;
   receivedAt: string;
@@ -310,6 +324,10 @@ class FieldObservationService {
       alightingsCount: submission.alightingsCount,
       crowdingScore: submission.crowdingScore,
       weatherCondition: submission.weatherCondition,
+      headwayMinutes: submission.headwayMinutes,
+      journeyTimeMinutes: submission.journeyTimeMinutes,
+      transferTimeMinutes: submission.transferTimeMinutes,
+      barrierType: submission.barrierType,
       evidenceClassification: 'OBSERVED',
       sha256Digest: sha256,
       receivedAt: new Date().toISOString(),
