@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getResilienceEngine } from '@/lib/multimodal/networkResilience';
+import { getMultimodalNetwork } from '@/lib/multimodal/networkGraph';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,6 +13,8 @@ export async function GET(request: NextRequest) {
         success: true,
         availableScenarios: engine.getAvailableScenarios(),
         baselineEvaluation: engine.evaluateResilience('ring-road-waterlogging'),
+        graphSummary: getMultimodalNetwork().getNetworkSummary(),
+        graphValidation: getMultimodalNetwork().validateNetworkConnectivity(),
       });
     }
 
