@@ -18,6 +18,27 @@ import { EvidenceClassification } from '@/lib/evidence/evidenceClassification';
 
 export type FrictionGrade = 'A' | 'B' | 'C' | 'D' | 'E';
 
+export interface IFIComponentDeconstruction {
+  dWalkComponent: number;
+  lVerticalComponent: number;
+  fCrossingComponent: number;
+  tWaitComponent: number;
+  observedAttributes: {
+    walkingDistanceMeters: number;
+    verticalLevelsChange: number;
+    roadCrossingsCount: number;
+    isCoveredWalkway: boolean;
+    dataTier: 'VERIFIED_EXTERNAL_PHYSICAL_SURVEY';
+  };
+  modeledAttributes: {
+    assumedWaitMinutes: number;
+    ifiRaw: number;
+    frictionScore: number;
+    grade: FrictionGrade;
+    dataTier: 'DERIVED_ANALYTIC_INDEX';
+  };
+}
+
 export interface InterchangeMetrics {
   hubId: string;
   name: string;
@@ -42,6 +63,7 @@ export interface InterchangeMetrics {
   ifiRaw: number;
   frictionScore: number; // 0 to 100 (lower is smoother)
   frictionGrade: FrictionGrade;
+  componentDeconstruction: IFIComponentDeconstruction;
   connectedModes: string[];
   bottleneckDescription: string;
   recommendedInterventions: string[];
@@ -63,11 +85,12 @@ export function calculateIFI(survey: InterchangeHubSurvey, typicalWaitMin: numbe
   ifiRaw: number;
   frictionScore: number;
   grade: FrictionGrade;
+  deconstruction: IFIComponentDeconstruction;
 } {
-  const dWalkComponent = 0.35 * (survey.walkingDistanceMeters / 100);
-  const lVerticalComponent = 0.25 * survey.verticalLevelsChange;
-  const fCrossingComponent = 0.20 * (survey.roadCrossingsCount * 1.5 + (survey.isCoveredWalkway ? 0 : 0.5));
-  const tWaitComponent = 0.20 * (typicalWaitMin / 5);
+  const dWalkComponent = Math.round(0.35 * (survey.walkingDistanceMeters / 100) * 1000) / 1000;
+  const lVerticalComponent = Math.round(0.25 * survey.verticalLevelsChange * 1000) / 1000;
+  const fCrossingComponent = Math.round(0.20 * (survey.roadCrossingsCount * 1.5 + (survey.isCoveredWalkway ? 0 : 0.5)) * 1000) / 1000;
+  const tWaitComponent = Math.round(0.20 * (typicalWaitMin / 5) * 1000) / 1000;
 
   const ifiRaw = Math.round((dWalkComponent + lVerticalComponent + fCrossingComponent + tWaitComponent) * 100) / 100;
 
@@ -82,10 +105,32 @@ export function calculateIFI(survey: InterchangeHubSurvey, typicalWaitMin: numbe
   else if (scaledScore <= 85) grade = 'D';
   else grade = 'E';
 
+  const deconstruction: IFIComponentDeconstruction = {
+    dWalkComponent,
+    lVerticalComponent,
+    fCrossingComponent,
+    tWaitComponent,
+    observedAttributes: {
+      walkingDistanceMeters: survey.walkingDistanceMeters,
+      verticalLevelsChange: survey.verticalLevelsChange,
+      roadCrossingsCount: survey.roadCrossingsCount,
+      isCoveredWalkway: survey.isCoveredWalkway,
+      dataTier: 'VERIFIED_EXTERNAL_PHYSICAL_SURVEY',
+    },
+    modeledAttributes: {
+      assumedWaitMinutes: typicalWaitMin,
+      ifiRaw,
+      frictionScore: scaledScore,
+      grade,
+      dataTier: 'DERIVED_ANALYTIC_INDEX',
+    },
+  };
+
   return {
     ifiRaw,
     frictionScore: scaledScore,
     grade,
+    deconstruction,
   };
 }
 
@@ -103,7 +148,7 @@ export class InterchangeAnalyticsService {
       const lines = Array.from(new Set(metroNodes.flatMap((n) => n?.metroLines || [])));
       const connectedModes = ['DTC Arterial Bus', ...lines.map((l) => `Metro ${l}`)];
 
-      const { ifiRaw, frictionScore, grade } = calculateIFI(survey);
+      const { ifiRaw, frictionScore, grade, deconstruction } = calculateIFI(survey);
 
       // Interventions logic
       const interventions: string[] = [];
@@ -147,6 +192,7 @@ export class InterchangeAnalyticsService {
         ifiRaw,
         frictionScore,
         frictionGrade: grade,
+        componentDeconstruction: deconstruction,
         connectedModes,
         bottleneckDescription: survey.bottleneckDescription,
         recommendedInterventions: interventions,
