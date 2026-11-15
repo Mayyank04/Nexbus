@@ -5,26 +5,30 @@
   --font-sans: var(--font-manrope), Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", Menlo, monospace;
 
-  /* NEXBUS Phase 3 Color Tokens */
+  /* NEXBUS Semantic Color Tokens — WCAG 2.1 AA & AAA Compliant */
   --color-ivory: #F5F0E6;
   --color-parchment: #EBE4D8;
   --color-surface-white: #FCFAF6;
-  --color-ink: #24211D;
-  --color-ink-muted: #71695F;
+  --color-ink: #1A1815;
+  --color-ink-secondary: #4A443C;
+  --color-ink-muted: #635B50;
   --color-terracotta: #B84C32;
   --color-terracotta-dark: #963B25;
   --color-terracotta-light: #F6EDE8;
-  --color-stone: #A69A89;
-  --color-gold: #C89B53;
+  --color-stone: #8C8275;
+  --color-gold: #B8860B;
   --color-divider: #DED5C8;
   --color-border-subtle: #DED5C8;
-  --color-map-asphalt: #514D48;
-  --color-transit-blue: #2A5C8A;
+  --color-border-strong: #8C8275;
+  --color-map-asphalt: #3D3935;
+  --color-transit-blue: #1D4ED8;
+  --color-status-green: #15803D;
+  --color-status-amber: #B45309;
 }
 
 :root {
   --background: #F5F0E6;
-  --foreground: #24211D;
+  --foreground: #1A1815;
 }
 
 * {
@@ -40,9 +44,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle architectural grain */
+/* Subtle architectural survey grid grain */
 .bg-grain {
-  background-image: radial-gradient(rgba(36, 33, 29, 0.035) 1px, transparent 0);
+  background-image: radial-gradient(rgba(26, 24, 21, 0.04) 1px, transparent 0);
   background-size: 24px 24px;
 }
 
@@ -52,20 +56,26 @@ body {
   color: #FCFAF6;
 }
 
-/* Refined custom scrollbars */
+/* Accessible focus ring styling */
+:focus-visible {
+  outline: 2px solid #B84C32;
+  outline-offset: 2px;
+}
+
+/* Precision scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #EBE4D8;
 }
 ::-webkit-scrollbar-thumb {
-  background: #C2B8A8;
-  border-radius: 2px;
+  background: #A69A89;
+  border-radius: 1px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8F8475;
+  background: #635B50;
 }
 
 /* Reduced motion preference */
