@@ -4,8 +4,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { DELHI_STOPS, DELHI_CORRIDORS, BusStop, TransitCorridor } from '@/data/delhiTransitData';
 import { METRO_LINES, METRO_STATIONS, INTERCHANGE_SURVEYS } from '@/lib/multimodal/networkGraph';
+import { DELHI_MOBILITY_ZONES } from '@/lib/demand/odMatrixEngine';
 
 export type CameraPreset = 'overview' | 'corridor' | 'street' | 'simulation' | 'journey';
+
+export type DigitalTwinLayer =
+  | 'all'
+  | 'metro'
+  | 'buses'
+  | 'interchanges'
+  | 'accessibility'
+  | 'demand'
+  | 'flow'
+  | 'utilization'
+  | 'disruption'
+  | 'flood_risk'
+  | 'demographics';
 
 interface DelhiCityCanvasProps {
   interactive?: boolean;
@@ -19,6 +33,8 @@ interface DelhiCityCanvasProps {
   className?: string;
   splitMode?: boolean;
   isSimulatedVariant?: boolean;
+  activeLayer?: DigitalTwinLayer;
+  viewMode?: '3D' | '2D';
 }
 
 export default function DelhiCityCanvas({
@@ -33,6 +49,8 @@ export default function DelhiCityCanvas({
   className = '',
   splitMode = false,
   isSimulatedVariant = false,
+  activeLayer = 'all',
+  viewMode = '3D',
 }: DelhiCityCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -74,12 +92,20 @@ export default function DelhiCityCanvas({
     }[]
   >([]);
 
+  // Phase 10 Analytical Geospatial Layer Groups Ref
+  const layerGroupsRef = useRef<Record<string, THREE.Group>>({});
+
   // Lighting references
   const sunLightRef = useRef<THREE.DirectionalLight | null>(null);
   const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
 
-  // Camera presets
+  // Camera presets & 2D/3D view mode
   useEffect(() => {
+    if (viewMode === '2D') {
+      targetCamPos.current.set(0, 88, 0.01);
+      targetLookAt.current.set(0, 0, 0);
+      return;
+    }
     if (preset === 'overview') {
       targetCamPos.current.set(48, 54, 62);
       targetLookAt.current.set(0, 0, 0);
@@ -96,7 +122,23 @@ export default function DelhiCityCanvas({
       targetCamPos.current.set(40, 46, 52);
       targetLookAt.current.set(2, 0, 4);
     }
-  }, [preset]);
+  }, [preset, viewMode]);
+
+  // Phase 10 Dynamic Geospatial Layer Visibility
+  useEffect(() => {
+    const lg = layerGroupsRef.current;
+    if (!lg || !lg.metro) return;
+    lg.metro.visible = activeLayer === 'all' || activeLayer === 'metro';
+    lg.buses.visible = activeLayer === 'all' || activeLayer === 'buses';
+    lg.interchanges.visible = activeLayer === 'all' || activeLayer === 'interchanges';
+    lg.accessibility.visible = activeLayer === 'accessibility';
+    lg.demand.visible = activeLayer === 'demand';
+    lg.flow.visible = activeLayer === 'flow';
+    lg.utilization.visible = activeLayer === 'utilization';
+    lg.disruption.visible = activeLayer === 'disruption';
+    lg.flood_risk.visible = activeLayer === 'flood_risk';
+    lg.demographics.visible = activeLayer === 'demographics';
+  }, [activeLayer]);
 
   // Dynamic focus on selected corridor or stop
   useEffect(() => {
@@ -514,6 +556,44 @@ export default function DelhiCityCanvas({
       }
     });
 
+    // -------------------------------------------------------------
+    // Phase 10 Analytical Geospatial Layer Hierarchy
+    // -------------------------------------------------------------
+    const metroGroup = new THREE.Group();
+    const busesGroup = new THREE.Group();
+    const interchangesGroup = new THREE.Group();
+    const accessibilityGroup = new THREE.Group();
+    const demandGroup = new THREE.Group();
+    const flowGroup = new THREE.Group();
+    const utilizationGroup = new THREE.Group();
+    const disruptionGroup = new THREE.Group();
+    const floodRiskGroup = new THREE.Group();
+    const demographicsGroup = new THREE.Group();
+
+    scene.add(metroGroup);
+    scene.add(busesGroup);
+    scene.add(interchangesGroup);
+    scene.add(accessibilityGroup);
+    scene.add(demandGroup);
+    scene.add(flowGroup);
+    scene.add(utilizationGroup);
+    scene.add(disruptionGroup);
+    scene.add(floodRiskGroup);
+    scene.add(demographicsGroup);
+
+    layerGroupsRef.current = {
+      metro: metroGroup,
+      buses: busesGroup,
+      interchanges: interchangesGroup,
+      accessibility: accessibilityGroup,
+      demand: demandGroup,
+      flow: flowGroup,
+      utilization: utilizationGroup,
+      disruption: disruptionGroup,
+      flood_risk: floodRiskGroup,
+      demographics: demographicsGroup,
+    };
+
     // 6. Bus Stop Totems & Animated Halos
     DELHI_STOPS.forEach((stop) => {
       const stopGroup = new THREE.Group();
@@ -545,7 +625,7 @@ export default function DelhiCityCanvas({
       pickMesh.userData = { type: 'stop', stop };
       stopGroup.add(pickMesh);
 
-      scene.add(stopGroup);
+      busesGroup.add(stopGroup);
       stopMarkersRef.current.set(stop.id, stopGroup);
     });
 
@@ -567,7 +647,7 @@ export default function DelhiCityCanvas({
           opacity: 0.85,
         });
         const metroMesh = new THREE.Mesh(metroGeo, metroMat);
-        scene.add(metroMesh);
+        metroGroup.add(metroMesh);
       }
     });
 
@@ -594,7 +674,7 @@ export default function DelhiCityCanvas({
       ring.position.y = 0.14;
       stGroup.add(ring);
 
-      scene.add(stGroup);
+      metroGroup.add(stGroup);
     });
 
     // 6d. Multimodal Interchange Beacon Rings (IFI Hubs)
@@ -618,8 +698,164 @@ export default function DelhiCityCanvas({
       beaconRing.position.y = 0.22;
       hubGroup.add(beaconRing);
 
-      scene.add(hubGroup);
+      interchangesGroup.add(hubGroup);
     });
+
+    // -------------------------------------------------------------
+    // Phase 10 Extended Analytical Layers Population
+    // -------------------------------------------------------------
+
+    // 1. Accessibility Catchment Rings (400m & 800m isochrone discs)
+    [...DELHI_STOPS, ...METRO_STATIONS].forEach((node) => {
+      const coords = 'coordinates' in node ? node.coordinates : (node as any).coordinatesLocal;
+      const c400 = new THREE.Mesh(
+        new THREE.CircleGeometry(2.4, 20),
+        new THREE.MeshBasicMaterial({ color: 0x4a6b5d, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
+      );
+      c400.rotation.x = -Math.PI / 2;
+      c400.position.set(coords[0], 0.02, coords[1]);
+      accessibilityGroup.add(c400);
+
+      const c800 = new THREE.Mesh(
+        new THREE.CircleGeometry(4.8, 20),
+        new THREE.MeshBasicMaterial({ color: 0x2a5c8a, transparent: true, opacity: 0.12, side: THREE.DoubleSide })
+      );
+      c800.rotation.x = -Math.PI / 2;
+      c800.position.set(coords[0], 0.015, coords[1]);
+      accessibilityGroup.add(c800);
+    });
+
+    // 2. Demand Density Extrusions (Planning Zones)
+    DELHI_MOBILITY_ZONES.forEach((z) => {
+      const x = (z.centerCoordinates[1] - 77.2197) * 160;
+      const zPos = -(z.centerCoordinates[0] - 28.6328) * 160;
+      const height = (z.residentPopulationThousands / 3650) * 8.0 + 1.2;
+      const col = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.2, 2.2, height, 6),
+        new THREE.MeshStandardMaterial({ color: 0xc89b53, roughness: 0.4, metalness: 0.2 })
+      );
+      col.position.set(x, height / 2, zPos);
+      demandGroup.add(col);
+    });
+
+    // 3. Passenger Flow Parabolic Arcs (Top Desire Lines)
+    const flowPairs = [
+      { from: [-18, 0, -42], to: [0, 0, 0] },
+      { from: [-30, 0, 18], to: [0, 0, 0] },
+      { from: [24, 0, 0], to: [0, 0, 0] },
+      { from: [6, 0, 24], to: [-26, 0, 48] },
+      { from: [0, 0, 0], to: [32, 0, 8] },
+    ];
+    flowPairs.forEach((pair) => {
+      const start = new THREE.Vector3(pair.from[0], 0.2, pair.from[2]);
+      const end = new THREE.Vector3(pair.to[0], 0.2, pair.to[2]);
+      const mid = new THREE.Vector3((pair.from[0] + pair.to[0]) / 2, 5.5, (pair.from[2] + pair.to[2]) / 2);
+      const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+      const tube = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 32, 0.2, 6, false),
+        new THREE.MeshBasicMaterial({ color: 0xf26522, transparent: true, opacity: 0.8 })
+      );
+      flowGroup.add(tube);
+    });
+
+    // 4. Corridor Utilization Glow Bands
+    DELHI_CORRIDORS.forEach((corridor) => {
+      const curve = corridorCurvesRef.current.get(corridor.id);
+      if (!curve) return;
+      const isOverload = corridor.id === 'corridor-ring-road' || corridor.id === 'corridor-heritage-spine';
+      const utilColor = isOverload ? 0xe63946 : corridor.id === 'corridor-radial-south' ? 0xe8b923 : 0x2a9d8f;
+      const utilTube = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 64, 0.45, 6, false),
+        new THREE.MeshBasicMaterial({ color: utilColor, transparent: true, opacity: 0.75 })
+      );
+      utilizationGroup.add(utilTube);
+    });
+
+    // 5. Disruption Incident Hotspot Beacons
+    const disruptions = [
+      { pos: [-10, 0.05, 16], name: 'Ring Road Moti Bagh Flood Hazard' },
+      { pos: [-2, 0.05, -15], name: 'Yellow Line Signaling Interlock' },
+      { pos: [12, 0.05, -2], name: 'ITO Vikas Marg Cross-River Block' },
+    ];
+    disruptions.forEach((d) => {
+      const ring = new THREE.Mesh(
+        new THREE.RingGeometry(2.2, 3.8, 24),
+        new THREE.MeshBasicMaterial({ color: 0xff1744, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+      );
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.set(d.pos[0], d.pos[1], d.pos[2]);
+      disruptionGroup.add(ring);
+
+      const pin = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.15, 0.15, 4.0, 8),
+        new THREE.MeshBasicMaterial({ color: 0xff1744 })
+      );
+      pin.position.set(d.pos[0], 2.0, d.pos[2]);
+      disruptionGroup.add(pin);
+    });
+
+    // 6. Yamuna Flood Plain & Waterlogging Risk
+    const riverPoints = [
+      new THREE.Vector3(-8, 0.02, -55),
+      new THREE.Vector3(4, 0.02, -35),
+      new THREE.Vector3(14, 0.02, -15),
+      new THREE.Vector3(20, 0.02, 5),
+      new THREE.Vector3(26, 0.02, 28),
+      new THREE.Vector3(32, 0.02, 55),
+    ];
+    const riverCurve = new THREE.CatmullRomCurve3(riverPoints);
+    const riverTube = new THREE.Mesh(
+      new THREE.TubeGeometry(riverCurve, 40, 2.2, 6, false),
+      new THREE.MeshBasicMaterial({ color: 0x4a7c8a, transparent: true, opacity: 0.85 })
+    );
+    floodRiskGroup.add(riverTube);
+
+    const floodBuffer = new THREE.Mesh(
+      new THREE.TubeGeometry(riverCurve, 40, 6.0, 6, false),
+      new THREE.MeshBasicMaterial({ color: 0x8fa89b, transparent: true, opacity: 0.35 })
+    );
+    floodRiskGroup.add(floodBuffer);
+
+    const waterloggedUnderpasses = [
+      { pos: [1, 0.05, -5], name: 'Minto Bridge Underpass' },
+      { pos: [16, 0.05, 34], name: 'Pul Prahladpur Underpass' },
+      { pos: [-16, 0.05, -14], name: 'Zakhira Underpass' },
+    ];
+    waterloggedUnderpasses.forEach((u) => {
+      const pin = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.2, 0.2, 2.8, 8),
+        new THREE.MeshBasicMaterial({ color: 0x00bcd4 })
+      );
+      pin.position.set(u.pos[0], 1.4, u.pos[1]);
+      floodRiskGroup.add(pin);
+    });
+
+    // 7. Demographics Density Overlays
+    DELHI_MOBILITY_ZONES.forEach((z) => {
+      const x = (z.centerCoordinates[1] - 77.2197) * 160;
+      const zPos = -(z.centerCoordinates[0] - 28.6328) * 160;
+      const isUltraDense = z.residentPopulationThousands > 2500;
+      const color = isUltraDense ? 0xb84c32 : z.residentPopulationThousands > 1500 ? 0xc89b53 : 0xd9cebe;
+      const disc = new THREE.Mesh(
+        new THREE.CircleGeometry(5.5, 18),
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.25, side: THREE.DoubleSide })
+      );
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.set(x, 0.02, zPos);
+      demographicsGroup.add(disc);
+    });
+
+    // Initialize layer group visibilities
+    metroGroup.visible = activeLayer === 'all' || activeLayer === 'metro';
+    busesGroup.visible = activeLayer === 'all' || activeLayer === 'buses';
+    interchangesGroup.visible = activeLayer === 'all' || activeLayer === 'interchanges';
+    accessibilityGroup.visible = activeLayer === 'accessibility';
+    demandGroup.visible = activeLayer === 'demand';
+    flowGroup.visible = activeLayer === 'flow';
+    utilizationGroup.visible = activeLayer === 'utilization';
+    disruptionGroup.visible = activeLayer === 'disruption';
+    floodRiskGroup.visible = activeLayer === 'flood_risk';
+    demographicsGroup.visible = activeLayer === 'demographics';
 
     // 7. Architectural Buses (Dual-tone, properly proportioned)
     if (showBuses) {

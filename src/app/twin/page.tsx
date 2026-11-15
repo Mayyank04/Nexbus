@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/navigation/Navbar';
-import DelhiCityCanvas from '@/components/3d/DelhiCityCanvas';
+import DelhiCityCanvas, { DigitalTwinLayer } from '@/components/3d/DelhiCityCanvas';
 import {
   DELHI_CORRIDORS,
   DELHI_STOPS,
@@ -32,13 +32,28 @@ import {
   Route,
 } from 'lucide-react';
 
+const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
+  { id: 'all', label: 'All Multimodal', tag: 'OVERVIEW' },
+  { id: 'metro', label: 'Metro Rail', tag: 'DMRC' },
+  { id: 'buses', label: 'Bus Network', tag: 'DTC/DIMTS' },
+  { id: 'interchanges', label: 'Hubs & Terminals', tag: 'TRANSFER' },
+  { id: 'demand', label: 'OD Gravity', tag: 'DEMAND' },
+  { id: 'flow', label: 'Desire Arcs', tag: 'FLOW' },
+  { id: 'utilization', label: 'Corridor Load', tag: 'CAPACITY' },
+  { id: 'accessibility', label: 'Walk Isochrones', tag: 'EQUITY' },
+  { id: 'disruption', label: 'Hazard Beacons', tag: 'INCIDENT' },
+  { id: 'flood_risk', label: 'Yamuna Flood', tag: 'CLIMATE' },
+  { id: 'demographics', label: 'Population', tag: 'CENSUS' },
+];
+
 export default function DigitalTwinPage() {
   const [selectedCorridor, setSelectedCorridor] = useState<TransitCorridor | null>(DELHI_CORRIDORS[0]);
   const [selectedStop, setSelectedStop] = useState<BusStop | null>(null);
   const [currentTimeHour, setCurrentTimeHour] = useState<number>(9);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [showBuses, setShowBuses] = useState<boolean>(true);
-  const [activeLayer, setActiveLayer] = useState<'volume' | 'crowding' | 'speed' | 'routes' | 'stops'>('volume');
+  const [activeLayer, setActiveLayer] = useState<DigitalTwinLayer>('all');
+  const [viewMode, setViewMode] = useState<'3D' | '2D'>('3D');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showDeepTelemetry, setShowDeepTelemetry] = useState<boolean>(false);
 
@@ -108,7 +123,7 @@ export default function DigitalTwinPage() {
       <Navbar />
 
       {/* =========================================================================
-          TOP: CLEAR TITLE & SELECTED GEOGRAPHIC AREA
+          TOP: CLEAR TITLE, SELECTED GEOGRAPHIC AREA & VIEW TOGGLES
          ========================================================================= */}
       <div className="bg-surface-white/95 border-b border-divider px-6 py-2.5 flex items-center justify-between text-xs z-30 shrink-0">
         <div className="flex items-center space-x-3">
@@ -122,10 +137,35 @@ export default function DigitalTwinPage() {
         </div>
 
         <div className="flex items-center space-x-4 font-mono text-[11px]">
+          <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
+            <button
+              onClick={() => setViewMode('3D')}
+              className={`px-2 py-0.5 font-mono text-[10px] transition-colors ${
+                viewMode === '3D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
+              }`}
+            >
+              3D ISOMETRIC
+            </button>
+            <button
+              onClick={() => setViewMode('2D')}
+              className={`px-2 py-0.5 font-mono text-[10px] transition-colors ${
+                viewMode === '2D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
+              }`}
+            >
+              2D NADIR
+            </button>
+          </div>
+          <span className="text-divider">|</span>
           <span className="text-ink-muted">LAYER: <strong className="text-terracotta uppercase">{activeLayer}</strong></span>
           <span className="text-divider">|</span>
           <span className="text-ink-muted">TIME: <strong className="text-ink">{currentTimeHour.toString().padStart(2, '0')}:00 IST</strong></span>
         </div>
+      </div>
+
+      {/* Advisory & Analytical Integrity Notice */}
+      <div className="px-6 py-1 bg-amber-500/10 border-b border-amber-500/20 text-[10px] font-mono text-amber-900 flex items-center justify-between z-20">
+        <span>▲ ANALYTICAL DIGITAL TWIN — SIMULATED / ESTIMATED / OBSERVED VISUALIZATION • READ-ONLY + PASSIVE + ADVISORY</span>
+        <span className="uppercase text-[9px] text-amber-800">NO PHYSICAL ACTUATION • PASSIVE TWIN</span>
       </div>
 
       {/* Main Digital Twin Workbench */}
@@ -136,28 +176,27 @@ export default function DigitalTwinPage() {
         <aside className="w-full lg:w-76 bg-ivory/95 border-b lg:border-b-0 lg:border-r border-divider flex flex-col z-20 shrink-0 h-auto lg:h-full overflow-y-auto">
           {/* Layer Selector */}
           <div className="p-4 border-b border-divider bg-parchment/30 space-y-2.5">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              NETWORK LAYERS
-            </span>
-            <div className="grid grid-cols-2 gap-1.5">
-              {(
-                [
-                  { id: 'volume', label: 'Volume' },
-                  { id: 'crowding', label: 'Crowding' },
-                  { id: 'speed', label: 'Speed' },
-                  { id: 'routes', label: 'Routes' },
-                ] as const
-              ).map((layer) => (
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                ANALYTICAL LAYERS ({TWIN_LAYERS.length})
+              </span>
+              <span className="font-mono text-[9px] text-terracotta uppercase">{activeLayer}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
+              {TWIN_LAYERS.map((layer) => (
                 <button
                   key={layer.id}
                   onClick={() => setActiveLayer(layer.id)}
-                  className={`font-mono text-xs py-1.5 px-2 text-center border transition-all ${
+                  className={`font-mono text-[11px] py-1.5 px-2 text-left border transition-all flex flex-col justify-between ${
                     activeLayer === layer.id
-                      ? 'border-terracotta bg-terracotta text-surface-white font-medium'
-                      : 'border-divider bg-surface-white text-ink-muted hover:text-ink'
+                      ? 'border-terracotta bg-terracotta text-surface-white font-medium shadow-xs'
+                      : 'border-divider bg-surface-white text-ink-muted hover:text-ink hover:border-stone'
                   }`}
                 >
-                  {layer.label}
+                  <span className="truncate">{layer.label}</span>
+                  <span className={`text-[8px] uppercase tracking-tight ${activeLayer === layer.id ? 'text-surface-white/80' : 'text-stone'}`}>
+                    {layer.tag}
+                  </span>
                 </button>
               ))}
             </div>
@@ -301,6 +340,8 @@ export default function DigitalTwinPage() {
               showBuses={showBuses}
               timeHour={currentTimeHour}
               interactive={true}
+              activeLayer={activeLayer}
+              viewMode={viewMode}
               className="w-full h-full"
             />
 
