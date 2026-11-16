@@ -14,6 +14,7 @@ import {
   CrowdingPredictionResponse,
 } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDigitalTwin } from '@/hooks/useDigitalTwin';
 import {
   Clock,
   Play,
@@ -48,66 +49,33 @@ const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
 ];
 
 export default function DigitalTwinPage() {
-  const [selectedCorridor, setSelectedCorridor] = useState<TransitCorridor | null>(DELHI_CORRIDORS[0]);
-  const [selectedStop, setSelectedStop] = useState<BusStop | null>(null);
-  const [currentTimeHour, setCurrentTimeHour] = useState<number>(9);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [showBuses, setShowBuses] = useState<boolean>(true);
-  const [activeLayer, setActiveLayer] = useState<DigitalTwinLayer>('all');
-  const [viewMode, setViewMode] = useState<'3D' | '2D'>('3D');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [showDeepTelemetry, setShowDeepTelemetry] = useState<boolean>(false);
-
-  const [predictionData, setPredictionData] = useState<CrowdingPredictionResponse['prediction'] | null>(null);
-  const [isLoadingPrediction, setIsLoadingPrediction] = useState<boolean>(false);
-  const [observedVehicles, setObservedVehicles] = useState<any[]>([]);
-  const [inspectedVehicle, setInspectedVehicle] = useState<any | null>(null);
-  const [liveFreshnessLag, setLiveFreshnessLag] = useState<number>(14);
-
-  // Playback timer
-  const playTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    fetch('/api/ingestion/observations?limit=16')
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.observations && res.observations.length > 0) {
-          setObservedVehicles(res.observations);
-          setInspectedVehicle(res.observations[0]);
-        }
-        if (res.metrics?.freshnessLagSeconds !== undefined) {
-          setLiveFreshnessLag(res.metrics.freshnessLagSeconds);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (isPlaying) {
-      playTimerRef.current = setInterval(() => {
-        setCurrentTimeHour((prev) => (prev >= 22 ? 6 : prev + 1));
-      }, 1800);
-    } else {
-      if (playTimerRef.current) clearInterval(playTimerRef.current);
-    }
-    return () => {
-      if (playTimerRef.current) clearInterval(playTimerRef.current);
-    };
-  }, [isPlaying]);
-
-  // Fetch prediction when corridor or time changes
-  useEffect(() => {
-    if (!selectedCorridor) return;
-    setIsLoadingPrediction(true);
-    fetchCrowdingPrediction(selectedCorridor.id, currentTimeHour)
-      .then((res) => {
-        if (res && res.prediction) {
-          setPredictionData(res.prediction);
-        }
-        setIsLoadingPrediction(false);
-      })
-      .catch(() => setIsLoadingPrediction(false));
-  }, [selectedCorridor, currentTimeHour]);
+  const {
+    selectedCorridor,
+    setSelectedCorridor,
+    selectedStop,
+    setSelectedStop,
+    currentTimeHour,
+    setCurrentTimeHour,
+    isPlaying,
+    setIsPlaying,
+    togglePlay,
+    showBuses,
+    setShowBuses,
+    activeLayer,
+    setActiveLayer,
+    viewMode,
+    setViewMode,
+    searchQuery,
+    setSearchQuery,
+    showDeepTelemetry,
+    setShowDeepTelemetry,
+    predictionData,
+    isLoadingPrediction,
+    observedVehicles,
+    inspectedVehicle,
+    setInspectedVehicle,
+    liveFreshnessLag,
+  } = useDigitalTwin();
 
   const filteredCorridors = DELHI_CORRIDORS.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

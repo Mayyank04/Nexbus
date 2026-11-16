@@ -1,146 +1,15 @@
 // Typed API Integration Layer for NEXBUS
+export type {
+  ApiResponse,
+  CrowdingPredictionResponse,
+  JourneyPlanSegment,
+  JourneyPlanOption,
+  JourneyPlanResponse,
+  SimulationResultResponse,
+} from '@/types';
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+import type { CrowdingPredictionResponse, JourneyPlanResponse, SimulationResultResponse } from '@/types';
 
-export interface CrowdingPredictionResponse {
-  success: boolean;
-  corridorId: string;
-  corridorName: string;
-  targetHour: string;
-  date: string;
-  prediction: {
-    loadPercentage: number;
-    severity: 'low' | 'moderate' | 'high' | 'critical';
-    confidenceScore: number;
-    predictedPassengersPerHour: number;
-    bounds: {
-      ci80: [number, number];
-      ci95: [number, number];
-    };
-    historicalBaseline: {
-      meanLoadPercentage: number;
-      variancePercentagePoints: number;
-    };
-  };
-  inferenceDetails: {
-    modelArchitecture: string;
-    leadTimeMinutes: number;
-    sensorInputsCount: number;
-    trainingSamples: string;
-  };
-}
-
-export interface JourneyPlanSegment {
-  type: 'walk' | 'bus' | 'transfer';
-  title: string;
-  detail: string;
-  durationMin: number;
-  corridorId?: string;
-  fleetType?: string;
-}
-
-export interface JourneyPlanOption {
-  id: string;
-  type: 'FASTEST' | 'BALANCED' | 'COMFORT FIRST';
-  tag: string;
-  routeName: string;
-  routeCode: string;
-  durationMin: number;
-  transfers: number;
-  departureTime: string;
-  arrivalTime: string;
-  crowding: 'Low' | 'Moderate' | 'High';
-  crowdingScore: number;
-  confidence: number;
-  seatProbability: string;
-  recommendationReason: string;
-  segments: JourneyPlanSegment[];
-}
-
-export interface JourneyPlanResponse {
-  success: boolean;
-  query: {
-    origin: string;
-    originId: string;
-    destination: string;
-    destinationId: string;
-    date: string;
-    time: string;
-    distanceKm: number;
-  };
-  plans: JourneyPlanOption[];
-  metadata: {
-    routingAlgorithm: string;
-    paretoFrontier: string[];
-    realTimeDisruptionFactored: boolean;
-  };
-}
-
-export interface SimulationResultResponse {
-  success: boolean;
-  scenario: {
-    corridorId: string;
-    corridorName: string;
-    interventions: {
-      additionalElectricBuses: number;
-      targetHeadwayMinutes: number;
-      transitSignalPriorityEnabled: boolean;
-      timeWindow: string;
-    };
-    baseline: {
-      headwayMinutes: number;
-      averageWaitTimeMinutes: number;
-      passengerOccupancyFactor: number;
-      passengerLoadPercentage: number;
-      unallocatedDemandPaxPerHour: number;
-      hourlyCapacityPax: number;
-    };
-    simulated: {
-      headwayMinutes: number;
-      averageWaitTimeMinutes: number;
-      passengerOccupancyFactor: number;
-      passengerLoadPercentage: number;
-      unallocatedDemandPaxPerHour: number;
-      hourlyCapacityPax: number;
-    };
-    deltas: {
-      waitTimeDeltaPct: number;
-      crowdingReliefPoints: number;
-      unallocatedDemandReductionPct: number;
-      capacityIncreasePaxPerHour: number;
-    };
-    environmentalImpact: {
-      monthlyCo2OffsetTons: number;
-      monthlyNoxOffsetKg: number;
-      dieselCngReplacedKmDaily: number;
-    };
-    affectedCorridors: {
-      name: string;
-      spilloverReliefPct: number;
-    }[];
-    governingEquations?: string[];
-    sensitivityAnalysis?: {
-      byElasticity: {
-        elasticity: number;
-        projectedInducedDemandPct: number;
-        projectedOccupancyFactor: number;
-        projectedOccupancyPercentage: number;
-      }[];
-      byFleetAvailability: {
-        depotAvailabilityRate: number;
-        activeBusesCount: number;
-        addedCapacityPaxPerHour: number;
-        monthlyCo2OffsetTons: number;
-      }[];
-    };
-    modelAssumptions: string[];
-    uncertaintyBoundPct: number;
-  };
-}
 
 // Client API Helper functions
 export async function fetchCrowdingPrediction(

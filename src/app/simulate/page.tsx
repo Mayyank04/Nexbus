@@ -28,70 +28,32 @@ import {
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSimulation } from '@/hooks/useSimulation';
 
 export default function SimulationLabPage() {
-  const [activeTab, setActiveTab] = useState<'corridor_counterfactual' | 'institutional_interventions'>('corridor_counterfactual');
-  const [selectedCorridorId, setSelectedCorridorId] = useState<string>('corridor-ring-road');
-  const [additionalBuses, setAdditionalBuses] = useState<number>(12);
-  const [targetHeadway, setTargetHeadway] = useState<number>(6); // minutes
-  const [signalPriority, setSignalPriority] = useState<boolean>(true);
-  const [timeWindow, setTimeWindow] = useState<string>('evening_peak');
-
-  const [isSimulating, setIsSimulating] = useState<boolean>(false);
-  const [simulationData, setSimulationData] = useState<SimulationResultResponse['scenario'] | null>(null);
-
-  // Phase 10 Institutional Scenario Planning State
-  const [scenarioReport, setScenarioReport] = useState<any | null>(null);
-  const [selectedInterventionIds, setSelectedInterventionIds] = useState<string[]>([
-    'intervention-brt-vikas-marg',
-    'intervention-skywalk-sarai-kale-khan',
-    'intervention-headway-synchronization',
-    'intervention-feeder-fleet-periphery',
-  ]);
-  const [isLoadingScenarios, setIsLoadingScenarios] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsLoadingScenarios(true);
-    fetch(`/api/simulation/scenarios?interventions=${selectedInterventionIds.join(',')}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res && res.report) {
-          setScenarioReport(res.report);
-        }
-        setIsLoadingScenarios(false);
-      })
-      .catch(() => setIsLoadingScenarios(false));
-  }, [selectedInterventionIds]);
-
-  const selectedCorridor =
-    DELHI_CORRIDORS.find((c) => c.id === selectedCorridorId) || DELHI_CORRIDORS[0];
-
-  const handleRunSimulation = async () => {
-    setIsSimulating(true);
-    const result = await runSimulationEvaluation(
-      selectedCorridorId,
-      additionalBuses,
-      targetHeadway,
-      signalPriority
-    );
-    if (result && result.scenario) {
-      setSimulationData(result.scenario);
-    }
-    setIsSimulating(false);
-  };
-
-  useEffect(() => {
-    handleRunSimulation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCorridorId]);
-
-  const handleReset = () => {
-    setAdditionalBuses(12);
-    setTargetHeadway(6);
-    setSignalPriority(true);
-    setTimeWindow('evening_peak');
-    handleRunSimulation();
-  };
+  const {
+    activeTab,
+    setActiveTab,
+    selectedCorridorId,
+    setSelectedCorridorId,
+    selectedCorridor,
+    additionalBuses,
+    setAdditionalBuses,
+    targetHeadway,
+    setTargetHeadway,
+    signalPriority,
+    setSignalPriority,
+    timeWindow,
+    setTimeWindow,
+    isSimulating,
+    simulationData,
+    runSimulation: handleRunSimulation,
+    resetParameters: handleReset,
+    scenarioReport,
+    selectedInterventionIds,
+    setSelectedInterventionIds,
+    isLoadingScenarios,
+  } = useSimulation();
 
   return (
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">

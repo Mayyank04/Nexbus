@@ -26,44 +26,29 @@ import { StopAutocomplete } from '@/components/ui/stop-autocomplete';
 import { Magnetic } from '@/components/ui/magnetic';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import { MultimodalJourneyPlan } from '@/lib/multimodal/journeyEngine';
+import { useMultimodalPlanner } from '@/hooks/useMultimodalPlanner';
 
 export default function JourneyPlannerPage() {
-  const [originStop, setOriginStop] = useState<string>('stop-aiims');
-  const [destinationStop, setDestinationStop] = useState<string>('stop-cp-regal');
-  const [preference, setPreference] = useState<'ALL' | 'FASTEST' | 'LEAST_TRANSFERS' | 'BUS_ONLY'>('ALL');
-  const [requireStepFree, setRequireStepFree] = useState<boolean>(false);
-  const [commuterProfile, setCommuterProfile] = useState<'MOHUA' | 'COST_SENSITIVE' | 'EXPRESS'>('MOHUA');
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [multimodalPlans, setMultimodalPlans] = useState<MultimodalJourneyPlan[]>([]);
-  const [selectedPlanId, setSelectedPlanId] = useState<string>('');
-  const [hasError, setHasError] = useState<boolean>(false);
-
-  const handleFetchPlans = async () => {
-    setIsLoading(true);
-    setHasError(false);
-    try {
-      const prefParam = preference === 'ALL' ? undefined : preference;
-      const res = await fetchMultimodalJourneyPlans(originStop, destinationStop, prefParam, requireStepFree);
-      if (res && res.plans && res.plans.length > 0) {
-        setMultimodalPlans(res.plans);
-        setSelectedPlanId(res.plans[0].id);
-      } else {
-        setMultimodalPlans([]);
-        setHasError(true);
-      }
-    } catch {
-      setHasError(true);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    handleFetchPlans();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [originStop, destinationStop, preference, requireStepFree]);
-
-  const activePlan = multimodalPlans.find((p) => p.id === selectedPlanId) || multimodalPlans[0];
+  const {
+    originStop,
+    setOriginStop,
+    destinationStop,
+    setDestinationStop,
+    preference,
+    setPreference,
+    requireStepFree,
+    setRequireStepFree,
+    commuterProfile,
+    setCommuterProfile,
+    isLoading,
+    multimodalPlans,
+    selectedPlanId,
+    setSelectedPlanId,
+    activePlan,
+    hasError,
+    fetchPlans: handleFetchPlans,
+    swapStops,
+  } = useMultimodalPlanner();
 
   return (
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
@@ -101,11 +86,7 @@ export default function JourneyPlannerPage() {
             {/* Direction Switch */}
             <div className="md:col-span-2 flex justify-center pt-4">
               <button
-                onClick={() => {
-                  const temp = originStop;
-                  setOriginStop(destinationStop);
-                  setDestinationStop(temp);
-                }}
+                onClick={swapStops}
                 className="w-10 h-10 rounded-full border border-divider bg-ivory hover:border-terracotta flex items-center justify-center text-ink-muted hover:text-terracotta transition-colors shadow-sm"
                 title="Swap origin and destination"
               >
