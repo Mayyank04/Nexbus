@@ -1145,16 +1145,16 @@ export default function DelhiCityCanvas({
         <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
       ) : (
         /* WebGL Architectural Blueprint Fallback */
-        <div className="w-full h-full flex flex-col items-center justify-center bg-parchment p-8 text-ink">
-          <div className="max-w-md border border-divider p-6 bg-ivory shadow-sm">
-            <span className="font-mono text-xs tracking-widest text-terracotta uppercase">
+        <div className="w-full h-full flex flex-col items-center justify-center bg-parchment p-4 sm:p-8 text-ink">
+          <div className="max-w-md w-full border border-divider p-4 sm:p-6 bg-ivory shadow-sm">
+            <span className="font-mono text-[11px] tracking-widest text-terracotta uppercase">
               Cartographic Projection / 2D Vector Fallback
             </span>
             <h3 className="font-serif text-2xl mt-2 mb-3">Delhi Metropolitan Spatial Model</h3>
             <p className="text-sm text-ink-muted leading-relaxed mb-4">
               Hardware WebGL acceleration unavailable. Rendering vector transit topology for Central, South, and Ring Road corridors.
             </p>
-            <div className="aspect-[4/3] bg-parchment/60 border border-divider/60 relative flex items-center justify-center">
+            <div className="aspect-[4/3] bg-parchment/40 relative flex items-center justify-center mt-3">
               <svg className="w-full h-full p-4" viewBox="0 0 400 300">
                 <circle cx="200" cy="150" r="110" fill="none" stroke="#A69A89" strokeWidth="1.5" strokeDasharray="4 4" />
                 <circle cx="200" cy="150" r="60" fill="none" stroke="#24211D" strokeWidth="2" />

@@ -110,7 +110,7 @@ export function StopAutocomplete({
 
       {/* Autocomplete Dropdown List */}
       {isOpen && (
-        <div className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface-white border border-divider shadow-lg divide-y divide-divider/40">
+        <div className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-surface-white border border-divider shadow-sm divide-y divide-divider/40">
           {filteredStops.length === 0 ? (
             <div className="p-3 text-center font-mono text-xs text-ink-muted">
               No matching transit stops found

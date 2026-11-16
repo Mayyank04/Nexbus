@@ -24,7 +24,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NEXBUS — Delhi Urban Mobility Intelligence",
+  title: "NEXBUS: Delhi Urban Mobility Intelligence",
   description:
     "An editorial digital twin and predictive transit intelligence platform built around a living architectural model of Delhi.",
 };

@@ -12,7 +12,7 @@
   --color-ink: #1A1815;
   --color-ink-secondary: #4A443C;
   --color-ink-muted: #635B50;
-  --color-terracotta: #B84C32;
+  --color-terracotta: #B0432B;
   --color-terracotta-dark: #963B25;
   --color-terracotta-light: #F6EDE8;
   --color-stone: #8C8275;
@@ -44,21 +44,23 @@ body {
   overflow-x: hidden;
 }
 
-/* Subtle architectural survey grid grain */
-.bg-grain {
-  background-image: radial-gradient(rgba(26, 24, 21, 0.04) 1px, transparent 0);
-  background-size: 24px 24px;
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 /* Editorial selection */
 ::selection {
-  background-color: #B84C32;
+  background-color: #B0432B;
   color: #FCFAF6;
 }
 
 /* Accessible focus ring styling */
 :focus-visible {
-  outline: 2px solid #B84C32;
+  outline: 2px solid #B0432B;
   outline-offset: 2px;
 }
 

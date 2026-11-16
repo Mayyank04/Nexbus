@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HydroNet Aargau — Gewässerqualität Telemetrie</title>
+  <meta name="site-kind" content="service">
+  <meta name="description" content="Offizielles Telemetrie- und Überwachungsportal für Fluss- und Grundwasserqualität des Kantons Aargau.">
+  <style>
+    :root {
+      --color-ink: #0F1E2E;
+      --color-ink-muted: #4B5E71;
+      --color-canvas: #F4F7FA;
+      --color-surface: #FFFFFF;
+      --color-surface-subtle: #E8EEF5;
+      --color-border: #D1DCE5;
+      --color-primary: #0A5C8A;
+      --color-primary-hover: #07476B;
+      --color-status-ok: #166534;
+      --color-status-ok-bg: #DCFCE7;
+      --color-status-warn: #9A3412;
+      --color-status-warn-bg: #FFEDD5;
+      --color-status-alert: #991B1B;
+      --color-status-alert-bg: #FEE2E2;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 48px;
+    }
+
+    p {
+      text-wrap: pretty;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 16px;
+      background: var(--color-ink);
+      color: var(--color-surface);
+      padding: 8px 16px;
+      z-index: 100;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    header {
+      background-color: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 24px;
+    }
+
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .canton-badge {
+      background-color: var(--color-ink);
+      color: var(--color-surface);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--color-ink);
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--color-ink-muted);
+    }
+
+    .header-telemetry {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-status-ok);
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-status-ok);
+    }
+
+    .synthetic-banner {
+      background-color: #FEF3C7;
+      border-bottom: 1px solid #F59E0B;
+      padding: 8px 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #92400E;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+    }
+
+    .toolbar-panel {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .station-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .station-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 14px;
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-ink-muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .station-btn:hover {
+      color: var(--color-ink);
+      border-color: var(--color-ink);
+    }
+
+    .station-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      border-color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .state-toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .state-toggle-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-ink-muted);
+      font-family: var(--font-mono);
+    }
+
+    .state-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 6px 10px;
+      border: 1px solid var(--color-border);
+      background-color: var(--color-canvas);
+      color: var(--color-ink);
+      cursor: pointer;
+    }
+
+    .state-btn:hover {
+      background-color: var(--color-surface-subtle);
+    }
+
+    /* Metric Summary Tiles */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-tile {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .metric-label-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .metric-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-param {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-ink-muted);
+    }
+
+    .metric-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .metric-number {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--color-ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-unit {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--color-ink-muted);
+    }
+
+    .metric-status-tag {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 3px 8px;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .tag-ok {
+      background-color: var(--color-status-ok-bg);
+      color: var(--color-status-ok);
+      border: 1px solid rgba(22, 101, 52, 0.2);
+    }
+
+    .tag-warn {
+      background-color: var(--color-status-warn-bg);
+      color: var(--color-status-warn);
+      border: 1px solid rgba(154, 52, 18, 0.2);
+    }
+
+    .tag-alert {
+      background-color: var(--color-status-alert-bg);
+      color: var(--color-status-alert);
+      border: 1px solid rgba(153, 27, 27, 0.2);
+    }
+
+    /* Asymmetric Content Split */
+    .content-layout {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-panel {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: 20px 24px;
+    }
+
+    .panel-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    .panel-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-ink-muted);
+    }
+
+    /* Data Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-ink-muted);
+      border-bottom: 2px solid var(--color-border);
+      padding: 10px 12px;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+
+    .num-col {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .param-title {
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    .param-desc {
+      font-size: 12px;
+      color: var(--color-ink-muted);
+      display: block;
+    }
+
+    /* Trend Chart Panel */
+    .trend-svg {
+      width: 100%;
+      height: 220px;
+      margin-top: 12px;
+    }
+
+    .filter-input-group {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-input {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid var(--color-border);
+      background-color: var(--color-surface);
+      color: var(--color-ink);
+      flex: 1;
+    }
+
+    .filter-input:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Fallback and Empty States */
+    .state-card {
+      padding: 48px 24px;
+      text-align: center;
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+    }
+
+    .state-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-bottom: 8px;
+    }
+
+    .state-card-desc {
+      font-size: 13px;
+      color: var(--color-ink-muted);
+      max-width: 420px;
+      margin: 0 auto 16px;
+    }
+
+    .action-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 16px;
+      background-color: var(--color-primary);
+      color: var(--color-surface);
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .action-btn:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .error-banner {
+      background-color: var(--color-status-alert-bg);
+      border: 1px solid var(--color-status-alert);
+      color: var(--color-status-alert);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+    }
+
+    .loading-pulse {
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    footer {
+      max-width: 1280px;
+      margin: 48px auto 0;
+      padding: 24px;
+      border-top: 1px solid var(--color-border);
+      font-size: 12px;
+      color: var(--color-ink-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
+  <div class="synthetic-banner" role="status">
+    ▲ SYNTHETISCHE TESTDATEN — AFU AARGAU HYDRO-TELEMETRIE MODELL (GSchG 814.20) • NUR ZU PRÜFUNGSZWECKEN
+  </div>
+
+  <header>
+    <div class="header-content">
+      <div class="brand-group">
+        <span class="canton-badge">KT. AG</span>
+        <div>
+          <h1 class="brand-title">HydroNet Aargau</h1>
+          <span class="brand-subtitle">Amt für Umwelt (Abteilung Oberflächengewässer & Hydrologie)</span>
+        </div>
+      </div>
+
+      <div class="header-telemetry">
+        <span class="status-indicator">
+          <span class="status-dot"></span>
+          <span>4 / 4 STATIONEN AKTIV</span>
+        </span>
+        <span style="color: var(--color-border);">|</span>
+        <span style="color: var(--color-ink-muted);">LETZTE MESSUNG: 09:45:00 UTC+1</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Active Station and Diagnostic State Switcher -->
+    <div class="toolbar-panel">
+      <div class="station-nav" role="tablist" aria-label="Messstationen">
+        <button class="station-btn active" role="tab" aria-selected="true" id="tab-brugg" onclick="selectStation('brugg')">
+          01 / Brugg (Aare)
+        </button>
+        <button class="station-btn" role="tab" aria-selected="false" id="tab-rheinfelden" onclick="selectStation('rheinfelden')">
+          02 / Rheinfelden (Rhein)
+        </button>
+        <button class="station-btn" role="tab" aria-selected="false" id="tab-mellingen" onclick="selectStation('mellingen')">
+          03 / Mellingen (Reuss)
+        </button>
+      </div>
+
+      <div class="state-toggle-group">
+        <span class="state-toggle-label">STATUS-SIMULATION:</span>
+        <button class="state-btn" onclick="toggleSimState('normal')">Normal</button>
+        <button class="state-btn" onclick="toggleSimState('loading')">Laden</button>
+        <button class="state-btn" onclick="toggleSimState('error')">Fehler</button>
+        <button class="state-btn" onclick="toggleSimState('empty')">Leer</button>
+      </div>
+    </div>
+
+    <!-- Error State Alert Banner (Conditionally Shown) -->
+    <div id="error-container" class="error-banner" style="display: none;" role="alert">
+      <div>
+        <strong>WARNUNG TELEMETRIE-UNTERBRUCH (CODE: ERR-AFU-704):</strong>
+        Signalverbindung zu Station 01 Brugg unterbrochen. Letzter gültiger Datensatz vor 18 Minuten.
+      </div>
+      <button class="action-btn" onclick="toggleSimState('normal')">Sensor neu abfragen</button>
+    </div>
+
+    <!-- Metric Tiles Summary -->
+    <div id="metric-tiles-container" class="metric-grid">
+      <div class="metric-tile">
+        <div class="metric-label-group">
+          <span class="metric-name">Abflussmenge</span>
+          <span class="metric-param">Q [m³/s]</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-number">314.8</span>
+          <span class="metric-unit">m³/s</span>
+        </div>
+        <span class="metric-status-tag tag-ok">Regulärer Mittelabfluss</span>
+      </div>
+
+      <div class="metric-tile">
+        <div class="metric-label-group">
+          <span class="metric-name">Wassertemperatur</span>
+          <span class="metric-param">T [°C]</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-number">13.2</span>
+          <span class="metric-unit">°C</span>
+        </div>
+        <span class="metric-status-tag tag-ok">Normal (GSchV Grenzwert: 25.0 °C)</span>
+      </div>
+
+      <div class="metric-tile">
+        <div class="metric-label-group">
+          <span class="metric-name">Gelöster Sauerstoff</span>
+          <span class="metric-param">O₂ [mg/L]</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-number">10.4</span>
+          <span class="metric-unit">mg/L</span>
+        </div>
+        <span class="metric-status-tag tag-ok">Gute Sättigung (> 9.0 mg/L)</span>
+      </div>
+
+      <div class="metric-tile">
+        <div class="metric-label-group">
+          <span class="metric-name">Trübung</span>
+          <span class="metric-param">FNU</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-number">2.1</span>
+          <span class="metric-unit">FNU</span>
+        </div>
+        <span class="metric-status-tag tag-ok">Klares Wasser (< 5.0 FNU)</span>
+      </div>
+    </div>
+
+    <!-- Loading State Viewport -->
+    <div id="loading-container" class="state-card loading-pulse" style="display: none;">
+      <h2 class="state-card-title">Telemetriedaten werden synchronisiert...</h2>
+      <p class="state-card-desc">Frage aktuelle Messwerte der kantonalen Pegel- und Sondensysteme ab. Bitte warten.</p>
+    </div>
+
+    <!-- Empty State Viewport -->
+    <div id="empty-container" class="state-card" style="display: none;">
+      <h2 class="state-card-title">Keine Messreihen gefunden</h2>
+      <p class="state-card-desc">Für das gewählte Filterkriterium oder den angegebenen Zeitraum liegen keine Sensorregistrierungen vor.</p>
+      <button class="action-btn" onclick="toggleSimState('normal')">Filter zurücksetzen</button>
+    </div>
+
+    <!-- Main Content Layout (Table & Trend Visualization) -->
+    <div id="content-layout-container" class="content-layout">
+      <!-- Left Column: Statutory Compliance Table -->
+      <section class="card-panel" aria-labelledby="table-heading">
+        <div class="panel-heading-row">
+          <h2 id="table-heading" class="panel-title">Gesetzliche Parameter & Grenzwerte (GSchV)</h2>
+          <span class="panel-meta">STANDORT: 47°29'08"N, 8°12'26"E</span>
+        </div>
+
+        <div class="filter-input-group">
+          <input
+            type="search"
+            id="param-filter"
+            class="filter-input"
+            placeholder="Parameter filtern (z.B. Sauerstoff, Temperatur)..."
+            aria-label="Wasserparameter filtern"
+            oninput="filterTable(this.value)"
+          >
+        </div>
+
+        <div class="table-container">
+          <table id="parameters-table">
+            <caption>Übersicht der kontinuierlich überwachten physikalischen und chemischen Gewässerindikatoren</caption>
+            <thead>
+              <tr>
+                <th scope="col">Messgrösse & Prüfmethode</th>
+                <th scope="col" class="num-col">Aktuell</th>
+                <th scope="col" class="num-col">Grenzbereich</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="param-title">Wassertemperatur</span>
+                  <span class="param-desc">Platin-Widerstandssonde PT100</span>
+                </td>
+                <td class="num-col">13.2 °C</td>
+                <td class="num-col">&le; 25.0 °C</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-title">Gelöster Sauerstoff (O₂)</span>
+                  <span class="param-desc">Optische Fluoreszenz-Lumineszenz</span>
+                </td>
+                <td class="num-col">10.4 mg/L</td>
+                <td class="num-col">&ge; 7.0 mg/L</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-title">Elektrische Leitfähigkeit</span>
+                  <span class="param-desc">4-Elektroden-Messzelle bei 20 °C</span>
+                </td>
+                <td class="num-col">342 &mu;S/cm</td>
+                <td class="num-col">200–600 &mu;S/cm</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-title">pH-Wert</span>
+                  <span class="param-desc">Glaselektroden-Potentiometrie</span>
+                </td>
+                <td class="num-col">8.12</td>
+                <td class="num-col">6.50–8.50</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-title">Trübung</span>
+                  <span class="param-desc">90° Streulichtmessung (ISO 7027)</span>
+                </td>
+                <td class="num-col">2.10 FNU</td>
+                <td class="num-col">&le; 10.0 FNU</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="param-title">Ammonium-Stickstoff (NH₄-N)</span>
+                  <span class="param-desc">Gassensitive Elektrode</span>
+                </td>
+                <td class="num-col">0.03 mg/L</td>
+                <td class="num-col">&le; 0.20 mg/L</td>
+                <td><span class="metric-status-tag tag-ok">Konform</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Right Column: Trend Visualization & Cartographic Telemetry -->
+      <section class="card-panel" aria-labelledby="trend-heading">
+        <div class="panel-heading-row">
+          <h2 id="trend-heading" class="panel-title">24-Stunden Ganglinie</h2>
+          <span class="panel-meta">PARAMETER: ABFLUSS Q [m³/s]</span>
+        </div>
+
+        <p style="font-size: 13px; color: var(--color-ink-muted); margin-bottom: 12px;">
+          Kontinuierlicher Abflussverlauf der Aare am Pegel Brugg. Dargestellt ist der hydrodynamische Durchflussverlauf der vergangenen 24 Stunden.
+        </p>
+
+        <!-- SVG Vector Trend Chart -->
+        <svg class="trend-svg" viewBox="0 0 500 220" role="img" aria-label="Ganglinie des Aare-Abflusses über 24 Stunden">
+          <!-- Background Grid Lines -->
+          <line x1="50" y1="20" x2="480" y2="20" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3" />
+          <line x1="50" y1="60" x2="480" y2="60" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3" />
+          <line x1="50" y1="100" x2="480" y2="100" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3" />
+          <line x1="50" y1="140" x2="480" y2="140" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3" />
+          <line x1="50" y1="180" x2="480" y2="180" stroke="#CBD5E1" stroke-width="1" />
+
+          <!-- Axis Y Labels -->
+          <text x="42" y="24" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="end">400</text>
+          <text x="42" y="64" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="end">350</text>
+          <text x="42" y="104" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="end">300</text>
+          <text x="42" y="144" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="end">250</text>
+          <text x="42" y="184" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="end">200</text>
+
+          <!-- Stat Area -->
+          <polygon
+            points="50,180 50,110 100,105 160,95 220,100 280,88 340,92 400,82 460,85 480,84 480,180"
+            fill="rgba(10, 92, 138, 0.12)"
+          />
+
+          <!-- Sparkline Path -->
+          <polyline
+            points="50,110 100,105 160,95 220,100 280,88 340,92 400,82 460,85 480,84"
+            fill="none"
+            stroke="#0A5C8A"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- Current Point Pin -->
+          <circle cx="480" cy="84" r="5" fill="#0A5C8A" stroke="#FFFFFF" stroke-width="2" />
+
+          <!-- Axis X Time Labels -->
+          <text x="50" y="202" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="middle">10:00</text>
+          <text x="160" y="202" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="middle">16:00</text>
+          <text x="280" y="202" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="middle">22:00</text>
+          <text x="400" y="202" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="middle">04:00</text>
+          <text x="480" y="202" font-family="monospace" font-size="12" fill="#4B5E71" text-anchor="middle">Jetzt</text>
+        </svg>
+
+        <!-- Hydrological Notes -->
+        <div style="margin-top: 16px; padding: 12px; background-color: var(--color-canvas); border: 1px solid var(--color-border); font-size: 12px; line-height: 1.5;">
+          <strong>HYDROMETRISCHE BEOBACHTUNG:</strong> Die Pegelstände entlang der unteren Aare bewegen sich im stabilen Mittelwasserbereich (MQ). Keine Hochwasserwarnstufen aktiv.
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div>
+      <strong>Kanton Aargau — Departement Bau, Verkehr und Umwelt (BVU)</strong><br>
+      Amt für Umwelt (AfU) • Entfelderstrasse 22, 5001 Aarau
+    </div>
+    <div style="text-align: right;">
+      <span>Rechtsgrundlagen: GSchG (SR 814.20) • GSchV (SR 814.201)</span><br>
+      <span>Datenbereitstellung: Open Government Data (OGD) Kanton Aargau</span>
+    </div>
+  </footer>
+
+  <script>
+    function selectStation(stationKey) {
+      document.querySelectorAll('.station-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+      const activeBtn = document.getElementById('tab-' + stationKey);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-selected', 'true');
+      }
+    }
+
+    function toggleSimState(state) {
+      const content = document.getElementById('content-layout-container');
+      const metrics = document.getElementById('metric-tiles-container');
+      const loading = document.getElementById('loading-container');
+      const empty = document.getElementById('empty-container');
+      const error = document.getElementById('error-container');
+
+      // Reset
+      content.style.display = 'grid';
+      metrics.style.display = 'grid';
+      loading.style.display = 'none';
+      empty.style.display = 'none';
+      error.style.display = 'none';
+
+      if (state === 'loading') {
+        content.style.display = 'none';
+        metrics.style.display = 'none';
+        loading.style.display = 'block';
+      } else if (state === 'empty') {
+        content.style.display = 'none';
+        empty.style.display = 'block';
+      } else if (state === 'error') {
+        error.style.display = 'flex';
+      }
+    }
+
+    function filterTable(query) {
+      const filter = query.toLowerCase();
+      const rows = document.querySelectorAll('#parameters-table tbody tr');
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(filter)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      if (visibleCount === 0 && filter.length > 0) {
+        toggleSimState('empty');
+      } else if (document.getElementById('empty-container').style.display === 'block') {
+        toggleSimState('normal');
+      }
+    }
+  </script>
+</body>
+</html>

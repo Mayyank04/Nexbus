@@ -2,24 +2,11 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import Footer from '@/components/navigation/Footer';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { Magnetic } from '@/components/ui/magnetic';
-import {
-  Database,
-  GitBranch,
-  Cpu,
-  Layers,
-  ArrowRight,
-  ShieldCheck,
-  Zap,
-  Activity,
-  Sliders,
-  Sparkles,
-  BarChart,
-  Network,
-} from 'lucide-react';
 
 interface MethodStage {
   step: string;
@@ -39,7 +26,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '01',
     name: 'Ticket Data Ingestion',
     category: 'Observed',
-    categoryColor: 'bg-green-100 text-green-800 border-green-300',
+    categoryColor: 'bg-parchment/60 text-ink border-divider',
     headline: 'Continuous Streaming of ETM Electronic Transactions',
     description:
       'Every DTC conductor electronic ticketing machine (ETM) generates encrypted transaction packets upon ticket issuance. Each event logs a monotonic ticket counter, stage code, route ID, fare denomination, and bus registration ID.',
@@ -52,7 +39,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '02',
     name: 'GTFS & Spatial Alignment',
     category: 'Observed',
-    categoryColor: 'bg-green-100 text-green-800 border-green-300',
+    categoryColor: 'bg-parchment/60 text-ink border-divider',
     headline: 'Conflating AVL GPS Beacons to Delhi Street Graph',
     description:
       'Raw GPS pings from onboard telematics units arrive with multipath urban drift (10-30m accuracy). An emission-transition Hidden Markov Model (HMM) snaps erratic pings to Delhi OpenStreetMap road centerlines and scheduled GTFS stop sequences.',
@@ -65,7 +52,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '03',
     name: 'Trip & Journey Reconstruction',
     category: 'Estimated',
-    categoryColor: 'bg-amber-100 text-amber-800 border-amber-300',
+    categoryColor: 'bg-parchment/60 text-ink-secondary border-divider',
     headline: 'Unsupervised Passenger Alighting Inference (Trip Chaining)',
     description:
       'Because DTC buses do not enforce tap-out upon alighting, passenger drop-off locations are unobserved. NEXBUS applies iterative trip chaining: assuming commuter return journeys start where their preceding trip concluded, inferring alighting stops.',
@@ -78,7 +65,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '04',
     name: 'Passenger Load Reconstruction',
     category: 'Estimated',
-    categoryColor: 'bg-amber-100 text-amber-800 border-amber-300',
+    categoryColor: 'bg-parchment/60 text-ink-secondary border-divider',
     headline: 'Cumulative In-Vehicle Occupancy Tracking',
     description:
       'For each individual bus trip along a route, in-vehicle passenger load is tracked sequentially by balancing boarding counts against inferred alighting counts at each consecutive stop node.',
@@ -91,7 +78,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '05',
     name: 'Segment Aggregation & Velocity Profiling',
     category: 'Estimated',
-    categoryColor: 'bg-amber-100 text-amber-800 border-amber-300',
+    categoryColor: 'bg-parchment/60 text-ink-secondary border-divider',
     headline: 'Harmonizing Multi-Trip Corridors into Urban Conduits',
     description:
       'Where multiple routes share common arterial roads (such as Ring Road or Aurobindo Marg), individual vehicle runs are harmonized into unified corridor segments, computing weighted average velocity and punctuality.',
@@ -104,7 +91,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '06',
     name: 'Crowding Prediction (ST-GNN)',
     category: 'Predicted',
-    categoryColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    categoryColor: 'bg-parchment/60 text-ink border-stone/50',
     headline: 'Spatio-Temporal Graph Neural Networks for Future Demand',
     description:
       'A deep neural network models Delhi’s transit stops as nodes and roads as edges. Spatial graph convolutions capture topological spillover, while Gated Recurrent Units (GRUs) predict passenger volume across 15, 30, and 45-minute horizons.',
@@ -117,7 +104,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '07',
     name: 'Confidence Interval Estimation',
     category: 'Predicted',
-    categoryColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    categoryColor: 'bg-parchment/60 text-ink border-stone/50',
     headline: 'Quantifying Uncertainty via Bayesian Calibrated Intervals',
     description:
       'Predictions are never presented as deceptive single numbers. NEXBUS generates 80% and 95% Bayesian credible intervals so dispatchers know whether high load is an expected peak or an anomalous surge.',
@@ -130,7 +117,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '08',
     name: 'Multi-Criteria Journey Optimization',
     category: 'Predicted',
-    categoryColor: 'bg-blue-100 text-blue-800 border-blue-300',
+    categoryColor: 'bg-parchment/60 text-ink border-stone/50',
     headline: 'Pareto-Optimal Routing (Fastest, Balanced, Comfort First)',
     description:
       'Unlike classic Dijkstra routing that treats time in a vacuum, our custom RAPTOR algorithm searches the Pareto frontier across three orthogonal commuter preferences: absolute travel duration, transfer friction, and predicted cabin crowding.',
@@ -143,7 +130,7 @@ const METHODOLOGY_STAGES: MethodStage[] = [
     step: '09',
     name: 'Counterfactual Simulation Lab',
     category: 'Hypothetical',
-    categoryColor: 'bg-purple-100 text-purple-800 border-purple-300',
+    categoryColor: 'bg-parchment/60 text-terracotta border-terracotta/40',
     headline: 'Agent-Based Micro-Simulation of Transit Interventions',
     description:
       'Allows planners to test hypotheticals (e.g. adding 15 electric buses to Ring Road) using an agent-based commuter micro-simulation. Calculates passenger wait-time reduction, mode shift from private vehicles, and avoided CO2 emissions.',
@@ -180,17 +167,17 @@ export default function MethodologyPage() {
 
           {/* Epistemological Tier Legend */}
           <div className="flex flex-wrap items-center gap-2.5 pt-2 font-mono text-xs">
-            <span className="px-2.5 py-1 bg-green-50 text-green-800 border border-green-300">
-              ● OBSERVED (Hardware Sensor Pings)
+            <span className="px-2.5 py-1 bg-parchment/60 text-ink border border-divider">
+              ● OBSERVED (Hardware Telemetry)
             </span>
-            <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-300">
+            <span className="px-2.5 py-1 bg-parchment/60 text-ink-secondary border border-divider">
               ▲ ESTIMATED (Statistical Imputation)
             </span>
-            <span className="px-2.5 py-1 bg-blue-50 text-blue-800 border border-blue-300">
+            <span className="px-2.5 py-1 bg-parchment/60 text-ink border border-stone/50">
               ◆ PREDICTED (Neural Graph Models)
             </span>
-            <span className="px-2.5 py-1 bg-purple-50 text-purple-800 border border-purple-300">
-              ★ HYPOTHETICAL (Counterfactual Sims)
+            <span className="px-2.5 py-1 bg-parchment/60 text-terracotta border border-terracotta/40">
+              ◇ COUNTERFACTUAL (Micro-Simulation)
             </span>
           </div>
         </div>
@@ -203,7 +190,7 @@ export default function MethodologyPage() {
             {/* Left: Step Index List */}
             <div className="lg:col-span-5 space-y-2 border border-[#DED5C8] bg-[#FCFAF6] p-4 shadow-sm">
               <span className="font-mono text-xs uppercase tracking-wider text-ink-muted block mb-3 px-2">
-                PIPELINE STAGES (01 — 09)
+                PIPELINE STAGES (01 / 09)
               </span>
 
               {METHODOLOGY_STAGES.map((stage, idx) => {
@@ -405,6 +392,8 @@ export default function MethodologyPage() {
           </div>
         </ScrollReveal>
       </main>
+
+      <Footer />
     </div>
   );
 }

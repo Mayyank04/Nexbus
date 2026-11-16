@@ -339,7 +339,7 @@ export default function Phase15ResearchValidationPanel() {
       case 'AUTH_REQUIRED':
         return <span className="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">BLOCKED / AUTH REQ</span>;
       case 'SIMULATED':
-        return <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">SIMULATED</span>;
+        return <span className="bg-terracotta/10 text-terracotta border border-terracotta/20 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">SIMULATED</span>;
       case 'UNAVAILABLE':
       default:
         return <span className="bg-slate-500/10 text-slate-400 border border-slate-500/20 px-2 py-0.5 rounded text-[10px] font-mono font-semibold">UNAVAILABLE</span>;
