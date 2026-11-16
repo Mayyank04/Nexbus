@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import Footer from '@/components/navigation/Footer';
 import Link from 'next/link';
-import { ArrowUpRight, Compass, ShieldCheck, Cpu, Terminal, Eye, Layers } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -46,19 +46,19 @@ export default function AboutPage() {
               NEXBUS is built on a radically different tradition:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
-              <div className="border border-divider p-5 sm:p-6 bg-surface-white shadow-sm space-y-2">
-                <h4 className="font-serif text-xl text-ink font-normal">
+              <div className="border border-divider p-5 sm:p-6 bg-surface-white shadow-xs space-y-2">
+                <h3 className="font-serif text-xl text-ink font-normal">
                   Architectural Visualization
-                </h4>
+                </h3>
                 <p className="text-xs text-ink-secondary leading-relaxed">
-                  Treating 3D geometry not as a decorative canvas gimmick, but as an authentic spatial scale model photographed under soft natural sunlight.
+                  3D geometry is an architectural spatial model representing Delhi&apos;s transit topology at scale under natural directional illumination.
                 </p>
               </div>
 
-              <div className="border border-divider p-5 sm:p-6 bg-surface-white shadow-sm space-y-2">
-                <h4 className="font-serif text-xl text-ink font-normal">
+              <div className="border border-divider p-5 sm:p-6 bg-surface-white shadow-xs space-y-2">
+                <h3 className="font-serif text-xl text-ink font-normal">
                   Swiss Editorial Composition
-                </h4>
+                </h3>
                 <p className="text-xs text-ink-secondary leading-relaxed">
                   Deliberate asymmetric typography, generous whitespace, sharp hairline dividers, and disciplined information hierarchy inspired by classic urban monographs.
                 </p>
@@ -157,6 +157,8 @@ export default function AboutPage() {
           </Link>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

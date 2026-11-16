@@ -52,21 +52,15 @@ p {
   text-wrap: pretty;
 }
 
-/* Subtle architectural survey grid grain */
-.bg-grain {
-  background-image: radial-gradient(rgba(26, 24, 21, 0.04) 1px, transparent 0);
-  background-size: 24px 24px;
-}
-
 /* Editorial selection */
 ::selection {
-  background-color: #B84C32;
+  background-color: #B0432B;
   color: #FCFAF6;
 }
 
 /* Accessible focus ring styling */
 :focus-visible {
-  outline: 2px solid #B84C32;
+  outline: 2px solid #B0432B;
   outline-offset: 2px;
 }
 

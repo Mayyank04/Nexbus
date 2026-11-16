@@ -13,6 +13,7 @@ import {
   fetchCrowdingPrediction,
   CrowdingPredictionResponse,
 } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Clock,
   Play,
@@ -347,9 +348,9 @@ export default function DigitalTwinPage() {
 
             {/* In-viewport Coordinates & Live Telemetry HUD */}
             <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
-              <div className="bg-surface-white/95 border border-divider px-3 py-2 backdrop-blur-sm shadow-sm space-y-1">
+              <div className="bg-surface-white border border-divider px-3 py-2 shadow-xs space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-800" />
                   <span className="font-mono text-[11px] uppercase tracking-widest text-ink font-semibold">
                     SHADOW OPERATIONS STREAM
                   </span>
@@ -394,7 +395,7 @@ export default function DigitalTwinPage() {
             </div>
 
             <div className="absolute top-4 right-4 pointer-events-none z-10">
-              <div className="bg-surface-white/90 border border-divider px-3 py-1.5 backdrop-blur-sm shadow-sm text-right space-y-0.5">
+              <div className="bg-surface-white border border-divider px-3 py-1.5 shadow-xs text-right space-y-0.5">
                 <div className="font-mono text-[11px] uppercase tracking-widest text-ink-muted">
                   TIME SLICE & LOAD
                 </div>
@@ -427,7 +428,7 @@ export default function DigitalTwinPage() {
           {/* =========================================================================
               BOTTOM: SIMPLE TIME CONTROLLER & SCRUBBER
              ========================================================================= */}
-          <div className="border-t border-divider bg-surface-white/95 p-3 z-20 backdrop-blur-sm">
+          <div className="border-t border-divider bg-surface-white p-3 z-20">
             <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-3 shrink-0">
                 <button
@@ -508,19 +509,28 @@ export default function DigitalTwinPage() {
               </p>
 
               {/* Load & Occupancy Summary Card */}
-              {predictionData && (
-                <div className="p-4 border border-divider bg-parchment/30 space-y-2">
+              {isLoadingPrediction ? (
+                <div className="p-4 border border-divider bg-surface-white space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-3 w-32" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                  <Skeleton className="h-8 w-24" />
+                  <Skeleton className="h-3 w-40" />
+                </div>
+              ) : predictionData ? (
+                <div className="p-4 border border-divider bg-surface-white space-y-2 shadow-xs">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted">
                       PREDICTED CABIN LOAD
                     </span>
                     <span
-                      className={`font-mono text-[11px] uppercase px-2 py-0.5 ${
+                      className={`font-mono text-[11px] uppercase px-2 py-0.5 border ${
                         predictionData.severity === 'critical'
-                          ? 'bg-red-100 text-red-900 border border-red-300'
+                          ? 'bg-terracotta text-surface-white border-terracotta font-medium'
                           : predictionData.severity === 'high'
-                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                          : 'bg-green-100 text-green-900 border border-green-300'
+                          ? 'bg-terracotta/10 text-terracotta border-terracotta/40 font-medium'
+                          : 'bg-parchment/60 text-ink border-divider font-medium'
                       }`}
                     >
                       {predictionData.severity}
@@ -570,7 +580,7 @@ export default function DigitalTwinPage() {
                     </div>
                   )}
                 </div>
-              )}
+              ) : null}
 
               {/* Key Metrics */}
               <div className="grid grid-cols-2 gap-2.5">

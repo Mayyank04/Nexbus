@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import Footer from '@/components/navigation/Footer';
 import DelhiCityCanvas from '@/components/3d/DelhiCityCanvas';
 import {
   fetchMultimodalJourneyPlans,
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react';
 import { StopAutocomplete } from '@/components/ui/stop-autocomplete';
 import { Magnetic } from '@/components/ui/magnetic';
+import { SkeletonCard } from '@/components/ui/skeleton';
 import { MultimodalJourneyPlan } from '@/lib/multimodal/journeyEngine';
 
 export default function JourneyPlannerPage() {
@@ -230,11 +232,7 @@ export default function JourneyPlannerPage() {
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="p-5 border border-divider bg-surface-white animate-pulse space-y-3">
-                    <div className="h-4 bg-parchment w-1/3" />
-                    <div className="h-6 bg-parchment w-2/3" />
-                    <div className="h-3 bg-parchment w-1/2" />
-                  </div>
+                  <SkeletonCard key={i} />
                 ))}
               </div>
             ) : (
@@ -417,9 +415,9 @@ export default function JourneyPlannerPage() {
 
           {/* Right Column: 3D City Visualization */}
           <div className="lg:col-span-7 border border-divider bg-parchment/20 relative min-h-[580px] flex flex-col justify-between">
-            <div className="p-4 border-b border-divider bg-surface-white/90 backdrop-blur-sm flex items-center justify-between z-10">
+            <div className="p-4 border-b border-divider bg-surface-white flex items-center justify-between z-10">
               <div className="flex items-center space-x-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-terracotta animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
                 <span className="font-mono text-xs text-ink tracking-wider uppercase">
                   3D MULTIMODAL SPATIAL TWIN
                 </span>
@@ -439,7 +437,7 @@ export default function JourneyPlannerPage() {
               />
 
               <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-                <div className="bg-surface-white/95 border border-divider p-4 backdrop-blur-sm shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="bg-surface-white border border-divider p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="font-mono text-xs text-ink">
                     <span className="text-terracotta uppercase font-semibold">SELECTED PLAN: </span>
                     <span>{activePlan?.title || 'Calculating...'}</span>
@@ -453,6 +451,8 @@ export default function JourneyPlannerPage() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/navigation/Navbar';
+import Footer from '@/components/navigation/Footer';
 import DelhiCityCanvas, { CameraPreset } from '@/components/3d/DelhiCityCanvas';
 import { DELHI_CORRIDORS, DELHI_STOPS, TransitCorridor, BusStop } from '@/data/delhiTransitData';
 import {
@@ -34,12 +35,9 @@ export default function HomePage() {
       <Navbar />
 
       {/* =========================================================================
-          HERO SECTION — ARCHITECTURAL SPATIAL INTELLIGENCE EXPERIENCE
+          HERO SECTION: ARCHITECTURAL SPATIAL INTELLIGENCE EXPERIENCE
          ========================================================================= */}
       <section className="relative w-full border-b border-divider min-h-[calc(100vh-4rem)] flex flex-col justify-between overflow-hidden">
-        {/* Subtle architectural grain background */}
-        <div className="absolute inset-0 bg-grain pointer-events-none opacity-40" />
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-6 sm:pt-8 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-grow">
           {/* Left Narrative Composition (45% width on desktop) */}
           <div className="lg:col-span-5 flex flex-col justify-between z-10 py-1">
@@ -176,7 +174,7 @@ export default function HomePage() {
         <div className="border-t border-divider bg-surface-white py-3 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-ink-muted font-mono">
             <div className="flex items-center space-x-3">
-              <span>FIG. 01 — CALIBRATED TRANSIT TOPOLOGY</span>
+              <span>FIG. 01 / CALIBRATED TRANSIT TOPOLOGY</span>
               <span className="text-divider">/</span>
               <span>10,800 SENSOR NODES</span>
             </div>
@@ -191,7 +189,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          01 — ARTERIAL GEOGRAPHY & CORRIDOR MATRIX
+          01: ARTERIAL GEOGRAPHY & CORRIDOR MATRIX
          ========================================================================= */}
       <section className="py-20 border-b border-divider bg-parchment/20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -279,7 +277,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          02 — CORRIDOR TELEMETRY & HOURLY PULSE
+          02: CORRIDOR TELEMETRY & HOURLY PULSE
          ========================================================================= */}
       <section className="py-20 border-b border-divider bg-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -347,7 +345,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          03 — MULTIMODAL ITINERARY PLANNER
+          03: MULTIMODAL ITINERARY PLANNER
          ========================================================================= */}
       <section className="py-20 border-b border-divider bg-parchment/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -383,10 +381,10 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-3 font-mono text-xs">
-                <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
+                <div className="p-4 bg-surface-white border border-divider flex items-center justify-between hover:border-stone transition-colors shadow-xs">
                   <div>
-                    <span className="text-[11px] uppercase font-bold text-amber-900 bg-amber-100 px-2 py-0.5 border border-amber-300">
-                      FASTEST
+                    <span className="font-mono text-[11px] uppercase font-medium text-ink bg-parchment/60 px-2 py-0.5 border border-divider">
+                      FASTEST ROUTE
                     </span>
                     <h3 className="font-serif text-lg text-ink font-normal mt-1">Route 502 Radial Express</h3>
                     <p className="text-ink-secondary text-xs font-sans">Direct corridor • 6 stops • 84% cabin crowd</p>
@@ -397,10 +395,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
+                <div className="p-4 bg-surface-white border border-divider flex items-center justify-between hover:border-stone transition-colors shadow-xs">
                   <div>
-                    <span className="text-[11px] uppercase font-bold text-green-900 bg-green-100 px-2 py-0.5 border border-green-300">
-                      BALANCED
+                    <span className="font-mono text-[11px] uppercase font-medium text-ink bg-parchment/60 px-2 py-0.5 border border-divider">
+                      BALANCED TRANSFER
                     </span>
                     <h3 className="font-serif text-lg text-ink font-normal mt-1">TMS Sewa + Janpath Feeder</h3>
                     <p className="text-ink-secondary text-xs font-sans">1 sheltered transfer at Moolchand • 62% cabin crowd</p>
@@ -411,10 +409,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="p-4 bg-parchment/20 border border-divider flex items-center justify-between hover:border-stone transition-colors">
+                <div className="p-4 bg-surface-white border border-divider flex items-center justify-between hover:border-stone transition-colors shadow-xs">
                   <div>
-                    <span className="text-[11px] uppercase font-bold text-blue-900 bg-blue-100 px-2 py-0.5 border border-blue-300">
-                      LESS CROWDED
+                    <span className="font-mono text-[11px] uppercase font-medium text-terracotta bg-parchment/60 px-2 py-0.5 border border-divider">
+                      SEATED COMFORT
                     </span>
                     <h3 className="font-serif text-lg text-ink font-normal mt-1">Electric Premium AC Shuttle</h3>
                     <p className="text-ink-secondary text-xs font-sans">94% seat availability • Terminal staging • 100% AC</p>
@@ -431,7 +429,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          04 — COUNTERFACTUAL SCENARIO SIMULATION
+          04: COUNTERFACTUAL SCENARIO SIMULATION
          ========================================================================= */}
       <section className="py-20 border-b border-divider bg-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -521,7 +519,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          05 — EPISTEMIC DATA CLASSIFICATION
+          05: EPISTEMIC DATA CLASSIFICATION
          ========================================================================= */}
       <section className="py-20 border-b border-divider bg-parchment/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -535,8 +533,8 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 font-mono text-xs">
-            <div className="border border-green-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-green-800 font-bold block text-[11px] uppercase">
+            <div className="border border-divider bg-surface-white p-5 space-y-2 shadow-xs">
+              <span className="text-ink font-semibold block text-[11px] uppercase tracking-wider">
                 ● TIER 01: OBSERVED
               </span>
               <h3 className="font-serif text-xl text-ink font-normal">Hardware Telemetry</h3>
@@ -545,8 +543,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="border border-amber-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-amber-800 font-bold block text-[11px] uppercase">
+            <div className="border border-divider bg-surface-white p-5 space-y-2 shadow-xs">
+              <span className="text-stone font-semibold block text-[11px] uppercase tracking-wider">
                 ▲ TIER 02: ESTIMATED
               </span>
               <h3 className="font-serif text-xl text-ink font-normal">Trip Chaining</h3>
@@ -555,8 +553,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="border border-blue-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-blue-800 font-bold block text-[11px] uppercase">
+            <div className="border border-divider bg-surface-white p-5 space-y-2 shadow-xs">
+              <span className="text-ink font-semibold block text-[11px] uppercase tracking-wider">
                 ◆ TIER 03: PREDICTED
               </span>
               <h3 className="font-serif text-xl text-ink font-normal">Neural Forecasts</h3>
@@ -565,9 +563,9 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="border border-purple-300 bg-surface-white p-5 space-y-2 shadow-sm">
-              <span className="text-purple-800 font-bold block text-[11px] uppercase">
-                ★ TIER 04: HYPOTHETICAL
+            <div className="border border-divider bg-surface-white p-5 space-y-2 shadow-xs">
+              <span className="text-terracotta font-semibold block text-[11px] uppercase tracking-wider">
+                ◇ TIER 04: COUNTERFACTUAL
               </span>
               <h3 className="font-serif text-xl text-ink font-normal">Micro-Simulation</h3>
               <p className="font-sans text-xs text-ink-secondary leading-relaxed font-normal">
@@ -589,43 +587,7 @@ export default function HomePage() {
       </section>
 
       {/* Editorial Footer */}
-      <footer className="border-t border-divider bg-surface-white py-14 text-ink">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8">
-          <div className="md:col-span-5 space-y-3">
-            <span className="font-serif text-2xl tracking-tight text-ink font-medium">NEXBUS</span>
-            <p className="text-xs text-ink-secondary leading-relaxed font-normal max-w-sm">
-              An architectural public mobility intelligence platform for the National Capital Territory of Delhi. Built with editorial restraint and computational precision.
-            </p>
-            <div className="font-mono text-[11px] text-ink-muted">
-              DELHI TRANSPORT CORPORATION &copy; 2026. DATA HARMONIZED UNDER OPEN MOBILITY ACCORD.
-            </div>
-          </div>
-
-          <div className="md:col-span-2 space-y-2 font-mono text-xs">
-            <span className="text-terracotta uppercase tracking-wider block mb-2 font-semibold">PLATFORM</span>
-            <div><Link href="/twin" className="hover:text-terracotta text-ink-secondary">Explore</Link></div>
-            <div><Link href="/journey" className="hover:text-terracotta text-ink-secondary">Journey Planner</Link></div>
-            <div><Link href="/simulate" className="hover:text-terracotta text-ink-secondary">Simulation</Link></div>
-            <div><Link href="/control" className="hover:text-terracotta text-ink-secondary">Intelligence</Link></div>
-          </div>
-
-          <div className="md:col-span-2 space-y-2 font-mono text-xs">
-            <span className="text-terracotta uppercase tracking-wider block mb-2 font-semibold">RESEARCH</span>
-            <div><Link href="/methodology" className="hover:text-terracotta text-ink-secondary">Methodology</Link></div>
-            <div><Link href="/about" className="hover:text-terracotta text-ink-secondary">About</Link></div>
-            <div><span className="text-ink-muted">GTFS-RT Feeds</span></div>
-            <div><span className="text-ink-muted">Privacy Model</span></div>
-          </div>
-
-          <div className="md:col-span-3 space-y-2 font-mono text-xs">
-            <span className="text-terracotta uppercase tracking-wider block font-semibold">COORDINATE REFERENCE</span>
-            <p className="text-ink-secondary text-[11px] leading-relaxed">
-              EPSG:7761 WGS 84 / UTM Zone 43N.<br />
-              Central Node: Connaught Place Radial Center (28.6315° N, 77.2167° E).
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

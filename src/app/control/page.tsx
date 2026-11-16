@@ -26,9 +26,9 @@ import {
   Radio,
   Database,
   Server,
-  Zap,
   ShieldAlert,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Magnetic } from '@/components/ui/magnetic';
 import { SOURCE_CAPABILITY_REGISTRY } from '@/data/sourceCapabilityRegistry';
 import Phase12ResearchPilotPanel from '@/components/research/Phase12ResearchPilotPanel';
@@ -315,7 +315,7 @@ export default function AnalyticsControlPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-600" />
               <span className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
-                Institutional Pilot Mode — Controlled Scenario Demonstrations
+                Institutional Pilot Mode: Controlled Scenario Demonstrations
               </span>
             </div>
             <span className="font-mono text-[10px] text-ink-muted uppercase tracking-tight">
@@ -389,68 +389,83 @@ export default function AnalyticsControlPage() {
         </div>
 
         {/* High-level Operational Telemetry Grid with Data Status Badges */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
-            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-green-100 text-green-900 border border-green-300 absolute top-4 right-4">
-              ● OBSERVED
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              TOTAL DAILY BOARDINGS
-            </span>
-            <div className="font-serif text-4xl text-ink font-normal">
-              {data ? (data.metrics.totalDailyPassengers / 1000000).toFixed(2) : '4.28'}M{' '}
-              <span className="text-sm font-mono text-ink-muted">PAX</span>
-            </div>
-            <div className="text-xs text-ink-muted font-mono pt-1">
-              ETM Conductor Terminal Records
-            </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="border border-divider bg-surface-white p-6 space-y-3 shadow-xs">
+                <div className="flex justify-between">
+                  <Skeleton className="h-3 w-28" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+                <Skeleton className="h-9 w-32" />
+                <Skeleton className="h-3 w-44" />
+              </div>
+            ))}
           </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-xs relative">
+              <span className="font-mono text-[9px] px-1.5 py-0.5 bg-parchment/60 text-ink border border-divider absolute top-4 right-4">
+                ● OBSERVED
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                TOTAL DAILY BOARDINGS
+              </span>
+              <div className="font-serif text-4xl text-ink font-normal">
+                {data ? (data.metrics.totalDailyPassengers / 1000000).toFixed(2) : '4.28'}M{' '}
+                <span className="text-sm font-mono text-ink-muted">PAX</span>
+              </div>
+              <div className="text-xs text-ink-muted font-mono pt-1">
+                ETM Conductor Terminal Records
+              </div>
+            </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
-            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 absolute top-4 right-4">
-              ▲ ESTIMATED
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              NETWORK ON-TIME RATE
-            </span>
-            <div className="font-serif text-4xl text-terracotta font-normal">
-              {data ? data.metrics.networkPunctualityPct : 81.4}%
+            <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-xs relative">
+              <span className="font-mono text-[9px] px-1.5 py-0.5 bg-parchment/60 text-ink-secondary border border-divider absolute top-4 right-4">
+                ▲ ESTIMATED
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                NETWORK ON-TIME RATE
+              </span>
+              <div className="font-serif text-4xl text-terracotta font-normal">
+                {data ? data.metrics.networkPunctualityPct : 81.4}%
+              </div>
+              <div className="text-xs text-ink-muted font-mono pt-1">
+                AVL Telematics Headway Variance
+              </div>
             </div>
-            <div className="text-xs text-ink-muted font-mono pt-1">
-              AVL Telematics Headway Variance
-            </div>
-          </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
-            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-blue-100 text-blue-900 border border-blue-300 absolute top-4 right-4">
-              ◆ PREDICTED
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              AI FORECAST FIDELITY
-            </span>
-            <div className="font-serif text-4xl text-ink font-normal">
-              {data ? data.metrics.forecastFidelityPct : 94.8}%
+            <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-xs relative">
+              <span className="font-mono text-[9px] px-1.5 py-0.5 bg-parchment/60 text-ink border border-stone/50 absolute top-4 right-4">
+                ◆ PREDICTED
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                AI FORECAST FIDELITY
+              </span>
+              <div className="font-serif text-4xl text-ink font-normal">
+                {data ? data.metrics.forecastFidelityPct : 94.8}%
+              </div>
+              <div className="text-xs text-ink-muted font-mono pt-1">
+                ST-GNN Holdout PICP-95 Coverage
+              </div>
             </div>
-            <div className="text-xs text-ink-muted font-mono pt-1">
-              ST-GNN Holdout PICP-95 Coverage
-            </div>
-          </div>
 
-          <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-sm relative">
-            <span className="font-mono text-[9px] px-1.5 py-0.5 bg-green-100 text-green-900 border border-green-300 absolute top-4 right-4">
-              ● OBSERVED
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
-              ELECTRIFIED FLEET
-            </span>
-            <div className="font-serif text-4xl text-[#2A5C8A] font-normal">
-              {data ? data.metrics.activeElectricFleet.toLocaleString() : '1,640'}
-            </div>
-            <div className="text-xs text-ink-muted font-mono pt-1">
-              42.7% total DTC fleet electrified
+            <div className="border border-divider bg-surface-white p-6 space-y-2 shadow-xs relative">
+              <span className="font-mono text-[9px] px-1.5 py-0.5 bg-parchment/60 text-ink border border-divider absolute top-4 right-4">
+                ● OBSERVED
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted block">
+                ELECTRIFIED FLEET
+              </span>
+              <div className="font-serif text-4xl text-ink font-normal">
+                {data ? data.metrics.activeElectricFleet.toLocaleString() : '1,640'}
+              </div>
+              <div className="text-xs text-ink-muted font-mono pt-1">
+                42.7% total DTC fleet electrified
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Large Meaningful Chart: Metropolitan Commuter Hourly Flow */}
         <div className="border border-divider bg-surface-white p-8 space-y-6 shadow-sm">
@@ -1360,8 +1375,10 @@ export default function AnalyticsControlPage() {
                   <div className="space-y-2">
                     {resilienceResult.authorityAdvisories?.map((adv: string, aIdx: number) => (
                       <div key={aIdx} className="flex items-start gap-2.5 text-xs text-ink">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                        <span className="font-light leading-relaxed">{adv}</span>
+                        <span className="font-mono text-[11px] font-semibold text-terracotta shrink-0 mt-0.5">
+                          {String(aIdx + 1).padStart(2, '0')}.
+                        </span>
+                        <span className="font-normal leading-relaxed">{adv}</span>
                       </div>
                     ))}
                   </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/navigation/Navbar';
+import Footer from '@/components/navigation/Footer';
 import DelhiCityCanvas from '@/components/3d/DelhiCityCanvas';
 import { DELHI_CORRIDORS } from '@/data/delhiTransitData';
 import {
@@ -26,6 +27,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SimulationLabPage() {
   const [activeTab, setActiveTab] = useState<'corridor_counterfactual' | 'institutional_interventions'>('corridor_counterfactual');
@@ -356,55 +358,67 @@ export default function SimulationLabPage() {
             </div>
 
             {/* Impact Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
-                <span className="font-mono text-[11px] text-ink-muted uppercase block">
-                  COMMUTER PLATFORM DELAY
-                </span>
-                <div className="font-serif text-4xl text-ink font-normal">
-                  {simulationData.deltas.waitTimeDeltaPct}%
-                </div>
-                <p className="text-sm text-ink-secondary leading-relaxed">
-                  Average passenger platform wait compressed from {simulationData.baseline.averageWaitTimeMinutes}m to {simulationData.simulated.averageWaitTimeMinutes}m.
-                </p>
+            {isSimulating ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="border border-divider p-5 bg-surface-white space-y-3 shadow-xs">
+                    <Skeleton className="h-3 w-28" />
+                    <Skeleton className="h-10 w-24" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                ))}
               </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
+                    COMMUTER PLATFORM DELAY
+                  </span>
+                  <div className="font-serif text-4xl text-ink font-normal">
+                    {simulationData.deltas.waitTimeDeltaPct}%
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed">
+                    Average passenger platform wait compressed from {simulationData.baseline.averageWaitTimeMinutes}m to {simulationData.simulated.averageWaitTimeMinutes}m.
+                  </p>
+                </div>
 
-              <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
-                <span className="font-mono text-[11px] text-ink-muted uppercase block">
-                  CROWDING RELIEF
-                </span>
-                <div className="font-serif text-4xl text-terracotta font-normal">
-                  -{simulationData.deltas.crowdingReliefPoints} pts
+                <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
+                    CROWDING RELIEF
+                  </span>
+                  <div className="font-serif text-4xl text-terracotta font-normal">
+                    -{simulationData.deltas.crowdingReliefPoints} pts
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed">
+                    Cabin occupancy reduced from {simulationData.baseline.passengerLoadPercentage}% crush load to {simulationData.simulated.passengerLoadPercentage}% seated equilibrium.
+                  </p>
                 </div>
-                <p className="text-sm text-ink-secondary leading-relaxed">
-                  Cabin occupancy reduced from {simulationData.baseline.passengerLoadPercentage}% crush load to {simulationData.simulated.passengerLoadPercentage}% seated equilibrium.
-                </p>
-              </div>
 
-              <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
-                <span className="font-mono text-[11px] text-ink-muted uppercase block">
-                  UNALLOCATED DEMAND RELIEF
-                </span>
-                <div className="font-serif text-4xl text-ink font-normal">
-                  -{simulationData.deltas.unallocatedDemandReductionPct}%
+                <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
+                    UNALLOCATED DEMAND RELIEF
+                  </span>
+                  <div className="font-serif text-4xl text-ink font-normal">
+                    -{simulationData.deltas.unallocatedDemandReductionPct}%
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed">
+                    Commuters unable to board falls from {simulationData.baseline.unallocatedDemandPaxPerHour} to {simulationData.simulated.unallocatedDemandPaxPerHour} pax/hr.
+                  </p>
                 </div>
-                <p className="text-sm text-ink-secondary leading-relaxed">
-                  Commuters unable to board falls from {simulationData.baseline.unallocatedDemandPaxPerHour} to {simulationData.simulated.unallocatedDemandPaxPerHour} pax/hr.
-                </p>
-              </div>
 
-              <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
-                <span className="font-mono text-[11px] text-ink-muted uppercase block">
-                  NET CO2 & NOX AVOIDED
-                </span>
-                <div className="font-serif text-4xl text-green-700 font-normal">
-                  {simulationData.environmentalImpact.monthlyCo2OffsetTons} T/mo
+                <div className="border border-divider p-5 bg-parchment/20 space-y-1.5">
+                  <span className="font-mono text-[11px] text-ink-muted uppercase block">
+                    NET CO2 & NOX AVOIDED
+                  </span>
+                  <div className="font-serif text-4xl text-green-700 font-normal">
+                    {simulationData.environmentalImpact.monthlyCo2OffsetTons} T/mo
+                  </div>
+                  <p className="text-sm text-ink-secondary leading-relaxed">
+                    Displacing {simulationData.environmentalImpact.dieselCngReplacedKmDaily.toLocaleString()} km of combustion bus runs daily with electric miles.
+                  </p>
                 </div>
-                <p className="text-sm text-ink-secondary leading-relaxed">
-                  Displacing {simulationData.environmentalImpact.dieselCngReplacedKmDaily.toLocaleString()} km of combustion bus runs daily with electric miles.
-                </p>
               </div>
-            </div>
+            )}
 
             {/* Governing Equations Block */}
             {simulationData.governingEquations && (
@@ -513,7 +527,7 @@ export default function SimulationLabPage() {
 
         {/* Official Advisory Banner */}
         <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 font-mono text-xs flex items-center justify-between">
-          <span>▲ ILLUSTRATIVE INTERVENTION — NOT AN APPROVED GOVERNMENT PROJECT. ADVISORY DECISION SUPPORT ONLY.</span>
+          <span>▲ ILLUSTRATIVE INTERVENTION · NOT AN APPROVED GOVERNMENT PROJECT. ADVISORY DECISION SUPPORT ONLY.</span>
           <span className="text-[11px] text-amber-800">READ-ONLY + PASSIVE + ADVISORY</span>
         </div>
 
@@ -716,6 +730,8 @@ export default function SimulationLabPage() {
       </div>
     )}
       </main>
+
+      <Footer />
     </div>
   );
 }
