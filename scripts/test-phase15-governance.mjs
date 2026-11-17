@@ -19,13 +19,14 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 // Import field observation service
-const fieldObsModule = await import('../src/lib/ingestion/fieldObservationService.ts');
+const fieldObsModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/ingestion/fieldObservationService.ts'));
 const fieldObservationService = fieldObsModule.fieldObservationService || fieldObsModule.default;
 
 export async function runPhase15GovernanceTests() {

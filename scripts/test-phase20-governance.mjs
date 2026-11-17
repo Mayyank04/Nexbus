@@ -132,7 +132,9 @@ async function runPhase20Tests() {
   });
 
   test('Environment template contains zero committed secrets', () => {
-    const envExample = fs.readFileSync(path.join(ROOT, '.env.example'), 'utf-8');
+    const envPath = path.join(ROOT, '.env.example');
+    assert(fs.existsSync(envPath), '.env.example template file must exist in repository root');
+    const envExample = fs.readFileSync(envPath, 'utf-8');
     assert(!envExample.includes('ghp_'), 'GitHub token found in .env.example');
     assert(!envExample.includes('AIza'), 'Google API key found in .env.example');
     assert(!envExample.includes('sk-'), 'OpenAI/API secret found in .env.example');
