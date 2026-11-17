@@ -424,6 +424,31 @@ async function runTests() {
     assert(false, `Phase 15 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 18 Production Readiness & Cross-Platform Packaging Tests ---');
+  // PWA Manifest
+  const manifestRes = await fetchUrl('/manifest.json');
+  assert(manifestRes.status === 200, 'GET /manifest.json returns HTTP 200');
+  assert(manifestRes.json?.name?.includes('NEXBUS'), 'Manifest includes valid NEXBUS app branding');
+  assert(manifestRes.json?.display === 'standalone', 'Manifest specifies standalone PWA display mode');
+
+  // Service Worker
+  const swRes = await fetchUrl('/sw.js');
+  assert(swRes.status === 200, 'GET /sw.js returns HTTP 200');
+  assert(swRes.text.includes('nexbus-offline-v1'), 'Service worker registers nexbus-offline-v1 cache partition');
+
+  // Dual-mode Digital Twin & Guided Tutorial
+  const twinRes = await fetchUrl('/twin');
+  assert(twinRes.status === 200, 'GET /twin returns HTTP 200');
+  assert(twinRes.text.includes('EXPLORE DELHI'), 'Twin surface renders Mode A (Explore Delhi) toggle');
+  assert(twinRes.text.includes('ADVANCED ANALYSIS'), 'Twin surface renders Mode B (Advanced Analysis) toggle');
+  assert(twinRes.text.includes('GUIDED TOUR'), 'Twin surface renders interactive 6-step guided tour controls');
+
+  // Legal governance surfaces
+  const termsRes = await fetchUrl('/terms');
+  assert(termsRes.status === 200, 'Route /terms returns HTTP 200');
+  const privacyRes = await fetchUrl('/privacy');
+  assert(privacyRes.status === 200, 'Route /privacy returns HTTP 200');
+
 
 
   console.log(`\n========================================`);
