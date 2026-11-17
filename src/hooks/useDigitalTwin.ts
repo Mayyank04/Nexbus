@@ -42,6 +42,31 @@ export function useDigitalTwin() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showDeepTelemetry, setShowDeepTelemetry] = useState<boolean>(false);
 
+  // Synchronize initial state from URL query parameters (e.g. ?mode=analyst&step=2)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlMode = params.get('mode');
+      if (urlMode === 'analyst' || urlMode === 'explore') {
+        setMode(urlMode);
+      }
+      if (params.get('tour') === 'false') {
+        setIsTutorialOpen(false);
+      }
+      const urlStep = params.get('step');
+      if (urlStep) {
+        const stepNum = parseInt(urlStep, 10);
+        if (!isNaN(stepNum) && stepNum >= 0 && stepNum <= 5) {
+          setTutorialStepIndex(stepNum);
+        }
+      }
+      const urlView = params.get('view');
+      if (urlView === '2d' || urlView === '2D') {
+        setViewMode('2D');
+      }
+    }
+  }, []);
+
   const [predictionData, setPredictionData] = useState<CrowdingPredictionResponse['prediction'] | null>(null);
   const [isLoadingPrediction, setIsLoadingPrediction] = useState<boolean>(false);
   const [observedVehicles, setObservedVehicles] = useState<any[]>([]);
