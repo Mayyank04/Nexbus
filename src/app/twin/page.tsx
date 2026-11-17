@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/navigation/Navbar';
 import DelhiCityCanvas, { DigitalTwinLayer } from '@/components/3d/DelhiCityCanvas';
+import EasyExploreTutorial from '@/components/3d/EasyExploreTutorial';
 import {
   DELHI_CORRIDORS,
   DELHI_STOPS,
@@ -32,6 +33,7 @@ import {
   Compass,
   MapPin,
   Route,
+  Sparkles,
 } from 'lucide-react';
 
 const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
@@ -50,6 +52,14 @@ const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
 
 export default function DigitalTwinPage() {
   const {
+    mode,
+    setMode,
+    tutorialStepIndex,
+    setTutorialStepIndex,
+    isTutorialOpen,
+    setIsTutorialOpen,
+    isMotionPaused,
+    toggleMotionPause,
     selectedCorridor,
     setSelectedCorridor,
     selectedStop,
@@ -92,20 +102,68 @@ export default function DigitalTwinPage() {
       <Navbar />
 
       {/* =========================================================================
-          TOP: CLEAR TITLE, SELECTED GEOGRAPHIC AREA & VIEW TOGGLES
+          TOP: DUAL-MODE SWITCHER, GEOGRAPHIC AREA & VIEW TOGGLES
          ========================================================================= */}
       <div className="bg-surface-white/95 border-b border-divider px-4 sm:px-6 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-y-2 text-xs z-30 shrink-0">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="font-serif text-base sm:text-lg font-normal text-ink">
-            Delhi Metropolitan Digital Twin
-          </span>
-          <span className="hidden sm:inline text-divider">|</span>
-          <span className="font-mono text-[11px] sm:text-[11px] text-ink-muted uppercase">
+          {/* Dual Surface Mode Selector */}
+          <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
+            <button
+              onClick={() => setMode('explore')}
+              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1 ${
+                mode === 'explore'
+                  ? 'bg-terracotta text-surface-white font-medium shadow-xs'
+                  : 'text-ink-muted hover:text-ink'
+              }`}
+            >
+              <span>🌟</span>
+              <span>EXPLORE DELHI</span>
+            </button>
+            <button
+              onClick={() => setMode('analyst')}
+              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1 ${
+                mode === 'analyst'
+                  ? 'bg-ink text-surface-white font-medium shadow-xs'
+                  : 'text-ink-muted hover:text-ink'
+              }`}
+            >
+              <span>🔬</span>
+              <span>ADVANCED ANALYSIS</span>
+            </button>
+          </div>
+
+          <span className="hidden md:inline text-divider">|</span>
+          <span className="font-mono text-[11px] text-ink-muted uppercase hidden sm:inline">
             AREA: NCT OF DELHI (28°36&apos;N 77°12&apos;E)
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] sm:text-[11px]">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 font-mono text-[11px]">
+          {/* Motion pause/resume button */}
+          <button
+            onClick={toggleMotionPause}
+            title={isMotionPaused ? 'Resume vehicle movement' : 'Pause vehicle movement'}
+            className="px-2 py-0.5 border border-divider bg-surface-white hover:border-ink text-ink-muted hover:text-ink transition-colors flex items-center space-x-1"
+          >
+            <span>{isMotionPaused ? '▶️' : '⏸️'}</span>
+            <span className="hidden sm:inline">{isMotionPaused ? 'RESUME' : 'PAUSE'}</span>
+          </button>
+
+          {/* Tutorial Tour Toggle (for Explore Mode) */}
+          {mode === 'explore' && (
+            <button
+              onClick={() => setIsTutorialOpen((prev) => !prev)}
+              className={`px-2 py-0.5 font-mono text-[11px] border transition-colors flex items-center space-x-1 ${
+                isTutorialOpen
+                  ? 'border-terracotta bg-terracotta/10 text-terracotta font-medium'
+                  : 'border-divider bg-surface-white text-ink-muted hover:text-ink'
+              }`}
+            >
+              <span>🗺️</span>
+              <span>GUIDED TOUR ({tutorialStepIndex + 1}/6)</span>
+            </button>
+          )}
+
           <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
             <button
               onClick={() => setViewMode('3D')}
@@ -124,8 +182,7 @@ export default function DigitalTwinPage() {
               2D NADIR
             </button>
           </div>
-          <span className="hidden sm:inline text-divider">|</span>
-          <span className="text-ink-muted">LAYER: <strong className="text-terracotta uppercase">{activeLayer}</strong></span>
+
           <span className="hidden sm:inline text-divider">|</span>
           <span className="text-ink-muted">TIME: <strong className="text-ink">{currentTimeHour.toString().padStart(2, '0')}:00 IST</strong></span>
         </div>
@@ -140,137 +197,263 @@ export default function DigitalTwinPage() {
       {/* Main Digital Twin Workbench */}
       <div className="flex-1 flex flex-col lg:flex-row relative overflow-hidden">
         {/* =========================================================================
-            LEFT COLUMN: COMPACT LAYER SELECTOR & SEARCH
+            LEFT COLUMN: COMPACT LAYER SELECTOR & SEARCH / EXPLORE GUIDE
            ========================================================================= */}
         <aside className="w-full lg:w-76 bg-ivory/95 border-b lg:border-b-0 lg:border-r border-divider flex flex-col z-20 shrink-0 h-auto lg:h-full overflow-y-auto">
-          {/* Layer Selector */}
-          <div className="p-4 border-b border-divider bg-parchment/30 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
-                ANALYTICAL LAYERS ({TWIN_LAYERS.length})
-              </span>
-              <span className="font-mono text-[11px] text-terracotta uppercase">{activeLayer}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
-              {TWIN_LAYERS.map((layer) => (
-                <button
-                  key={layer.id}
-                  onClick={() => setActiveLayer(layer.id)}
-                  className={`font-mono text-[11px] py-1.5 px-2 text-left border transition-all flex flex-col justify-between ${
-                    activeLayer === layer.id
-                      ? 'border-terracotta bg-terracotta text-surface-white font-medium shadow-xs'
-                      : 'border-divider bg-surface-white text-ink-muted hover:text-ink hover:border-stone'
-                  }`}
-                >
-                  <span className="truncate">{layer.label}</span>
-                  <span className={`text-[11px] uppercase tracking-tight ${activeLayer === layer.id ? 'text-surface-white' : 'text-stone'}`}>
-                    {layer.tag}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {/* Layer Legend */}
-            <div className="pt-2 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
-              <span>LEGEND:</span>
-              <div className="flex items-center space-x-2">
-                <span className="flex items-center space-x-1">
-                  <span className="w-2 h-2 rounded-full bg-[#A69A89]" />
-                  <span>Normal</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <span className="w-2 h-2 rounded-full bg-[#C89B53]" />
-                  <span>Moderate</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <span className="w-2 h-2 rounded-full bg-[#B84C32]" />
-                  <span>Surge</span>
-                </span>
+          {mode === 'explore' ? (
+            /* Mode A: Child-Friendly & Newcomer Exploration Panel */
+            <div className="flex-1 p-4 space-y-4">
+              <div className="bg-surface-white border border-divider p-3.5 space-y-2">
+                <div className="flex items-center space-x-1.5 text-xs font-mono text-terracotta">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span className="font-semibold uppercase tracking-wider">Explore Delhi Mode</span>
+                </div>
+                <h3 className="font-serif text-lg text-ink font-normal leading-snug">
+                  Discovering Delhi&apos;s Public Transit
+                </h3>
+                <p className="text-xs text-ink-muted leading-relaxed font-normal">
+                  Friendly symbols and bright paths show where buses and metro trains travel across the city.
+                </p>
+                {!isTutorialOpen && (
+                  <button
+                    onClick={() => {
+                      setIsTutorialOpen(true);
+                      setTutorialStepIndex(0);
+                    }}
+                    className="w-full mt-1.5 py-2 px-3 bg-terracotta text-surface-white font-mono text-xs uppercase flex items-center justify-center space-x-1.5 hover:bg-ink transition-colors font-medium shadow-xs"
+                  >
+                    <span>🌟</span>
+                    <span>Start 6-Step Guided Tour</span>
+                  </button>
+                )}
               </div>
-            </div>
-          </div>
 
-          {/* Search Input */}
-          <div className="p-3 border-b border-divider bg-surface-white">
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-stone absolute left-2.5 top-2.5" />
-              <input
-                type="text"
-                placeholder="Search corridors or stops…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-parchment/40 border border-divider pl-8 pr-3 py-1.5 font-mono text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:border-terracotta"
-              />
-            </div>
-          </div>
+              {/* Friendly Major Routes */}
+              <div className="space-y-2">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
+                  MAJOR BUS ROUTES
+                </span>
+                {DELHI_CORRIDORS.map((corridor) => {
+                  const isSelected = selectedCorridor?.id === corridor.id;
+                  return (
+                    <div
+                      key={corridor.id}
+                      onClick={() => {
+                        setSelectedCorridor(corridor);
+                        setSelectedStop(null);
+                      }}
+                      className={`p-3 border cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-terracotta bg-parchment/80 shadow-xs'
+                          : 'border-divider bg-surface-white hover:border-ink hover:bg-parchment/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-serif text-sm font-normal text-ink">
+                          {corridor.name}
+                        </span>
+                        <span
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: corridor.color }}
+                        />
+                      </div>
+                      <div className="font-mono text-[11px] text-ink-muted flex items-center justify-between">
+                        <span>{corridor.code}</span>
+                        <span className="text-terracotta font-medium">{corridor.busesPerHour} Buses / hr</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-          {/* Corridors List */}
-          <div className="flex-1 p-3 space-y-2 overflow-y-auto">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
-              ARTERIAL CONDUITS ({filteredCorridors.length})
-            </span>
+              {/* Famous Stops */}
+              <div className="space-y-2">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
+                  POPULAR BUS STOPS
+                </span>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {DELHI_STOPS.slice(0, 6).map((stop) => {
+                    const isSelected = selectedStop?.id === stop.id;
+                    return (
+                      <button
+                        key={stop.id}
+                        onClick={() => {
+                          setSelectedStop(stop);
+                          setSelectedCorridor(null);
+                        }}
+                        className={`p-2 text-left border transition-all text-xs flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-terracotta bg-terracotta text-surface-white font-medium'
+                            : 'border-divider bg-surface-white text-ink hover:border-ink'
+                        }`}
+                      >
+                        <span className="font-medium truncate">{stop.name}</span>
+                        <span className={`font-mono text-[10px] ${isSelected ? 'text-surface-white/80' : 'text-ink-muted'}`}>
+                          {stop.code}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-            {filteredCorridors.map((corridor) => {
-              const isSelected = selectedCorridor?.id === corridor.id;
-              return (
-                <div
-                  key={corridor.id}
-                  onClick={() => {
-                    setSelectedCorridor(corridor);
-                    setSelectedStop(null);
-                  }}
-                  className={`p-3 border cursor-pointer transition-all ${
-                    isSelected
-                      ? 'border-terracotta bg-parchment/80 shadow-sm'
-                      : 'border-divider bg-surface-white hover:border-stone hover:bg-parchment/20'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-[11px] font-medium text-ink-muted">
-                      {corridor.code}
-                    </span>
-                    <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: corridor.color }}
-                    />
+              {/* Friendly Crowding Legend */}
+              <div className="border border-divider bg-surface-white p-3 space-y-2">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
+                  HOW CROWDED IS IT?
+                </span>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-700" />
+                    <span className="font-medium text-ink">Plenty of Seats</span>
+                    <span className="text-ink-muted text-[11px] ml-auto">Quiet times</span>
                   </div>
-                  <h4 className="font-serif text-base text-ink font-normal leading-snug">
-                    {corridor.name}
-                  </h4>
-                  <div className="mt-2 pt-1.5 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
-                    <span>{corridor.busesPerHour} BUSES/HR</span>
-                    <span className="text-terracotta font-medium uppercase">
-                      {corridor.status}
-                    </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-600" />
+                    <span className="font-medium text-ink">Getting Busy</span>
+                    <span className="text-ink-muted text-[11px] ml-auto">Some standing</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
+                    <span className="font-medium text-ink">Super Crowded</span>
+                    <span className="text-ink-muted text-[11px] ml-auto">Peak rush</span>
                   </div>
                 </div>
-              );
-            })}
-
-            {/* Stops in search */}
-            {searchQuery && filteredStops.length > 0 && (
-              <div className="pt-2">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
-                  MATCHING STOPS ({filteredStops.length})
-                </span>
-                <div className="space-y-1">
-                  {filteredStops.map((stop) => (
+              </div>
+            </div>
+          ) : (
+            /* Mode B: Professional GIS & Analytical Layers */
+            <>
+              {/* Layer Selector */}
+              <div className="p-4 border-b border-divider bg-parchment/30 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
+                    ANALYTICAL LAYERS ({TWIN_LAYERS.length})
+                  </span>
+                  <span className="font-mono text-[11px] text-terracotta uppercase">{activeLayer}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pr-1">
+                  {TWIN_LAYERS.map((layer) => (
                     <button
-                      key={stop.id}
-                      onClick={() => {
-                        setSelectedStop(stop);
-                        setSelectedCorridor(null);
-                      }}
-                      className="w-full text-left p-2 border border-divider bg-surface-white hover:border-terracotta font-mono text-xs flex justify-between"
+                      key={layer.id}
+                      onClick={() => setActiveLayer(layer.id)}
+                      className={`font-mono text-[11px] py-1.5 px-2 text-left border transition-all flex flex-col justify-between ${
+                        activeLayer === layer.id
+                          ? 'border-terracotta bg-terracotta text-surface-white font-medium shadow-xs'
+                          : 'border-divider bg-surface-white text-ink-muted hover:text-ink hover:border-stone'
+                      }`}
                     >
-                      <span>{stop.name}</span>
-                      <span className="text-terracotta">{stop.code}</span>
+                      <span className="truncate">{layer.label}</span>
+                      <span className={`text-[11px] uppercase tracking-tight ${activeLayer === layer.id ? 'text-surface-white' : 'text-stone'}`}>
+                        {layer.tag}
+                      </span>
                     </button>
                   ))}
                 </div>
+
+                {/* Layer Legend */}
+                <div className="pt-2 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
+                  <span>LEGEND:</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-[#A69A89]" />
+                      <span>Normal</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-[#C89B53]" />
+                      <span>Moderate</span>
+                    </span>
+                    <span className="flex items-center space-x-1">
+                      <span className="w-2 h-2 rounded-full bg-[#B84C32]" />
+                      <span>Surge</span>
+                    </span>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+
+              {/* Search Input */}
+              <div className="p-3 border-b border-divider bg-surface-white">
+                <div className="relative">
+                  <Search className="w-3.5 h-3.5 text-stone absolute left-2.5 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="Search corridors or stops…"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-parchment/40 border border-divider pl-8 pr-3 py-1.5 font-mono text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:border-terracotta"
+                  />
+                </div>
+              </div>
+
+              {/* Corridors List */}
+              <div className="flex-1 p-3 space-y-2 overflow-y-auto">
+                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
+                  ARTERIAL CONDUITS ({filteredCorridors.length})
+                </span>
+
+                {filteredCorridors.map((corridor) => {
+                  const isSelected = selectedCorridor?.id === corridor.id;
+                  return (
+                    <div
+                      key={corridor.id}
+                      onClick={() => {
+                        setSelectedCorridor(corridor);
+                        setSelectedStop(null);
+                      }}
+                      className={`p-3 border cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-terracotta bg-parchment/80 shadow-sm'
+                          : 'border-divider bg-surface-white hover:border-stone hover:bg-parchment/20'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-mono text-[11px] font-medium text-ink-muted">
+                          {corridor.code}
+                        </span>
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: corridor.color }}
+                        />
+                      </div>
+                      <h4 className="font-serif text-base text-ink font-normal leading-snug">
+                        {corridor.name}
+                      </h4>
+                      <div className="mt-2 pt-1.5 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
+                        <span>{corridor.busesPerHour} BUSES/HR</span>
+                        <span className="text-terracotta font-medium uppercase">
+                          {corridor.status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Stops in search */}
+                {searchQuery && filteredStops.length > 0 && (
+                  <div className="pt-2">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block mb-1">
+                      MATCHING STOPS ({filteredStops.length})
+                    </span>
+                    <div className="space-y-1">
+                      {filteredStops.map((stop) => (
+                        <button
+                          key={stop.id}
+                          onClick={() => {
+                            setSelectedStop(stop);
+                            setSelectedCorridor(null);
+                          }}
+                          className="w-full text-left p-2 border border-divider bg-surface-white hover:border-terracotta font-mono text-xs flex justify-between"
+                        >
+                          <span>{stop.name}</span>
+                          <span className="text-terracotta">{stop.code}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Bottom Reset & 3D Fleet Toggle */}
           <div className="p-3 border-t border-divider bg-parchment/40 flex items-center justify-between font-mono text-xs">
@@ -311,8 +494,22 @@ export default function DigitalTwinPage() {
               interactive={true}
               activeLayer={activeLayer}
               viewMode={viewMode}
+              mode={mode}
+              tutorialStepIndex={mode === 'explore' && isTutorialOpen ? tutorialStepIndex : null}
+              isPaused={isMotionPaused}
               className="w-full h-full"
             />
+
+            {/* Mode A: Child-Friendly Floating Guided Tutorial Card */}
+            {mode === 'explore' && isTutorialOpen && (
+              <div className="absolute bottom-16 right-4 sm:right-6 z-30 max-w-md w-full pointer-events-auto">
+                <EasyExploreTutorial
+                  currentStepIndex={tutorialStepIndex}
+                  onStepChange={(idx) => setTutorialStepIndex(idx)}
+                  onClose={() => setIsTutorialOpen(false)}
+                />
+              </div>
+            )}
 
             {/* In-viewport Coordinates & Live Telemetry HUD */}
             <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
