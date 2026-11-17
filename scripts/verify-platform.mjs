@@ -4,15 +4,25 @@ import { execSync } from 'child_process';
 
 const BASE_URL = 'http://localhost:3000';
 
-async function fetchUrl(path, options = {}) {
+async function fetchUrl(path, options = {}, retries = 2) {
   const url = `${BASE_URL}${path}`;
-  const res = await fetch(url, options);
-  const text = await res.text();
-  let json = null;
-  try {
-    json = JSON.parse(text);
-  } catch {}
-  return { status: res.status, headers: res.headers, json, text };
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        headers: { Connection: 'close', ...(options.headers || {}) },
+        ...options,
+      });
+      const text = await res.text();
+      let json = null;
+      try {
+        json = JSON.parse(text);
+      } catch {}
+      return { status: res.status, headers: res.headers, json, text };
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  }
 }
 
 async function runTests() {
