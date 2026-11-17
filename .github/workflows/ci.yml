@@ -33,6 +33,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
+      - name: Environment Diagnostics
+        run: |
+          echo "Node.js version: $(node -v)"
+          echo "npm version: $(npm -v)"
+          echo "Architecture: $(uname -m)"
+          echo "OS: $(uname -s)"
+
       - name: Deterministic Dependency Installation
         run: npm ci
 
@@ -45,6 +52,7 @@ jobs:
       - name: Start Background Development Server for Endpoints Verification
         run: |
           npx next dev -p 3000 &
+          echo $! > /tmp/next_dev.pid
           # Poll until health endpoint responds
           for i in {1..30}; do
             if curl -s http://localhost:3000/api/health > /dev/null; then
@@ -66,6 +74,14 @@ jobs:
         env:
           NODE_ENV: test
           NEXBUS_SAFETY_MODE: READ_ONLY_PASSIVE
+
+      - name: Stop Background Server Before Build
+        if: always()
+        run: |
+          if [ -f /tmp/next_dev.pid ]; then
+            kill $(cat /tmp/next_dev.pid) || true
+            rm -f /tmp/next_dev.pid
+          fi
 
       - name: Next.js Production Turbopack Build
         run: npm run build
