@@ -1,0 +1,74 @@
+name: NEXBUS Continuous Integration & Quality Gates
+
+on:
+  push:
+    branches:
+      - main
+      - 'phase-*'
+  pull_request:
+    branches:
+      - main
+      - 'phase-*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gates:
+    name: Node.js ${{ matrix.node-version }} Quality Gates
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Deterministic Dependency Installation
+        run: npm ci
+
+      - name: TypeScript Static Type Enforcement
+        run: npx tsc --noEmit
+
+      - name: Dependency Vulnerability Audit
+        run: npm audit --audit-level=high
+
+      - name: Start Background Development Server for Endpoints Verification
+        run: |
+          npx next dev -p 3000 &
+          # Poll until health endpoint responds
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/health > /dev/null; then
+              echo "Next.js server is ready on port 3000."
+              break
+            fi
+            echo "Waiting for server startup ($i/30)..."
+            sleep 1
+          done
+
+      - name: Execute Full Automated Platform Verification Suite
+        run: npm test
+        env:
+          NODE_ENV: test
+          NEXBUS_SAFETY_MODE: READ_ONLY_PASSIVE
+
+      - name: Execute Phase 20 Data Provenance & Security Governance Suite
+        run: node scripts/test-phase20-governance.mjs
+        env:
+          NODE_ENV: test
+          NEXBUS_SAFETY_MODE: READ_ONLY_PASSIVE
+
+      - name: Next.js Production Turbopack Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXBUS_SAFETY_MODE: READ_ONLY_PASSIVE

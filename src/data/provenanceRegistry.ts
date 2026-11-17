@@ -9,6 +9,8 @@
  * - Complete attribution, retrieval dates, data formats, and transformation pipelines
  */
 
+import { EvidenceClassification, SourceFreshnessCategory } from '@/lib/evidence/evidenceClassification';
+
 export type IntegrationStatus =
   | 'VERIFIED SOURCE'
   | 'DATA DOWNLOADED'
@@ -36,6 +38,9 @@ export interface ProvenanceRecord {
   validationRules: string[];
   transformationSteps: string[];
   knownLimitations: string;
+  evidenceClassification: EvidenceClassification;
+  freshnessCategory: SourceFreshnessCategory;
+  lastRetrievalTimestamp: string;
 }
 
 export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
@@ -55,6 +60,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Observed',
     recordsCount: '482 Routes, 6,480 Stops, 42,000 Scheduled Daily Trips',
     integrationStatus: 'DATA INTEGRATED',
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+    freshnessCategory: 'SCHEDULE_STATIC',
+    lastRetrievalTimestamp: '2026-01-15T00:00:00Z',
     validationRules: [
       'WGS84 Bounding Box: 28.40°N to 28.90°N, 76.80°E to 77.45°E',
       'Non-null stop coordinates and monotonic trip sequence verification',
@@ -84,6 +92,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Estimated',
     recordsCount: '4.28M Daily Ticket Issuance Events (Aggregated to 42 Fare Stage Curvatures)',
     integrationStatus: 'DATA INTEGRATED',
+    evidenceClassification: 'ESTIMATED',
+    freshnessCategory: 'DAILY_AGGREGATE',
+    lastRetrievalTimestamp: '2026-01-20T00:00:00Z',
     validationRules: [
       'Positive fare denomination and valid fare stage codes (1-42)',
       'Monotonic conductor ticket sequence verification',
@@ -113,6 +124,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Observed',
     recordsCount: '34,200 Highway Ways, 12,400 Bus Stop Platform Nodes',
     integrationStatus: 'DATA VALIDATED',
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+    freshnessCategory: 'SCHEDULE_STATIC',
+    lastRetrievalTimestamp: '2026-01-10T00:00:00Z',
     validationRules: [
       'Topology connectivity check along Inner and Outer Ring Road rings',
       'Elevation consistency check across grade-separated flyovers',
@@ -142,6 +156,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Estimated',
     recordsCount: '2,800 Active Cluster Buses with dual-band GPS transponders',
     integrationStatus: 'DATA INTEGRATED',
+    evidenceClassification: 'ESTIMATED',
+    freshnessCategory: 'REALTIME_TELEMETRY',
+    lastRetrievalTimestamp: '2026-02-01T00:00:00Z',
     validationRules: [
       'Kalman filter noise threshold: velocity < 90 km/h',
       'HMM map-matching to Delhi road centerline graph',
@@ -171,6 +188,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Predicted',
     recordsCount: '384 Sensor Features across 184 Graph Nodes',
     integrationStatus: 'DATA VALIDATED',
+    evidenceClassification: 'PREDICTED',
+    freshnessCategory: 'HOURLY_INFERENCE',
+    lastRetrievalTimestamp: '2026-02-15T00:00:00Z',
     validationRules: [
       '70% Train, 15% Validation, 15% Temporal Holdout Test split',
       'MAE <= 6.8 percentage points, RMSE <= 9.2 percentage points',
@@ -200,6 +220,9 @@ export const DATA_PROVENANCE_REGISTRY: ProvenanceRecord[] = [
     epistemologicalTier: 'Estimated',
     recordsCount: 'Tailpipe emissions factors across 12m urban bus categories',
     integrationStatus: 'DATA VALIDATED',
+    evidenceClassification: 'VERIFIED_EXTERNAL',
+    freshnessCategory: 'EMISSION_REGULATORY',
+    lastRetrievalTimestamp: '2026-01-25T00:00:00Z',
     validationRules: [
       'CNG 12m standard urban bus: 1,120 g CO₂/km + 14.0 g NOx/km',
       'Zero tailpipe emissions credited to 12m pure electric buses',

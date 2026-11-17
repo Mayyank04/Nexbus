@@ -3,7 +3,8 @@
  * @description NEXBUS Service Worker providing offline caching, asset persistence, and PWA resilience.
  */
 
-const CACHE_NAME = 'nexbus-offline-v1';
+const PREVIOUS_CACHE = 'nexbus-offline-v1';
+const CACHE_NAME = 'nexbus-offline-v2';
 const PRECACHE_URLS = [
   '/',
   '/twin',
@@ -45,12 +46,12 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Skip non-GET requests and chrome-extension schemes
-  if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
+  // Skip non-GET requests, chrome-extension schemes, and foreign origins (Cache Poisoning Defense)
+  if (request.method !== 'GET' || !url.protocol.startsWith('http') || url.origin !== self.location.origin) {
     return;
   }
 
-  // API Requests: Network-First with graceful offline fallback
+  // API Requests: Network-First with graceful degraded offline fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request).catch(async () => {
@@ -59,12 +60,22 @@ self.addEventListener('fetch', (event) => {
         return new Response(
           JSON.stringify({
             success: false,
+            degraded: true,
             offline: true,
-            error: 'OFFLINE_MODE',
-            message: 'Device is offline. Showing cached transit intelligence.',
+            evidenceClassification: 'UNAVAILABLE',
+            freshnessStatus: 'UNAVAILABLE',
+            error: 'OFFLINE_DEGRADATION',
+            message: 'Device is offline. Live external transit telemetry is paused.',
+            timestamp: new Date().toISOString(),
           }),
           {
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Nexbus-Degraded': 'true',
+              'X-Nexbus-Offline': 'true',
+              'X-Nexbus-Evidence-Classification': 'UNAVAILABLE',
+              'Cache-Control': 'no-store, no-cache',
+            },
             status: 200,
           }
         );
