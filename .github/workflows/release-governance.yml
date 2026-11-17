@@ -1,0 +1,48 @@
+name: NEXBUS Release Governance & Integrity Verification
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release-verification:
+    name: Production Release Gates & Evidence Checksums
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Deterministic Dependency Installation
+        run: npm ci
+
+      - name: Enforce Read-Only Safety Invariant
+        run: |
+          echo "Verifying absence of transit vehicle actuation keywords..."
+          ! grep -rnE "dispatchBus|switchSignal|interlockingControl|sendVehicleCommand" src/app/api/
+
+      - name: Verify TypeScript & Build
+        run: |
+          npx tsc --noEmit
+          npm run build
+
+      - name: Generate Release Manifest & SHA-256 Checksums
+        run: |
+          mkdir -p release-artifacts
+          find src/ public/ -type f -exec sha256sum {} + | sort -k 2 > release-artifacts/source-checksums.sha256
+          echo "Commit SHA: ${{ github.sha }}" > release-artifacts/release-metadata.txt
+          echo "Build Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> release-artifacts/release-metadata.txt
+          echo "Safety Invariant: READ-ONLY + PASSIVE + ADVISORY" >> release-artifacts/release-metadata.txt
+
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexbus-release-governance-dossier
+          path: release-artifacts/

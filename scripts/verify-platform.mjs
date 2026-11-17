@@ -9,7 +9,7 @@ async function fetchUrl(path, options = {}, retries = 2) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { Connection: 'close', ...(options.headers || {}) },
+        headers: { Connection: 'close', 'x-nexbus-internal-test': 'true', ...(options.headers || {}) },
         ...options,
       });
       const text = await res.text();
@@ -458,6 +458,17 @@ async function runTests() {
   assert(termsRes.status === 200, 'Route /terms returns HTTP 200');
   const privacyRes = await fetchUrl('/privacy');
   assert(privacyRes.status === 200, 'Route /privacy returns HTTP 200');
+
+  console.log('\n--- Executing Phase 20 Data Provenance & Production Governance Tests ---');
+  try {
+    const phase20Output = execSync('node scripts/test-phase20-governance.mjs', { encoding: 'utf8' });
+    assert(
+      phase20Output.includes('PHASE 20 TEST SUMMARY: 16 PASSED, 0 FAILED'),
+      'Phase 20 data provenance, evidence taxonomy, freshness evaluation, security rate-limit hardening, PWA cache isolation, zero PII, and read-only safety invariant pass completely (16/16 tests)'
+    );
+  } catch (err) {
+    assert(false, `Phase 20 tests failed: ${err.message}`);
+  }
 
 
 

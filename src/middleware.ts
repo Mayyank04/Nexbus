@@ -23,17 +23,33 @@ export function middleware(request: NextRequest) {
       request.headers.get('x-real-ip') ||
       '127.0.0.1';
 
-    // Allow internal automated test suite & local development harness without artificial 429 throttling
-    const isInternalTest =
-      process.env.NODE_ENV === 'test' ||
-      request.headers.get('x-nexbus-internal-test') === 'true' ||
-      (process.env.NODE_ENV === 'development' && (clientIp === '127.0.0.1' || clientIp === '::1'));
+    // Phase 20 Hardened Rate Limiting & Bypass Verification
+    // In production, arbitrary headers like 'x-nexbus-internal-test' MUST NEVER bypass rate limits.
+    // A test bypass in production requires a verified, high-entropy secret matching NEXBUS_INTERNAL_TEST_SECRET.
+    const isProduction = process.env.NODE_ENV === 'production';
+    const internalSecret = process.env.NEXBUS_INTERNAL_TEST_SECRET;
+    const providedSecret = request.headers.get('x-nexbus-internal-secret');
 
-    if (isInternalTest) {
+    let isAuthorizedTestBypass = false;
+    if (isProduction) {
+      if (internalSecret && internalSecret.length >= 32 && providedSecret === internalSecret) {
+        isAuthorizedTestBypass = true;
+      }
+    } else {
+      // In development or test mode, permit localhost or explicitly flagged test suites
+      const isLoopback = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === 'localhost';
+      if (process.env.NODE_ENV === 'test' || (isLoopback && request.headers.get('x-nexbus-internal-test') === 'true')) {
+        isAuthorizedTestBypass = true;
+      }
+    }
+
+    if (isAuthorizedTestBypass) {
       const response = NextResponse.next();
       response.headers.set('X-Content-Type-Options', 'nosniff');
       response.headers.set('X-Frame-Options', 'SAMEORIGIN');
       response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+      response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+      response.headers.set('X-Nexbus-Bypass', 'authorized-test');
       return response;
     }
 
@@ -76,6 +92,8 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
 
   return response;
 }

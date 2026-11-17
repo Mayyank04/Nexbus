@@ -298,6 +298,7 @@ export class BenchmarkRegistryService {
       VERIFIED_EXTERNAL: 0,
       DERIVED: 0,
       ESTIMATED: 0,
+      PREDICTED: 0,
       SIMULATED: 0,
       SYNTHETIC: 0,
       UNAVAILABLE: 0,

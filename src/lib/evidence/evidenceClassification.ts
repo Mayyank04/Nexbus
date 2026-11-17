@@ -8,10 +8,159 @@ export type EvidenceClassification =
   | 'VERIFIED_EXTERNAL'
   | 'DERIVED'
   | 'ESTIMATED'
+  | 'PREDICTED'
   | 'SIMULATED'
   | 'SYNTHETIC'
   | 'UNAVAILABLE'
   | 'AUTH_REQUIRED';
+
+export type FreshnessStatus =
+  | 'FRESH'
+  | 'AGING'
+  | 'STALE'
+  | 'EXPIRED'
+  | 'UNKNOWN'
+  | 'UNAVAILABLE';
+
+export interface DataProvenanceRecord {
+  recordId: string;
+  sourceId: string;
+  sourceOrganization: string;
+  sourceName: string;
+  sourceUrl?: string | null;
+  evidenceClassification: EvidenceClassification;
+  collectionTimestamp?: string | null;
+  sourcePublicationTimestamp?: string | null;
+  lastRetrievalTimestamp?: string | null;
+  validityInterval?: { start: string; end: string } | null;
+  geographicCoverage?: string | null;
+  spatialResolution?: string | null;
+  temporalResolution?: string | null;
+  transformationMethod?: string | null;
+  modelId?: string | null;
+  modelVersion?: string | null;
+  inputRecordReferences?: string[] | null;
+  confidenceScore?: number | null;
+  uncertaintyInterval?: { lower: number; upper: number; confidenceLevelPct: number } | null;
+  knownLimitations?: string | null;
+  dataLicense?: string | null;
+  validationStatus?: 'VALIDATED' | 'UNVALIDATED' | 'FLAGGED' | 'EXEMPT';
+  freshnessStatus?: FreshnessStatus;
+}
+
+export type SourceFreshnessCategory =
+  | 'REALTIME_TELEMETRY'
+  | 'HOURLY_INFERENCE'
+  | 'DAILY_AGGREGATE'
+  | 'SCHEDULE_STATIC'
+  | 'RESEARCH_BENCHMARK'
+  | 'EMISSION_REGULATORY';
+
+export interface FreshnessThresholdConfig {
+  freshMaxSeconds: number;
+  agingMaxSeconds: number;
+  staleMaxSeconds: number;
+}
+
+export const DEFAULT_FRESHNESS_THRESHOLDS: Record<SourceFreshnessCategory, FreshnessThresholdConfig> = {
+  REALTIME_TELEMETRY: { freshMaxSeconds: 30, agingMaxSeconds: 120, staleMaxSeconds: 600 },
+  HOURLY_INFERENCE: { freshMaxSeconds: 3600, agingMaxSeconds: 7200, staleMaxSeconds: 14400 },
+  DAILY_AGGREGATE: { freshMaxSeconds: 86400, agingMaxSeconds: 172800, staleMaxSeconds: 604800 },
+  SCHEDULE_STATIC: { freshMaxSeconds: 5184000, agingMaxSeconds: 10368000, staleMaxSeconds: 15552000 }, // 60, 120, 180 days
+  RESEARCH_BENCHMARK: { freshMaxSeconds: 31536000, agingMaxSeconds: 63072000, staleMaxSeconds: 94608000 }, // 1, 2, 3 years
+  EMISSION_REGULATORY: { freshMaxSeconds: 63072000, agingMaxSeconds: 126144000, staleMaxSeconds: 189216000 },
+};
+
+export function sanitizeTimestamp(timestamp: string | null | undefined): {
+  valid: boolean;
+  date?: Date;
+  ageSeconds?: number;
+  error?: string;
+} {
+  if (!timestamp || typeof timestamp !== 'string' || timestamp.trim() === '') {
+    return { valid: false, error: 'Timestamp is missing or empty' };
+  }
+  const date = new Date(timestamp);
+  const timeMs = date.getTime();
+  if (isNaN(timeMs)) {
+    return { valid: false, error: 'Invalid ISO timestamp string' };
+  }
+  const now = Date.now();
+  const ageSeconds = Math.round((now - timeMs) / 1000);
+  if (ageSeconds < -300) {
+    // Clock skew beyond 5 minutes in the future
+    return { valid: false, date, ageSeconds, error: 'Future timestamp detected beyond permissible clock skew (5m)' };
+  }
+  return { valid: true, date, ageSeconds: Math.max(0, ageSeconds) };
+}
+
+export function evaluateFreshness(
+  timestamp: string | null | undefined,
+  category: SourceFreshnessCategory = 'REALTIME_TELEMETRY',
+  customThresholds?: Partial<FreshnessThresholdConfig>
+): { status: FreshnessStatus; ageSeconds: number | null; error?: string } {
+  if (!timestamp) {
+    return { status: 'UNKNOWN', ageSeconds: null, error: 'No timestamp provided; freshness cannot be fabricated' };
+  }
+  const sanitized = sanitizeTimestamp(timestamp);
+  if (!sanitized.valid) {
+    return { status: 'UNKNOWN', ageSeconds: sanitized.ageSeconds ?? null, error: sanitized.error };
+  }
+
+  const age = sanitized.ageSeconds!;
+  const thresholds = {
+    ...DEFAULT_FRESHNESS_THRESHOLDS[category],
+    ...(customThresholds || {}),
+  };
+
+  if (age <= thresholds.freshMaxSeconds) {
+    return { status: 'FRESH', ageSeconds: age };
+  }
+  if (age <= thresholds.agingMaxSeconds) {
+    return { status: 'AGING', ageSeconds: age };
+  }
+  if (age <= thresholds.staleMaxSeconds) {
+    return { status: 'STALE', ageSeconds: age };
+  }
+  return { status: 'EXPIRED', ageSeconds: age };
+}
+
+/**
+ * Strict immutability rules preventing evidence classification elevation.
+ * A synthetic fixture or model prediction must NEVER be elevated to an observed fact.
+ */
+export function preventClassificationElevation(
+  current: EvidenceClassification,
+  target: EvidenceClassification
+): { allowed: boolean; reason?: string } {
+  if (current === target) return { allowed: true };
+
+  // Synthetic records cannot be converted to real world classifications
+  if (current === 'SYNTHETIC' && target !== 'SYNTHETIC' && target !== 'UNAVAILABLE') {
+    return {
+      allowed: false,
+      reason: `Illegal elevation: SYNTHETIC records cannot be reclassified as ${target}`,
+    };
+  }
+
+  // Model-generated predictions cannot be converted to observed facts
+  if ((current === 'PREDICTED' || current === 'SIMULATED') && (target === 'OBSERVED' || target === 'VERIFIED_EXTERNAL')) {
+    return {
+      allowed: false,
+      reason: `Illegal elevation: ${current} outputs cannot be reclassified as ${target}`,
+    };
+  }
+
+  // Unavailable or auth-required data cannot silently become observed
+  if ((current === 'UNAVAILABLE' || current === 'AUTH_REQUIRED') && (target === 'OBSERVED' || target === 'VERIFIED_EXTERNAL')) {
+    return {
+      allowed: false,
+      reason: `Illegal elevation: ${current} state cannot be substituted as ${target}`,
+    };
+  }
+
+  return { allowed: true };
+}
 
 export type ObservationLifecycleState =
   | 'PLANNED'
