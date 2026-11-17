@@ -25,7 +25,13 @@ export type DigitalTwinLayer =
   | 'flood_risk'
   | 'demographics';
 
+export type TwinSurfaceMode = 'explore' | 'analyst';
+
 export function useDigitalTwin() {
+  const [mode, setMode] = useState<TwinSurfaceMode>('explore');
+  const [tutorialStepIndex, setTutorialStepIndex] = useState<number>(0);
+  const [isTutorialOpen, setIsTutorialOpen] = useState<boolean>(true);
+  const [isMotionPaused, setIsMotionPaused] = useState<boolean>(false);
   const [selectedCorridor, setSelectedCorridor] = useState<TransitCorridor | null>(DELHI_CORRIDORS[0]);
   const [selectedStop, setSelectedStop] = useState<BusStop | null>(null);
   const [currentTimeHour, setCurrentTimeHour] = useState<number>(9);
@@ -99,7 +105,20 @@ export function useDigitalTwin() {
     setIsPlaying((prev) => !prev);
   }, []);
 
+  const toggleMotionPause = useCallback(() => {
+    setIsMotionPaused((prev) => !prev);
+  }, []);
+
   return {
+    mode,
+    setMode,
+    tutorialStepIndex,
+    setTutorialStepIndex,
+    isTutorialOpen,
+    setIsTutorialOpen,
+    isMotionPaused,
+    setIsMotionPaused,
+    toggleMotionPause,
     selectedCorridor,
     setSelectedCorridor,
     selectedStop,

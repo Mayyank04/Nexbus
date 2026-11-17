@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#1A1815"/>
+  <rect x="24" y="24" width="464" height="464" rx="72" fill="none" stroke="#B84C32" stroke-width="8" opacity="0.8"/>
+  <!-- Concentric Transit Rings -->
+  <circle cx="256" cy="256" r="160" fill="none" stroke="#F5F0E6" stroke-width="6" opacity="0.4" stroke-dasharray="16 8"/>
+  <circle cx="256" cy="256" r="110" fill="none" stroke="#B84C32" stroke-width="8"/>
+  <circle cx="256" cy="256" r="60" fill="#B84C32"/>
+  <!-- Compass / North Vector -->
+  <polygon points="256,70 276,140 236,140" fill="#F5F0E6"/>
+  <!-- Monogram N -->
+  <text x="256" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="900" fill="#F5F0E6" text-anchor="middle" dominant-baseline="central">N</text>
+  <!-- Transit Hub Dots -->
+  <circle cx="256" cy="96" r="12" fill="#F5F0E6"/>
+  <circle cx="366" cy="256" r="12" fill="#F5F0E6"/>
+  <circle cx="256" cy="416" r="12" fill="#F5F0E6"/>
+  <circle cx="146" cy="256" r="12" fill="#F5F0E6"/>
+</svg>

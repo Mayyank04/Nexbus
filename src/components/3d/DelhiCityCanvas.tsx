@@ -5,8 +5,10 @@ import * as THREE from 'three';
 import { DELHI_STOPS, DELHI_CORRIDORS, BusStop, TransitCorridor } from '@/data/delhiTransitData';
 import { METRO_LINES, METRO_STATIONS, INTERCHANGE_SURVEYS } from '@/lib/multimodal/networkGraph';
 import { DELHI_MOBILITY_ZONES } from '@/lib/demand/odMatrixEngine';
+import { TUTORIAL_STEPS } from './EasyExploreTutorial';
 
 export type CameraPreset = 'overview' | 'corridor' | 'street' | 'simulation' | 'journey';
+export type TwinSurfaceMode = 'explore' | 'analyst';
 
 export type DigitalTwinLayer =
   | 'all'
@@ -35,6 +37,9 @@ interface DelhiCityCanvasProps {
   isSimulatedVariant?: boolean;
   activeLayer?: DigitalTwinLayer;
   viewMode?: '3D' | '2D';
+  mode?: TwinSurfaceMode;
+  tutorialStepIndex?: number | null;
+  isPaused?: boolean;
 }
 
 export default function DelhiCityCanvas({
@@ -51,6 +56,9 @@ export default function DelhiCityCanvas({
   isSimulatedVariant = false,
   activeLayer = 'all',
   viewMode = '3D',
+  mode = 'analyst',
+  tutorialStepIndex = null,
+  isPaused = false,
 }: DelhiCityCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -71,6 +79,18 @@ export default function DelhiCityCanvas({
 
   const [hoveredStop, setHoveredStop] = useState<BusStop | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
+  const [isContextLost, setIsContextLost] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Accessible reduced-motion detection
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   // Entity references
   const busEntitiesRef = useRef<
@@ -123,6 +143,15 @@ export default function DelhiCityCanvas({
       targetLookAt.current.set(2, 0, 4);
     }
   }, [preset, viewMode]);
+
+  // Mode A: Child-Friendly Tutorial Focal Camera Transitions
+  useEffect(() => {
+    if (mode === 'explore' && tutorialStepIndex != null && TUTORIAL_STEPS[tutorialStepIndex]) {
+      const focus = TUTORIAL_STEPS[tutorialStepIndex].cameraFocus;
+      targetLookAt.current.set(focus.target[0], focus.target[1], focus.target[2]);
+      targetCamPos.current.set(focus.position[0], focus.position[1], focus.position[2]);
+    }
+  }, [mode, tutorialStepIndex]);
 
   // Phase 10 Dynamic Geospatial Layer Visibility
   useEffect(() => {
@@ -197,6 +226,16 @@ export default function DelhiCityCanvas({
     const container = containerRef.current;
     if (!container) return;
 
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      console.warn('NEXBUS: WebGL context lost. Rendering 2D vector schematic fallback.');
+      setIsContextLost(true);
+    };
+    const handleContextRestored = () => {
+      console.info('NEXBUS: WebGL context restored.');
+      setIsContextLost(false);
+    };
+
     try {
       const canvas = document.createElement('canvas');
       const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -242,6 +281,11 @@ export default function DelhiCityCanvas({
 
       container.appendChild(renderer.domElement);
       rendererRef.current = renderer;
+
+      // WebGL Context Loss & Recovery Listeners
+      const canvas = renderer.domElement;
+      canvas.addEventListener('webglcontextlost', handleContextLost, false);
+      canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
     } catch (e) {
       console.warn('WebGL initialization failed, falling back to 2D vector schematic:', e);
       setWebglSupported(false);
@@ -866,37 +910,68 @@ export default function DelhiCityCanvas({
     floodRiskGroup.visible = activeLayer === 'flood_risk';
     demographicsGroup.visible = activeLayer === 'demographics';
 
-    // 7. Architectural Buses (Dual-tone, properly proportioned)
+    // 7. Architectural & Friendly Buses (Dual-mode support)
     if (showBuses) {
+      const isExplore = mode === 'explore';
       const busBodyMatDTC = new THREE.MeshStandardMaterial({
-        color: 0xb84c32, // Terracotta DTC bus
+        color: isExplore ? 0xd32f2f : 0xb84c32, // Cheerful red for explore, terracotta DTC for analyst
         roughness: 0.35,
         metalness: 0.2,
       });
       const busBodyMatEV = new THREE.MeshStandardMaterial({
-        color: 0x2a5c8a, // Electric Transit Blue
+        color: isExplore ? 0x2e7d32 : 0x2a5c8a, // Cheerful electric green for explore, transit blue for analyst
         roughness: 0.3,
         metalness: 0.3,
       });
       const busWindowMat = new THREE.MeshBasicMaterial({ color: 0x1f2326 });
       const headLampMat = new THREE.MeshBasicMaterial({ color: 0xfffae0 });
       const tailLampMat = new THREE.MeshBasicMaterial({ color: 0xe63946 });
+      const wheelMat = new THREE.MeshStandardMaterial({ color: 0x1a1815, roughness: 0.9 });
 
-      const busCountPerCorridor = isSimulatedVariant ? 6 : 4;
+      const busCountPerCorridor = isSimulatedVariant ? 6 : (isExplore ? 5 : 4);
       DELHI_CORRIDORS.forEach((corridor) => {
         const curve = corridorCurvesRef.current.get(corridor.id);
         if (!curve) return;
 
         for (let b = 0; b < busCountPerCorridor; b++) {
           const busGroup = new THREE.Group();
+          const scale = isExplore ? 1.35 : 1.0;
+          busGroup.scale.set(scale, scale, scale);
 
+          const isEV = isSimulatedVariant || (b % 2 === 1);
           const body = new THREE.Mesh(
             new THREE.BoxGeometry(0.75, 0.44, 1.6),
-            isSimulatedVariant ? busBodyMatEV : busBodyMatDTC
+            isEV ? busBodyMatEV : busBodyMatDTC
           );
           body.castShadow = true;
           body.position.y = 0.24;
           busGroup.add(body);
+
+          // Friendly rounded roof & wheels for Explore Mode
+          if (isExplore) {
+            const roof = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.36, 0.36, 1.45, 12),
+              isEV ? busBodyMatEV : busBodyMatDTC
+            );
+            roof.rotation.x = Math.PI / 2;
+            roof.position.y = 0.44;
+            busGroup.add(roof);
+
+            // 4 Friendly Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 10);
+            const wheelCoords: [number, number, number][] = [
+              [-0.4, 0.12, 0.5],
+              [0.4, 0.12, 0.5],
+              [-0.4, 0.12, -0.5],
+              [0.4, 0.12, -0.5],
+            ];
+            wheelCoords.forEach(([wx, wy, wz]) => {
+              const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+              wheel.rotation.z = Math.PI / 2;
+              wheel.position.set(wx, wy, wz);
+              busGroup.add(wheel);
+            });
+          }
 
           const windows = new THREE.Mesh(
             new THREE.BoxGeometry(0.78, 0.16, 1.1),
@@ -919,13 +994,19 @@ export default function DelhiCityCanvas({
           tailLamps.position.set(0, 0.2, -0.82);
           busGroup.add(tailLamps);
 
-          // Epistemological Provenance Beacon (Cyan = Observed, Terracotta = Calibrated)
+          // Epistemological Provenance / Cheerful Beacon
           const isObservedBeacon = b % 2 === 0;
-          const beaconMat = new THREE.MeshBasicMaterial({
-            color: isObservedBeacon ? 0x00d2ff : 0xb84c32,
-          });
-          const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 6), beaconMat);
-          beacon.position.set(0, 0.48, 0);
+          const beaconColor = isExplore
+            ? 0xffcc00 // Warm bright yellow beacon
+            : isObservedBeacon
+            ? 0x00d2ff
+            : 0xb84c32;
+          const beaconMat = new THREE.MeshBasicMaterial({ color: beaconColor });
+          const beacon = new THREE.Mesh(
+            new THREE.SphereGeometry(isExplore ? 0.12 : 0.09, 8, 8),
+            beaconMat
+          );
+          beacon.position.set(0, isExplore ? 0.6 : 0.48, 0);
           busGroup.add(beacon);
 
           scene.add(busGroup);
@@ -935,7 +1016,8 @@ export default function DelhiCityCanvas({
             corridor,
             progress: b / busCountPerCorridor + Math.random() * 0.1,
             speed:
-              0.00045 + (Math.random() * 0.0002) * (isSimulatedVariant ? 1.25 : 1.0),
+              (0.00045 + (Math.random() * 0.0002) * (isSimulatedVariant ? 1.25 : 1.0)) *
+              (isExplore ? 0.85 : 1.0),
           });
         }
       });
@@ -1068,28 +1150,32 @@ export default function DelhiCityCanvas({
       camera.position.copy(currentCamPos.current);
       camera.lookAt(currentLookAt.current);
 
-      // Animate Buses along corridors
-      busEntitiesRef.current.forEach((bus) => {
-        const curve = corridorCurvesRef.current.get(bus.corridor.id);
-        if (!curve) return;
+      const shouldAnimate = !isPaused && !prefersReducedMotion;
 
-        bus.progress = (bus.progress + bus.speed) % 1.0;
-        const pos = curve.getPointAt(bus.progress);
-        const tangent = curve.getTangentAt(bus.progress);
+      // Animate Buses along corridors (paused if reduced motion is requested or user paused)
+      if (shouldAnimate) {
+        busEntitiesRef.current.forEach((bus) => {
+          const curve = corridorCurvesRef.current.get(bus.corridor.id);
+          if (!curve) return;
 
-        bus.group.position.set(pos.x, 0.08, pos.z);
-        bus.group.lookAt(pos.x + tangent.x, 0.08, pos.z + tangent.z);
-      });
+          bus.progress = (bus.progress + bus.speed) % 1.0;
+          const pos = curve.getPointAt(bus.progress);
+          const tangent = curve.getTangentAt(bus.progress);
 
-      // Animate Pulse Particles
-      pulseParticlesRef.current.forEach((pulse) => {
-        const curve = corridorCurvesRef.current.get(pulse.corridorId);
-        if (!curve) return;
+          bus.group.position.set(pos.x, 0.08, pos.z);
+          bus.group.lookAt(pos.x + tangent.x, 0.08, pos.z + tangent.z);
+        });
 
-        pulse.progress = (pulse.progress + pulse.speed) % 1.0;
-        const pos = curve.getPointAt(pulse.progress);
-        pulse.mesh.position.set(pos.x, 0.38, pos.z);
-      });
+        // Animate Pulse Particles
+        pulseParticlesRef.current.forEach((pulse) => {
+          const curve = corridorCurvesRef.current.get(pulse.corridorId);
+          if (!curve) return;
+
+          pulse.progress = (pulse.progress + pulse.speed) % 1.0;
+          const pos = curve.getPointAt(pulse.progress);
+          pulse.mesh.position.set(pos.x, 0.38, pos.z);
+        });
+      }
 
       // Animate Stop Markers
       stopMarkersRef.current.forEach((group, stopId) => {
@@ -1120,6 +1206,12 @@ export default function DelhiCityCanvas({
       container.removeEventListener('wheel', handleWheel);
       container.removeEventListener('click', handleClick);
 
+      const canvasEl = rendererRef.current?.domElement;
+      if (canvasEl) {
+        canvasEl.removeEventListener('webglcontextlost', handleContextLost);
+        canvasEl.removeEventListener('webglcontextrestored', handleContextRestored);
+      }
+
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       if (rendererRef.current && rendererRef.current.domElement) {
         rendererRef.current.dispose();
@@ -1137,34 +1229,219 @@ export default function DelhiCityCanvas({
     isSimulatedVariant,
     interactive,
     onSelectStop,
+    mode,
+    isPaused,
+    prefersReducedMotion,
   ]);
 
   return (
     <div className={`relative w-full h-full overflow-hidden select-none ${className}`}>
-      {webglSupported ? (
+      {webglSupported && !isContextLost ? (
         <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
       ) : (
-        /* WebGL Architectural Blueprint Fallback */
-        <div className="w-full h-full flex flex-col items-center justify-center bg-parchment p-4 sm:p-8 text-ink">
-          <div className="max-w-md w-full border border-divider p-4 sm:p-6 bg-ivory shadow-sm">
-            <span className="font-mono text-[11px] tracking-widest text-terracotta uppercase">
-              Cartographic Projection / 2D Vector Fallback
-            </span>
-            <h3 className="font-serif text-2xl mt-2 mb-3">Delhi Metropolitan Spatial Model</h3>
-            <p className="text-sm text-ink-muted leading-relaxed mb-4">
-              Hardware WebGL acceleration unavailable. Rendering vector transit topology for Central, South, and Ring Road corridors.
+        /* WebGL Architectural Blueprint & Interactive 2D Vector Fallback */
+        <div className="w-full h-full flex flex-col items-center justify-center bg-parchment p-4 sm:p-6 text-ink overflow-y-auto">
+          <div className="max-w-2xl w-full border border-divider p-5 sm:p-7 bg-ivory shadow-sm space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-divider pb-3">
+              <div>
+                <span className="font-mono text-[11px] tracking-widest text-terracotta uppercase block">
+                  {isContextLost ? '⚠️ WEBGL CONTEXT RECOVERY ACTIVE' : 'CARTOGRAPHIC PROJECTION · 2D VECTOR FALLBACK'}
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl mt-1 text-ink">
+                  Delhi Metropolitan Spatial Network
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] px-2 py-0.5 bg-surface-white border border-divider text-ink-muted">
+                  {mode === 'explore' ? '🌟 EXPLORE MODE' : '🔬 ANALYST MODE'}
+                </span>
+                {isContextLost && (
+                  <button
+                    onClick={() => {
+                      setIsContextLost(false);
+                      setWebglSupported(true);
+                    }}
+                    className="font-mono text-[11px] px-3 py-1 bg-terracotta text-surface-white hover:bg-ink transition-colors"
+                  >
+                    RETRY 3D ACCELERATION
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed">
+              {isContextLost
+                ? 'Your device graphics context was temporarily reclaimed. Displaying the 2D precision cartographic vector schematic with all routes and stops accessible.'
+                : 'Hardware 3D WebGL acceleration is unavailable on this device or mode. Rendering vector transit topology for all National Capital Territory corridors.'}
             </p>
-            <div className="aspect-[4/3] bg-parchment/40 relative flex items-center justify-center mt-3">
-              <svg className="w-full h-full p-4" viewBox="0 0 400 300">
-                <circle cx="200" cy="150" r="110" fill="none" stroke="#A69A89" strokeWidth="1.5" strokeDasharray="4 4" />
-                <circle cx="200" cy="150" r="60" fill="none" stroke="#24211D" strokeWidth="2" />
-                <line x1="200" y1="20" x2="200" y2="280" stroke="#B84C32" strokeWidth="2.5" />
-                <line x1="40" y1="150" x2="360" y2="150" stroke="#C89B53" strokeWidth="2" />
-                <circle cx="200" cy="150" r="6" fill="#B84C32" />
-                <text x="210" y="154" className="font-mono text-[10px] fill-ink">CP-01</text>
-                <circle cx="200" cy="230" r="5" fill="#B84C32" />
-                <text x="210" y="234" className="font-mono text-[10px] fill-ink">AIIMS-04</text>
+
+            {/* Interactive SVG Schematic Map */}
+            <div className="aspect-[16/10] bg-surface-white border border-divider relative flex items-center justify-center p-2">
+              <svg className="w-full h-full" viewBox="0 0 500 320" role="img" aria-label="Delhi Transit Vector Map">
+                {/* Background Grid */}
+                <defs>
+                  <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+                    <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#DED5C8" strokeWidth="0.5" />
+                  </pattern>
+                </defs>
+                <rect width="500" height="320" fill="url(#grid)" />
+
+                {/* Yamuna River Curve */}
+                <path
+                  d="M 280,0 Q 310,100 330,160 T 360,320"
+                  fill="none"
+                  stroke="#A2C3D2"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                  opacity="0.6"
+                />
+                <text x="330" y="80" className="font-mono text-[9px] fill-[#4A7C8A] tracking-wider">YAMUNA RIVER</text>
+
+                {/* Outer Ring Road */}
+                <circle
+                  cx="240"
+                  cy="160"
+                  r="130"
+                  fill="none"
+                  stroke="#7E22CE"
+                  strokeWidth="2.5"
+                  strokeDasharray="6 3"
+                  className="cursor-pointer hover:stroke-terracotta transition-colors"
+                  onClick={() => {
+                    const c = DELHI_CORRIDORS.find((x) => x.id === 'corridor-outer-ring');
+                    if (c && onSelectCorridor) onSelectCorridor(c);
+                  }}
+                />
+                <text x="250" y="25" className="font-mono text-[9px] fill-[#7E22CE]">OUTER RING ROAD (ORR)</text>
+
+                {/* Ring Road (Inner) */}
+                <circle
+                  cx="240"
+                  cy="160"
+                  r="85"
+                  fill="none"
+                  stroke="#B84C32"
+                  strokeWidth="3.5"
+                  className="cursor-pointer hover:stroke-ink transition-colors"
+                  onClick={() => {
+                    const c = DELHI_CORRIDORS.find((x) => x.id === 'corridor-ring-road');
+                    if (c && onSelectCorridor) onSelectCorridor(c);
+                  }}
+                />
+                <text x="250" y="70" className="font-mono text-[9px] fill-terracotta font-medium">INNER RING ROAD (IRR)</text>
+
+                {/* Central North-South Axis */}
+                <line
+                  x1="240"
+                  y1="20"
+                  x2="240"
+                  y2="300"
+                  stroke="#C89B53"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:stroke-ink transition-colors"
+                  onClick={() => {
+                    const c = DELHI_CORRIDORS.find((x) => x.id === 'corridor-radial-axials');
+                    if (c && onSelectCorridor) onSelectCorridor(c);
+                  }}
+                />
+
+                {/* East-West Trans-Yamuna Axis */}
+                <line
+                  x1="60"
+                  y1="160"
+                  x2="440"
+                  y2="160"
+                  stroke="#15803D"
+                  strokeWidth="2"
+                  className="cursor-pointer hover:stroke-ink transition-colors"
+                  onClick={() => {
+                    const c = DELHI_CORRIDORS.find((x) => x.id === 'corridor-south-ext');
+                    if (c && onSelectCorridor) onSelectCorridor(c);
+                  }}
+                />
+
+                {/* Major Stops */}
+                {/* Connaught Place */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => {
+                    const stop = DELHI_STOPS.find((s) => s.id === 'stop-cp-01');
+                    if (stop && onSelectStop) onSelectStop(stop);
+                  }}
+                >
+                  <circle cx="240" cy="140" r="7" fill="#B84C32" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="252" y="144" className="font-serif text-[11px] fill-ink font-bold">Connaught Place</text>
+                  <text x="252" y="153" className="font-mono text-[8px] fill-ink-muted">HUB · METRO INTERCHANGE</text>
+                </g>
+
+                {/* AIIMS */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => {
+                    const stop = DELHI_STOPS.find((s) => s.id === 'stop-aiims-04');
+                    if (stop && onSelectStop) onSelectStop(stop);
+                  }}
+                >
+                  <circle cx="240" cy="225" r="7" fill="#B84C32" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="252" y="228" className="font-serif text-[11px] fill-ink font-bold">AIIMS Medical Hub</text>
+                  <text x="252" y="237" className="font-mono text-[8px] fill-ink-muted">AUROBINDO CORRIDOR</text>
+                </g>
+
+                {/* Kashmiri Gate */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => {
+                    const stop = DELHI_STOPS.find((s) => s.id === 'stop-kashmere-gate-08');
+                    if (stop && onSelectStop) onSelectStop(stop);
+                  }}
+                >
+                  <circle cx="240" cy="55" r="6" fill="#15803D" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="252" y="58" className="font-serif text-[11px] fill-ink font-bold">Kashmiri Gate ISBT</text>
+                </g>
+
+                {/* Dhaula Kuan */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => {
+                    const stop = DELHI_STOPS.find((s) => s.id === 'stop-dhaula-kuan-06');
+                    if (stop && onSelectStop) onSelectStop(stop);
+                  }}
+                >
+                  <circle cx="160" cy="175" r="6" fill="#C89B53" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="80" y="178" className="font-serif text-[11px] fill-ink font-bold">Dhaula Kuan</text>
+                </g>
+
+                {/* Lajpat Nagar */}
+                <g
+                  className="cursor-pointer"
+                  onClick={() => {
+                    const stop = DELHI_STOPS.find((s) => s.id === 'stop-lajpat-nagar-07');
+                    if (stop && onSelectStop) onSelectStop(stop);
+                  }}
+                >
+                  <circle cx="310" cy="200" r="6" fill="#7E22CE" stroke="#FFFFFF" strokeWidth="2" />
+                  <text x="322" y="204" className="font-serif text-[11px] fill-ink font-bold">Lajpat Nagar</text>
+                </g>
               </svg>
+            </div>
+
+            {/* Quick Interactive Legend */}
+            <div className="pt-2 border-t border-divider flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-ink-muted">
+              <span>INTERACTIVE MAP: Tap any corridor or stop marker to inspect schedule & dwell times</span>
+              <div className="flex items-center space-x-3">
+                <span className="flex items-center space-x-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
+                  <span>Ring Road</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#7E22CE]" />
+                  <span>Outer Ring</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#15803D]" />
+                  <span>Radial Corridors</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
