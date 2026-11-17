@@ -18,7 +18,13 @@
 
 import assert from 'node:assert';
 import { execSync } from 'node:child_process';
-import { getBenchmarkRegistryService } from '../src/lib/research/benchmarkRegistry.ts';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
@@ -50,7 +56,8 @@ export async function runPhase14Certification() {
   // Test 2: External Benchmark Registry & Anti-Leakage Partitioning
   // -------------------------------------------------------------
   console.log('\n2. Testing External Benchmark Reference Registry & 4-Tier Partitioning...');
-  const benchService = getBenchmarkRegistryService();
+  const benchModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/research/benchmarkRegistry.ts'));
+  const benchService = benchModule.getBenchmarkRegistryService();
   const summary = benchService.getSummaryReport();
   assert(summary.totalDatasets >= 8, `Expected >= 8 registered benchmark datasets, got ${summary.totalDatasets}`);
   assert.strictEqual(summary.leakageAuditPassed, true, 'Anti-leakage audit must pass');

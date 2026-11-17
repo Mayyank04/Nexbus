@@ -11,12 +11,19 @@
  */
 
 import assert from 'node:assert';
-import { getBenchmarkRegistryService } from '../src/lib/research/benchmarkRegistry.ts';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
 
 export async function auditExternalBenchmarkData() {
   console.log('\n=== NEXBUS PHASE 14 EXTERNAL BENCHMARK DATA AUDIT ===\n');
 
-  const service = getBenchmarkRegistryService();
+  const benchModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/research/benchmarkRegistry.ts'));
+  const service = benchModule.getBenchmarkRegistryService();
   const datasets = service.getAllDatasets();
 
   // 1. Dataset Count
