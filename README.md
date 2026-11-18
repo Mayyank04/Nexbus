@@ -7,7 +7,8 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
   <a href="https://nexbus.vercel.app"><strong>Live Prototype</strong></a> · 
   <a href="https://github.com/Mayyank04/Nexbus"><strong>Source Code</strong></a> · 
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
-  <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a>
+  <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
+  <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a>
 </p>
 
 ---
@@ -335,7 +336,7 @@ cd Nexbus
 
 ### Select the Submission Branch
 ```bash
-git checkout phase-21-competition-submission
+git checkout phase-22-final-demonstration-and-submission-certification
 ```
 
 ### Install Dependencies
@@ -392,6 +393,8 @@ The Phase 21 release report records:
 
 *Remote CI evidence:* [GitHub Actions Run 44148714932](https://github.com/Mayyank04/Nexbus/actions/runs/44148714932)
 
+*Assertion Reconciliation Note: The 74 platform assertions executed by `npm test` (`scripts/verify-platform.mjs`) include assertion #74 which executes `scripts/test-phase20-governance.mjs` as a child process, validating all 16 Phase 20 governance assertions. In GitHub Actions CI, `test-phase20-governance.mjs` is also run as a dedicated matrix step for standalone log visibility. The total unique automated suite comprises 74 platform assertions; reporting $74 + 16 = 90$ represents duplicate accounting and is disavowed.*
+
 *These results describe the reported automated checks. They do not establish real-world transport accuracy, universal device compatibility, or institutional validation.*
 
 ---
@@ -425,9 +428,18 @@ The following documents form the NEXBUS competition submission package:
 | **2. Working prototype** | [nexbus.vercel.app](https://nexbus.vercel.app) | **`COMPLETE_VERIFIED`** |
 | **3. Public source code and README** | [GitHub Repository](https://github.com/Mayyank04/Nexbus) | **`COMPLETE_VERIFIED`** |
 | **4. Technical note** | [`docs/phase-21/NEXBUS_TECHNICAL_NOTE.md`](docs/phase-21/NEXBUS_TECHNICAL_NOTE.md) | **`COMPLETE_VERIFIED`** |
-| **5. Demonstration video** | [`docs/phase-21/DEMO_VIDEO_SCRIPT.md`](docs/phase-21/DEMO_VIDEO_SCRIPT.md) | **`IN_PROGRESS`** |
+| **5. Demonstration video** | [`docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4`](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) | **`LOCALLY_VALIDATED`** |
 
-*Demonstration video: The 3-minute-45-second recording script and production cues are prepared. The video itself must be recorded, reviewed, uploaded, and linked before the fifth deliverable can be marked complete.*
+*Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 160.59s narration in en_IN by Aman, 10.75 MB H.264/AAC MP4). Accessible directly at [docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) with poster thumbnail at [docs/phase-22/demo/DEMO_THUMBNAIL.png](docs/phase-22/demo/DEMO_THUMBNAIL.png) and recording validation log at [docs/phase-22/demo/DEMO_VALIDATION_REPORT.md](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md). Marked LOCALLY_VALIDATED pending competition portal upload or public cloud video stream hosting.*
+
+### Phase 22 Final Demonstration and Submission Certification
+- [Final Competition Certification](docs/phase-22/FINAL_COMPETITION_CERTIFICATION.md)
+- [Submission Package Dossier](docs/phase-22/SUBMISSION_PACKAGE.md)
+- [Baseline Audit](docs/phase-22/BASELINE_AUDIT.md)
+- [Claims and Evidence Register](docs/phase-22/CLAIMS_AND_EVIDENCE_REGISTER.md)
+- [Demonstration Video MP4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4)
+- [Demonstration Video Validation Report](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md)
+- [Final Demo Script](docs/phase-22/demo/DEMO_SCRIPT_FINAL.md)
 
 ### Phase 21 Submission Documentation
 - [Competition Proposal](docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md)
@@ -458,7 +470,7 @@ NEXBUS is a decision-support prototype, not a replacement for official transport
 - Model outputs that require further independent calibration and validation.
 - Scenario assumptions that may not represent actual commuter behaviour under extreme conditions.
 - Native platform builds that require additional device certification.
-- A demonstration video that remains to be physically recorded.
+- Demonstration video hosted locally in repository; external video streaming upload pending competition portal distribution.
 
 ### Potential Future Work
 - Expanded Delhi transit network coverage (500+ bus routes).
@@ -489,14 +501,14 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Release baseline:** Phase 21
-- **Release commit:** `6e56d3d`
-- **Working branch:** `phase-21-competition-submission`
+- **Release baseline:** Phase 22 — Final Demonstration Production, Submission Package Validation & Competition Release Certification
+- **Release commit:** `89848ea` (Phase 21 baseline), transitioning to Phase 22 certification commit
+- **Working branch:** `phase-22-final-demonstration-and-submission-certification`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
-- **CI status:** 🟢 Successful Node.js 20.x and 22.x matrix run ([GitHub Actions Run 44148714932](https://github.com/Mayyank04/Nexbus/actions/runs/44148714932)).
+- **CI status:** 🟢 Continuous Integration matrix verified across Node.js 20.x and 22.x ([GitHub Actions](https://github.com/Mayyank04/Nexbus/actions)).
 
-NEXBUS is prepared for competition evaluation within its documented and verified scope. The demonstration video remains the final outstanding submission action.
+NEXBUS has fulfilled all five competition deliverables under the READ-ONLY + PASSIVE + ADVISORY operational safety invariant. The system is certified as `SUBMISSION_READY_WITH_DISCLOSED_LIMITATIONS`.
 
 <p align="center">
   <strong>NEXBUS</strong><br/>

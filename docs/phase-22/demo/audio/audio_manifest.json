@@ -1,0 +1,66 @@
+[
+  {
+    "id": "seg1",
+    "title": "Introduction & Problem Context",
+    "durationSec": 19.797098,
+    "targetSec": 21,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg1.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg1.mp3"
+  },
+  {
+    "id": "seg2",
+    "title": "Platform Overview & Safety Mandate",
+    "durationSec": 23.784127,
+    "targetSec": 30,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg2.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg2.mp3"
+  },
+  {
+    "id": "seg3",
+    "title": "Digital Twin: Explore Delhi Mode",
+    "durationSec": 21.203673,
+    "targetSec": 40,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg3.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg3.mp3"
+  },
+  {
+    "id": "seg4",
+    "title": "Advanced GIS Analysis & 2D Vector Fallback",
+    "durationSec": 20.419274,
+    "targetSec": 30,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg4.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg4.mp3"
+  },
+  {
+    "id": "seg5",
+    "title": "Multi-Criteria Journey Planning",
+    "durationSec": 18.819728,
+    "targetSec": 35,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg5.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg5.mp3"
+  },
+  {
+    "id": "seg6",
+    "title": "Parametric Simulation Lab",
+    "durationSec": 20.814649,
+    "targetSec": 30,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg6.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg6.mp3"
+  },
+  {
+    "id": "seg7",
+    "title": "Data Provenance & Evidence Classification",
+    "durationSec": 18.014014,
+    "targetSec": 25,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg7.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg7.mp3"
+  },
+  {
+    "id": "seg8",
+    "title": "Limitations & Operational Safety Invariant",
+    "durationSec": 17.786803,
+    "targetSec": 14,
+    "wavPath": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg8.wav",
+    "mp3Path": "/Users/mayankgautam/Desktop/nexbus/docs/phase-22/demo/audio/seg8.mp3"
+  }
+]
