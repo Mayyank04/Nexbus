@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { formatNumber } from '@/lib/utils/formatters';
 import {
   ShieldCheck,
   Award,
@@ -344,8 +345,8 @@ export default function Phase13ResearchDashboard() {
                         {l.originZoneName} &rarr; {l.destinationZoneName}
                       </td>
                       <td className="py-2.5 px-3 text-ink-muted">{l.primaryCorridor}</td>
-                      <td className="py-2.5 px-3 text-right font-medium">{m.toLocaleString()}</td>
-                      <td className="py-2.5 px-3 text-right">{c.toLocaleString()}</td>
+                      <td className="py-2.5 px-3 text-right font-medium">{formatNumber(m)}</td>
+                      <td className="py-2.5 px-3 text-right">{formatNumber(c)}</td>
                       <td className="py-2.5 px-3 text-right font-medium text-green-800">{geh.toFixed(2)}</td>
                       <td className="py-2.5 px-3 text-center">
                         <span className="px-1.5 py-0.5 text-[10px] bg-green-100 text-green-800">PASS</span>
@@ -358,7 +359,7 @@ export default function Phase13ResearchDashboard() {
           </div>
           <div className="text-[10px] font-mono text-ink-muted flex items-center justify-between">
             <span>GEH &lt; 5.0 satisfies UK DfT / US FHWA international screenline validation criteria (100% pass rate).</span>
-            <span>Total Network Trips: {odReport.totalNetworkHourlyTrips?.toLocaleString()} pax/hr</span>
+            <span>Total Network Trips: {formatNumber(odReport.totalNetworkHourlyTrips)} pax/hr</span>
           </div>
         </div>
       )}

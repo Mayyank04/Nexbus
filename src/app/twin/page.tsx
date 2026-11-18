@@ -15,7 +15,10 @@ import {
   CrowdingPredictionResponse,
 } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatNumber } from '@/lib/utils/formatters';
 import { useDigitalTwin } from '@/hooks/useDigitalTwin';
+import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
+import WhatAmILookingAtGuide from '@/components/3d/WhatAmILookingAtGuide';
 import {
   Clock,
   Play,
@@ -51,6 +54,7 @@ const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
 ];
 
 export default function DigitalTwinPage() {
+  const { level } = useExperienceLevel();
   const {
     mode,
     setMode,
@@ -86,6 +90,31 @@ export default function DigitalTwinPage() {
     setInspectedVehicle,
     liveFreshnessLag,
   } = useDigitalTwin();
+
+  // Keep internal mode aligned if user switches experience level
+  useEffect(() => {
+    if (level === 'advanced' && mode !== 'analyst') {
+      setMode('analyst');
+    } else if (level === 'easy' && mode !== 'explore') {
+      setMode('explore');
+    }
+  }, [level, mode, setMode]);
+
+  const handleFlyToLandmark = (landmark: string) => {
+    if (landmark === 'ring-road') {
+      const ring = DELHI_CORRIDORS.find((c) => c.id === 'corridor-ring-road') || DELHI_CORRIDORS[0];
+      setSelectedCorridor(ring);
+      setSelectedStop(null);
+    } else if (landmark === 'kashmere-gate') {
+      const kg = DELHI_STOPS.find((s) => s.id === 'stop-kashmere-gate') || DELHI_STOPS[0];
+      setSelectedStop(kg);
+      setSelectedCorridor(null);
+    } else if (landmark === 'cp') {
+      const cp = DELHI_STOPS.find((s) => s.id === 'stop-cp-regal') || DELHI_STOPS[1];
+      setSelectedStop(cp);
+      setSelectedCorridor(null);
+    }
+  };
 
   const filteredCorridors = DELHI_CORRIDORS.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,15 +200,16 @@ export default function DigitalTwinPage() {
                 viewMode === '3D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
               }`}
             >
-              3D ISOMETRIC
+              3D VIEW
             </button>
             <button
               onClick={() => setViewMode('2D')}
+              title="Switch to Simple Flat Map for easy viewing"
               className={`px-2 py-0.5 font-mono text-[11px] transition-colors ${
                 viewMode === '2D' ? 'bg-terracotta text-surface-white font-medium' : 'text-ink-muted hover:text-ink'
               }`}
             >
-              2D NADIR
+              2D FLAT MAP
             </button>
           </div>
 
@@ -203,6 +233,9 @@ export default function DigitalTwinPage() {
           {mode === 'explore' ? (
             /* Mode A: Child-Friendly & Newcomer Exploration Panel */
             <div className="flex-1 p-4 space-y-4">
+              {/* Persistent 5-Question Explainer */}
+              <WhatAmILookingAtGuide onFlyToLandmark={handleFlyToLandmark} />
+
               <div className="bg-surface-white border border-divider p-3.5 space-y-2">
                 <div className="flex items-center space-x-1.5 text-xs font-mono text-terracotta">
                   <Sparkles className="w-3.5 h-3.5" />
@@ -297,26 +330,29 @@ export default function DigitalTwinPage() {
                 </div>
               </div>
 
-              {/* Friendly Crowding Legend */}
+              {/* Friendly Crowding Legend with Triple Encoding (Color + Emoji/Icon + Text) */}
               <div className="border border-divider bg-surface-white p-3 space-y-2">
-                <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
-                  HOW CROWDED IS IT?
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-ink-muted block">
+                    HOW CROWDED IS IT?
+                  </span>
+                  <span className="font-mono text-[10px] text-terracotta uppercase">TRIPLE ENCODED</span>
+                </div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-700" />
-                    <span className="font-medium text-ink">Plenty of Seats</span>
-                    <span className="text-ink-muted text-[11px] ml-auto">Quiet times</span>
+                    <span className="w-3 h-3 rounded-full bg-emerald-700 flex items-center justify-center text-[9px] text-white font-bold">✓</span>
+                    <span className="font-medium text-ink">🟢 Not Very Crowded</span>
+                    <span className="text-ink-muted text-[11px] ml-auto">Plenty of seats</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-600" />
-                    <span className="font-medium text-ink">Getting Busy</span>
+                    <span className="w-3 h-3 rounded-full bg-amber-600 flex items-center justify-center text-[9px] text-white font-bold">~</span>
+                    <span className="font-medium text-ink">🟡 Getting Busy</span>
                     <span className="text-ink-muted text-[11px] ml-auto">Some standing</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-terracotta" />
-                    <span className="font-medium text-ink">Super Crowded</span>
-                    <span className="text-ink-muted text-[11px] ml-auto">Peak rush</span>
+                    <span className="w-3 h-3 rounded-full bg-terracotta flex items-center justify-center text-[9px] text-white font-bold">!</span>
+                    <span className="font-medium text-ink">🔴 Very Crowded</span>
+                    <span className="text-ink-muted text-[11px] ml-auto">Peak rush pack</span>
                   </div>
                 </div>
               </div>
@@ -513,6 +549,12 @@ export default function DigitalTwinPage() {
 
             {/* In-viewport Coordinates & Live Telemetry HUD */}
             <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
+              {/* Prominent Simulation Disclosure Badge */}
+              <div className="bg-amber-100/95 border border-amber-300 text-amber-950 px-3 py-1.5 text-xs font-mono flex items-center gap-2 shadow-xs">
+                <span className="text-sm">⚠️</span>
+                <span><strong>SIMULATED MOVEMENT:</strong> Not real-time satellite GPS tracking</span>
+              </div>
+
               <div className="bg-surface-white border border-divider px-3 py-2 shadow-xs space-y-1">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-800" />
@@ -595,12 +637,14 @@ export default function DigitalTwinPage() {
              ========================================================================= */}
           <div className="border-t border-divider bg-surface-white p-3 z-20">
             <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center space-x-3 shrink-0">
+              <div className="flex flex-wrap items-center space-x-2 sm:space-x-3 shrink-0">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
-                  className="w-7 h-7 border border-divider bg-surface-white hover:border-terracotta flex items-center justify-center text-ink transition-colors"
+                  className="px-2.5 py-1.5 border border-divider bg-surface-white hover:border-terracotta flex items-center justify-center text-ink transition-colors font-mono text-xs gap-1.5"
+                  title={isPlaying ? 'Pause simulation time' : 'Start simulation time'}
                 >
                   {isPlaying ? <Pause className="w-3.5 h-3.5 text-terracotta" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+                  <span>{isPlaying ? 'PAUSE' : 'PLAY'}</span>
                 </button>
 
                 <div className="flex items-center space-x-1.5 font-mono text-xs">
@@ -610,17 +654,31 @@ export default function DigitalTwinPage() {
                   </span>
                 </div>
 
-                <span className="font-mono text-[11px] px-2 py-0.5 bg-parchment border border-divider text-ink-muted">
-                  {currentTimeHour >= 8 && currentTimeHour <= 10
-                    ? 'MORNING PEAK'
-                    : currentTimeHour >= 17 && currentTimeHour <= 19
-                    ? 'EVENING PEAK'
-                    : 'INTER-PEAK'}
-                </span>
+                {/* Friendly Time-of-Day Quick Jump Buttons */}
+                <div className="hidden sm:flex items-center space-x-1">
+                  {[
+                    { hour: 8, label: '☀️ 8 AM (Rush)' },
+                    { hour: 14, label: '🌤️ 2 PM' },
+                    { hour: 18, label: '🌆 6 PM (Rush)' },
+                    { hour: 21, label: '🌙 9 PM' },
+                  ].map((preset) => (
+                    <button
+                      key={preset.hour}
+                      onClick={() => setCurrentTimeHour(preset.hour)}
+                      className={`font-mono text-[10px] px-2 py-0.5 border transition-colors ${
+                        currentTimeHour === preset.hour
+                          ? 'border-terracotta bg-terracotta text-surface-white font-medium'
+                          : 'border-divider bg-parchment/40 text-ink-muted hover:text-ink'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Slider Scrubber */}
-              <div className="w-full md:w-96 flex items-center space-x-3">
+              <div className="w-full md:w-80 flex items-center space-x-3">
                 <span className="font-mono text-[11px] text-ink-muted">06:00</span>
                 <input
                   type="range"
@@ -629,6 +687,7 @@ export default function DigitalTwinPage() {
                   step="1"
                   value={currentTimeHour}
                   onChange={(e) => setCurrentTimeHour(parseInt(e.target.value, 10))}
+                  aria-label="Time of Day Slider"
                   className="w-full accent-[#B84C32] cursor-pointer"
                 />
                 <span className="font-mono text-[11px] text-ink-muted">22:00</span>
@@ -638,7 +697,7 @@ export default function DigitalTwinPage() {
                 <div className="text-right">
                   <span className="text-ink-muted text-[11px] block">EXPECTED PAX</span>
                   <span className="font-medium text-ink">
-                    {predictionData ? predictionData.predictedPassengersPerHour.toLocaleString() : '---'}
+                    {predictionData ? formatNumber(predictionData.predictedPassengersPerHour) : '---'}
                   </span>
                 </div>
                 <div className="border-l border-divider pl-3 text-right">
@@ -707,7 +766,7 @@ export default function DigitalTwinPage() {
                       {predictionData.loadPercentage}%
                     </span>
                     <span className="font-mono text-xs text-ink-muted">
-                      ({predictionData.predictedPassengersPerHour.toLocaleString()} pax/hr)
+                      ({formatNumber(predictionData.predictedPassengersPerHour)} pax/hr)
                     </span>
                   </div>
 
@@ -799,7 +858,7 @@ export default function DigitalTwinPage() {
                           </span>
                         </div>
                         <span className="font-mono text-[11px] text-ink-muted">
-                          {stop.dailyFootfall.toLocaleString()} pax/d
+                          {formatNumber(stop.dailyFootfall)} pax/d
                         </span>
                       </div>
                     );
@@ -881,7 +940,7 @@ export default function DigitalTwinPage() {
                 <div className="p-2.5 border border-divider bg-surface-white">
                   <span className="font-mono text-[11px] text-ink-muted block">DAILY FOOTFALL</span>
                   <span className="font-serif text-lg text-ink font-normal">
-                    {selectedStop.dailyFootfall.toLocaleString()}
+                    {formatNumber(selectedStop.dailyFootfall)}
                   </span>
                 </div>
               </div>

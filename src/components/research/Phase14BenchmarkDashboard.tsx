@@ -17,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { EXTERNAL_BENCHMARK_REGISTRY, ExternalBenchmarkDataset } from '@/lib/research/benchmarkRegistry';
+import { formatNumber } from '@/lib/utils/formatters';
 
 export default function Phase14BenchmarkDashboard() {
   const [activeTab, setActiveTab] = useState<'status' | 'journey' | 'headway' | 'od' | 'ml' | 'evidence'>('status');
@@ -338,8 +339,8 @@ export default function Phase14BenchmarkDashboard() {
                   <tr key={s.id} className="hover:bg-ivory/50">
                     <td className="py-2 px-3 font-sans text-ink font-medium">{s.id}: {s.loc}</td>
                     <td className="py-2 px-3 text-ink-muted">{s.dir}</td>
-                    <td className="py-2 px-3 text-right">{s.m.toLocaleString()} pax/hr</td>
-                    <td className="py-2 px-3 text-right">{s.c.toLocaleString()} pax/hr</td>
+                    <td className="py-2 px-3 text-right">{formatNumber(s.m)} pax/hr</td>
+                    <td className="py-2 px-3 text-right">{formatNumber(s.c)} pax/hr</td>
                     <td className="py-2 px-3 text-right font-bold text-ink">{s.geh.toFixed(2)}</td>
                     <td className="py-2 px-3 text-center">
                       <span className="px-2 py-0.5 text-[9px] bg-green-100 text-green-900 border border-green-300">
@@ -453,7 +454,7 @@ export default function Phase14BenchmarkDashboard() {
 
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div><span className="text-ink-muted">Format:</span> {selectedDataset.dataFormat}</div>
-                <div><span className="text-ink-muted">Records:</span> {selectedDataset.recordCount.toLocaleString()}</div>
+                <div><span className="text-ink-muted">Records:</span> {formatNumber(selectedDataset.recordCount)}</div>
                 <div><span className="text-ink-muted">Geographic:</span> {selectedDataset.geographicScope}</div>
                 <div><span className="text-ink-muted">License:</span> {selectedDataset.license}</div>
                 <div className="col-span-2">

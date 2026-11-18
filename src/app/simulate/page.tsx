@@ -28,9 +28,12 @@ import {
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatNumber } from '@/lib/utils/formatters';
+import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
 import { useSimulation } from '@/hooks/useSimulation';
 
 export default function SimulationLabPage() {
+  const { level } = useExperienceLevel();
   const {
     activeTab,
     setActiveTab,
@@ -122,6 +125,95 @@ export default function SimulationLabPage() {
                     <span>{isSimulating ? 'Computing Model…' : 'Run Simulation'}</span>
                   </button>
                 </Magnetic>
+              </div>
+            </div>
+
+            {/* Prominent Advisory Badge */}
+            <div className="p-3 bg-amber-50 border border-amber-300 text-amber-950 font-mono text-xs flex flex-wrap items-center justify-between gap-2 shadow-xs">
+              <span className="flex items-center gap-1.5">
+                <span className="text-sm">⚠️</span>
+                <span><strong>ADVISORY SIMULATION:</strong> This is a computer test to explore ideas, not a real-world promise.</span>
+              </span>
+              <span className="text-[11px] uppercase tracking-wider text-amber-800">NO PHYSICAL DISPATCH • PASSIVE TWIN</span>
+            </div>
+
+            {/* Friendly Introductory Question Cards (Curiosity Sandbox) */}
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs uppercase tracking-wider text-ink-muted">
+                  EXPLORE A QUESTION (1-CLICK EXPERIMENTS)
+                </span>
+                <span className="font-mono text-[11px] text-terracotta">
+                  TRY THESE SCENARIOS
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button
+                  onClick={() => {
+                    setSelectedCorridorId('corridor-ring-road');
+                    setAdditionalBuses(10);
+                    setTargetHeadway(5);
+                    setSignalPriority(true);
+                    handleRunSimulation();
+                  }}
+                  className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 mb-1.5 text-terracotta font-mono text-xs">
+                    <span>🚌</span>
+                    <span className="font-semibold uppercase tracking-wider">Fleet Expansion</span>
+                  </div>
+                  <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">
+                    What happens if we add 10 more electric buses to the Ring Road?
+                  </h3>
+                  <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+                    Tests how extra buses cut passenger wait times and ease peak rush-hour crowding.
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSelectedCorridorId('corridor-rad-mehrauli');
+                    setAdditionalBuses(16);
+                    setTargetHeadway(4);
+                    setSignalPriority(true);
+                    handleRunSimulation();
+                  }}
+                  className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 mb-1.5 text-emerald-700 font-mono text-xs">
+                    <span>🍃</span>
+                    <span className="font-semibold uppercase tracking-wider">Clean Air Day</span>
+                  </div>
+                  <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">
+                    What happens if we make bus travel free on bad air days?
+                  </h3>
+                  <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+                    Estimates private car drivers switching to buses and kilograms of exhaust averted.
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSelectedCorridorId('corridor-outer-ring');
+                    setAdditionalBuses(0);
+                    setTargetHeadway(14);
+                    setSignalPriority(false);
+                    handleRunSimulation();
+                  }}
+                  className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 mb-1.5 text-amber-700 font-mono text-xs">
+                    <span>🌧️</span>
+                    <span className="font-semibold uppercase tracking-wider">Monsoon Congestion</span>
+                  </div>
+                  <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">
+                    What happens if a major road is flooded during heavy monsoon rains?
+                  </h3>
+                  <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+                    Reveals passenger platform bottlenecks when vehicle speeds drop across Delhi.
+                  </p>
+                </button>
               </div>
             </div>
 
@@ -376,7 +468,7 @@ export default function SimulationLabPage() {
                     {simulationData.environmentalImpact.monthlyCo2OffsetTons} T/mo
                   </div>
                   <p className="text-sm text-ink-secondary leading-relaxed">
-                    Displacing {simulationData.environmentalImpact.dieselCngReplacedKmDaily.toLocaleString()} km of combustion bus runs daily with electric miles.
+                    Displacing {formatNumber(simulationData.environmentalImpact.dieselCngReplacedKmDaily)} km of combustion bus runs daily with electric miles.
                   </p>
                 </div>
               </div>
@@ -507,7 +599,7 @@ export default function SimulationLabPage() {
             <div className="p-4 border border-divider bg-surface-white space-y-1">
               <span className="font-mono text-[11px] text-ink-muted uppercase block">800M POP EXPANSION</span>
               <div className="font-serif text-2xl text-ink font-normal">
-                +{scenarioReport.cumulativeImpact.netAdditionalPopCovered800mThousands.toLocaleString()}k
+                +{formatNumber(scenarioReport.cumulativeImpact.netAdditionalPopCovered800mThousands)}k
               </div>
               <span className="text-[11px] text-ink-muted">citizens within walk</span>
             </div>
@@ -515,7 +607,7 @@ export default function SimulationLabPage() {
             <div className="p-4 border border-divider bg-surface-white space-y-1">
               <span className="font-mono text-[11px] text-ink-muted uppercase block">ANNUAL CO2 SAVED</span>
               <div className="font-serif text-2xl text-green-700 font-normal">
-                {scenarioReport.cumulativeImpact.netAnnualGhgAbatementTonnes.toLocaleString()} T
+                {formatNumber(scenarioReport.cumulativeImpact.netAnnualGhgAbatementTonnes)} T
               </div>
               <span className="text-[11px] text-ink-muted">tCO2e avoided/yr</span>
             </div>
@@ -523,7 +615,7 @@ export default function SimulationLabPage() {
             <div className="p-4 border border-divider bg-surface-white space-y-1">
               <span className="font-mono text-[11px] text-ink-muted uppercase block">PORTFOLIO CAPEX</span>
               <div className="font-serif text-2xl text-terracotta font-normal">
-                ₹{scenarioReport.cumulativeImpact.totalCapexCroresInr.toLocaleString()} Cr
+                ₹{formatNumber(scenarioReport.cumulativeImpact.totalCapexCroresInr)} Cr
               </div>
               <span className="text-[11px] text-ink-muted">₹{scenarioReport.cumulativeImpact.totalOpexAnnualCroresInr} Cr/yr OPEX</span>
             </div>
