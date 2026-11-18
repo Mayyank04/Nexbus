@@ -27,8 +27,10 @@ import { Magnetic } from '@/components/ui/magnetic';
 import { SkeletonCard } from '@/components/ui/skeleton';
 import { MultimodalJourneyPlan } from '@/lib/multimodal/journeyEngine';
 import { useMultimodalPlanner } from '@/hooks/useMultimodalPlanner';
+import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
 
 export default function JourneyPlannerPage() {
+  const { level } = useExperienceLevel();
   const {
     originStop,
     setOriginStop,
@@ -49,6 +51,8 @@ export default function JourneyPlannerPage() {
     fetchPlans: handleFetchPlans,
     swapStops,
   } = useMultimodalPlanner();
+
+  const isSimple = level === 'easy' || level === 'commuter';
 
   return (
     <div className="min-h-screen bg-ivory text-ink selection:bg-terracotta selection:text-surface-white flex flex-col">
@@ -112,12 +116,20 @@ export default function JourneyPlannerPage() {
               <span className="font-mono text-[10px] uppercase tracking-wider text-ink-muted mr-1">
                 PREFERENCE:
               </span>
-              {[
-                { id: 'ALL', label: 'All Modes' },
-                { id: 'FASTEST', label: 'Fastest Multimodal' },
-                { id: 'LEAST_TRANSFERS', label: 'Least Transfers' },
-                { id: 'BUS_ONLY', label: 'Bus Only' },
-              ].map((tab) => (
+              {(isSimple
+                ? [
+                    { id: 'ALL', label: 'All Choices' },
+                    { id: 'FASTEST', label: '⚡ Fastest (Save Time)' },
+                    { id: 'LEAST_TRANSFERS', label: '🔄 Fewest Changes (Easy)' },
+                    { id: 'BUS_ONLY', label: '🚌 Bus Only' },
+                  ]
+                : [
+                    { id: 'ALL', label: 'All Modes' },
+                    { id: 'FASTEST', label: 'Fastest Multimodal' },
+                    { id: 'LEAST_TRANSFERS', label: 'Least Transfers' },
+                    { id: 'BUS_ONLY', label: 'Bus Only' },
+                  ]
+              ).map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setPreference(tab.id as any)}
@@ -260,7 +272,7 @@ export default function JourneyPlannerPage() {
                     </div>
 
                     {/* Mode Breakdown Pills */}
-                    <div className="my-3 flex flex-wrap items-center gap-2">
+                    <div className="my-2.5 flex flex-wrap items-center gap-2">
                       {plan.legs.map((leg, lIdx) => (
                         <div
                           key={lIdx}
@@ -278,6 +290,16 @@ export default function JourneyPlannerPage() {
                           <span className="opacity-75">({leg.durationMinutes}m)</span>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Plain Language Route Recommendation Reason */}
+                    <div className="mb-3 p-2.5 bg-parchment/50 border border-divider/60 text-xs text-ink-secondary leading-snug">
+                      <span className="font-semibold text-ink">Why this choice? </span>
+                      {plan.preference === 'FASTEST'
+                        ? 'Quickest option: prioritizes high-speed Delhi Metro lines to bypass street congestion.'
+                        : plan.preference === 'LEAST_TRANSFERS'
+                        ? 'Easiest option: minimizes transfers so you can sit comfortably with minimal switching.'
+                        : 'Balanced option: steady pace, predictable frequency, and moderate walking.'}
                     </div>
 
                     {/* Metric Bar */}
@@ -381,6 +403,19 @@ export default function JourneyPlannerPage() {
                           <span>From: {leg.originName}</span>
                           <span>→</span>
                           <span>To: {leg.destinationName}</span>
+                        </div>
+
+                        {/* Crowd expectation with triple encoding */}
+                        <div className="pt-1 flex flex-wrap items-center gap-2 text-[10px] font-mono">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-xs bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            <span>🟢</span>
+                            <span>Plenty of empty seats expected</span>
+                          </span>
+                          {leg.mode === 'TRANSFER' && (
+                            <span className="text-ink-muted">
+                              Follow concourse signage • Elevators & escalators available
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

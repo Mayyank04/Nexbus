@@ -6,6 +6,7 @@ import {
   FreshnessStatus,
   DataProvenanceRecord,
 } from '@/lib/evidence/evidenceClassification';
+import { formatDateTimeUtc } from '@/lib/utils/formatters';
 
 export interface ProvenanceIndicatorProps {
   provenance: Partial<DataProvenanceRecord>;
@@ -180,7 +181,7 @@ export function ProvenanceIndicator({
                 <dt className="text-[#4A5568] font-mono uppercase text-[10px]">Collection / Observation Time</dt>
                 <dd className="font-mono text-[#0D1B2A]">
                   {provenance.collectionTimestamp
-                    ? new Date(provenance.collectionTimestamp).toLocaleString('en-IN')
+                    ? formatDateTimeUtc(provenance.collectionTimestamp)
                     : 'Static / Historical Archive'}
                 </dd>
               </div>

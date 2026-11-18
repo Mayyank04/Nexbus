@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Manrope, IBM_Plex_Mono } from "next/font/google";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
+import { ExperienceLevelProvider } from "@/lib/context/ExperienceLevelContext";
+import WelcomeOnboardingModal from "@/components/onboarding/WelcomeOnboardingModal";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -77,9 +79,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-ivory text-ink font-sans">
-        {children}
-        <OfflineIndicator />
-        <InstallPrompt />
+        <ExperienceLevelProvider>
+          {children}
+          <OfflineIndicator />
+          <InstallPrompt />
+          <WelcomeOnboardingModal />
+        </ExperienceLevelProvider>
       </body>
     </html>
   );

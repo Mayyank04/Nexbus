@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { DELHI_CORRIDORS } from '@/data/delhiTransitData';
 import { DATA_PROVENANCE_REGISTRY } from '@/data/provenanceRegistry';
 import { ML_VALIDATION_DOSSIER } from '@/lib/mlEvaluation';
+import { formatNumber, formatDateUtc } from '@/lib/utils/formatters';
 import {
   TrendingUp,
   Activity,
@@ -239,7 +240,7 @@ export default function AnalyticsControlPage() {
               Executive Mobility Observatory
             </h1>
             <p className="text-sm sm:text-base text-ink-secondary font-normal leading-relaxed">
-              Empirical transit analytics synthesized from {data?.metrics.totalConnectedBuses.toLocaleString() || '3,840'} connected DTC transponders, ETM fare punches, and multi-sensor ridership telemetry.
+              Empirical transit analytics synthesized from {data?.metrics.totalConnectedBuses ? formatNumber(data.metrics.totalConnectedBuses) : '3,840'} connected DTC transponders, ETM fare punches, and multi-sensor ridership telemetry.
             </p>
           </div>
 
@@ -458,7 +459,7 @@ export default function AnalyticsControlPage() {
                 ELECTRIFIED FLEET
               </span>
               <div className="font-serif text-4xl text-ink font-normal">
-                {data ? data.metrics.activeElectricFleet.toLocaleString() : '1,640'}
+                {data ? formatNumber(data.metrics.activeElectricFleet) : '1,640'}
               </div>
               <div className="text-xs text-ink-muted font-mono pt-1">
                 42.7% total DTC fleet electrified
@@ -502,7 +503,7 @@ export default function AnalyticsControlPage() {
                   {/* Tooltip */}
                   <div className="opacity-0 group-hover:opacity-100 absolute -top-12 bg-ink text-surface-white font-mono text-[10px] p-2 whitespace-nowrap z-20 pointer-events-none transition-opacity shadow-sm">
                     <div className="font-medium">{d.hour} IST</div>
-                    <div>{d.passengers.toLocaleString()} passengers ({d.load}% load)</div>
+                    <div>{formatNumber(d.passengers)} passengers ({d.load}% load)</div>
                   </div>
 
                   <div
@@ -566,7 +567,7 @@ export default function AnalyticsControlPage() {
                     </td>
                     <td className="py-4 px-4 text-ink-muted">{c.code}</td>
                     <td className="py-4 px-4 text-right font-medium text-ink">
-                      {c.dailyPassengers.toLocaleString()}
+                      {formatNumber(c.dailyPassengers)}
                     </td>
                     <td className="py-4 px-4 text-right">{c.busesPerHour} buses/hr</td>
                     <td className="py-4 px-4 text-right">{c.averageSpeedKmH} km/h</td>
@@ -618,7 +619,7 @@ export default function AnalyticsControlPage() {
                       {stop.name}
                     </h4>
                     <span className="text-[10px] font-mono text-ink-muted">
-                      {stop.zone} Zone • {stop.dailyFootfall.toLocaleString()} daily boardings • Avg Dwell: {stop.avgDwellTimeSeconds}s
+                      {stop.zone} Zone • {formatNumber(stop.dailyFootfall)} daily boardings • Avg Dwell: {stop.avgDwellTimeSeconds}s
                     </span>
                   </div>
                   <span
@@ -703,7 +704,7 @@ export default function AnalyticsControlPage() {
           </div>
 
           <p className="text-xs text-ink-muted leading-relaxed font-light">
-            Reproducible validation across {ML_VALIDATION_DOSSIER.datasetSplit.totalRecords.toLocaleString()} hourly corridor records partitioned into a 70% Train, 15% Validation, and 15% Temporal Holdout Test split.
+            Reproducible validation across {formatNumber(ML_VALIDATION_DOSSIER.datasetSplit.totalRecords)} hourly corridor records partitioned into a 70% Train, 15% Validation, and 15% Temporal Holdout Test split.
           </p>
 
           {/* Model Comparison Table */}
@@ -882,7 +883,7 @@ export default function AnalyticsControlPage() {
                     </td>
                     <td className="py-3 px-3 text-ink-muted text-[11px]">
                       <div>{src.updateFrequency}</div>
-                      <div className="text-[10px] text-ink-muted/80">Tested: {src.lastTestedAt ? new Date(src.lastTestedAt).toLocaleDateString() : 'N/A'}</div>
+                      <div className="text-[10px] text-ink-muted/80">Tested: {src.lastTestedAt ? formatDateUtc(src.lastTestedAt) : 'N/A'}</div>
                     </td>
                     <td className="py-3 px-3 text-center">
                       <span
@@ -1656,9 +1657,9 @@ export default function AnalyticsControlPage() {
                         {demandMetrics.hourlyProfiles?.slice(0, 10).map((hp: any) => (
                           <tr key={hp.hour} className={hp.isPeak ? 'bg-amber-50/50' : ''}>
                             <td className="py-1.5 px-2 font-semibold text-ink">{hp.timeLabel}</td>
-                            <td className="py-1.5 px-2 text-right text-ink">{hp.expectedPaxPerHour.toLocaleString()}</td>
+                            <td className="py-1.5 px-2 text-right text-ink">{formatNumber(hp.expectedPaxPerHour)}</td>
                             <td className="py-1.5 px-2 text-right text-ink-muted">
-                              {hp.lowerCi95PaxPerHour.toLocaleString()} – {hp.upperCi95PaxPerHour.toLocaleString()}
+                              {formatNumber(hp.lowerCi95PaxPerHour)} – {formatNumber(hp.upperCi95PaxPerHour)}
                             </td>
                             <td className="py-1.5 px-2 text-center">
                               <span className={`px-1.5 py-0.2 text-[10px] border ${
@@ -1729,7 +1730,7 @@ export default function AnalyticsControlPage() {
                     <div className="p-3 border border-divider bg-ivory space-y-0.5 font-mono text-xs">
                       <span className="text-[10px] uppercase text-ink-muted block">Total Hourly Trips</span>
                       <div className="font-serif text-xl text-ink font-medium">
-                        {odReport.totalNetworkHourlyTrips.toLocaleString()}
+                        {formatNumber(odReport.totalNetworkHourlyTrips)}
                       </div>
                       <span className="text-[10px] text-ink-muted">across network</span>
                     </div>
@@ -1783,7 +1784,7 @@ export default function AnalyticsControlPage() {
                               <td className="py-2 px-2 text-ink font-medium">{dl.originZoneName}</td>
                               <td className="py-2 px-2 text-ink font-medium">{dl.destinationZoneName}</td>
                               <td className="py-2 px-2 text-right font-semibold text-ink">
-                                {dl.flowPaxPerHour.toLocaleString()}
+                                {formatNumber(dl.flowPaxPerHour)}
                               </td>
                               <td className="py-2 px-2 text-right text-ink-muted">{dl.impedanceMinutes} min</td>
                               <td className="py-2 px-2 text-ink-muted text-[11px]">{dl.primaryCorridor}</td>

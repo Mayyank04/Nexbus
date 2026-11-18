@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ArrowUpRight, Compass } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Compass, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ExperienceLevelSelector from '@/components/ui/ExperienceLevelSelector';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -65,8 +66,11 @@ export default function Navbar() {
           </nav>
 
           {/* Actions & Mobile Toggle */}
-          <div className="flex items-center space-x-3">
-            <div className="hidden lg:flex items-center space-x-2 border border-divider px-2.5 py-1.5 bg-surface-white text-[11px] font-mono text-ink-muted">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Experience Level Selector (Easy Explore / Commuter / Advanced) */}
+            <ExperienceLevelSelector compact />
+
+            <div className="hidden xl:flex items-center space-x-2 border border-divider px-2.5 py-1.5 bg-surface-white text-[11px] font-mono text-ink-muted">
               <span className={`w-2 h-2 rounded-full ${isAuthoritySurface ? 'bg-amber-600' : 'bg-status-green'}`} />
               <span className="tracking-wider uppercase">
                 {isAuthoritySurface ? 'SHADOW AUDIT' : 'CIVIC TRANSIT'}
@@ -117,6 +121,10 @@ export default function Navbar() {
                   <ArrowUpRight className="w-4 h-4 text-stone" />
                 </Link>
               ))}
+
+              <div className="pt-2">
+                <ExperienceLevelSelector />
+              </div>
 
               <div className="pt-3 flex flex-col gap-2">
                 <Link

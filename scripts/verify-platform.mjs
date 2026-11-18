@@ -470,6 +470,17 @@ async function runTests() {
     assert(false, `Phase 20 tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 23 Universal Understanding & Formatter Invariant Tests ---');
+  try {
+    const phase23Output = execSync('node --experimental-strip-types scripts/test-formatters.mjs', { encoding: 'utf8' });
+    assert(
+      phase23Output.includes('ALL FORMATTER TESTS PASSED DETERMINISTICALLY'),
+      'Phase 23 deterministic number/date/currency formatters eliminate SSR/CSR hydration divergences across all browsers and locales'
+    );
+  } catch (err) {
+    assert(false, `Phase 23 formatter tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);

@@ -8,7 +8,8 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
   <a href="https://github.com/Mayyank04/Nexbus"><strong>Source Code</strong></a> · 
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
-  <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a>
+  <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a> · 
+  <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a>
 </p>
 
 ---
@@ -167,6 +168,19 @@ $$\mathbf{READ\text{-}ONLY} \quad + \quad \mathbf{PASSIVE} \quad + \quad \mathbf
 The application is designed for information, exploration, and decision support. It does not issue operational commands to vehicles, traffic signals, railway infrastructure, or transport control systems.
 
 The platform's privacy architecture avoids requiring commuter accounts or device GPS tracking for its core experience. Security and privacy claims should be interpreted within the scope of the documented implementation and verification.
+
+### 3.6 Universal Understanding, Child-Friendly UX & 3-Tier Architecture
+
+Phase 23 introduces an inclusive, cognitive design system that enables commuters, school students, and children to explore Delhi's transit network without technical barriers, while allowing professionals to access deep mathematical models with a single click:
+
+| Experience Tier | Audience | Key Features |
+| :--- | :--- | :--- |
+| **Level 1: Easy Explore** (Default) | First-time visitors, curious citizens, school students | Plain English explanations, 5-question explainer card ("What am I looking at?"), 1-click curiosity cards, time-of-day shortcuts (8 AM, 2 PM, 6 PM, 9 PM). |
+| **Level 2: Everyday Commuter** | Regular Delhi bus & metro riders | Practical trip planning, fares in ₹, Delhi Government Pink Pass free bus travel indicators, 10% Smart Card discounts, and step-free access. |
+| **Level 3: Advanced Analysis** | Urban planners, transport economists, researchers | All 11 GIS layers, Poisson arrival rates, Little's Law queues ($L = \lambda W$), Spatio-Temporal Graph Neural Networks, and Well-to-Wheel (WTW) lifecycle emissions. |
+
+- **Triple Encoding:** Status and crowding are never conveyed by color alone. Every indicator pairs **Color + Symbol + Plain-Language Text** (e.g., 🟢 Plenty of seats / 🟡 Getting busy / 🔴 Very crowded).
+- **Safari Hydration Parity:** Complete elimination of SSR/CSR locale formatting divergence between Node.js and client browsers at root cause via deterministic formatting utilities (`@/lib/utils/formatters.ts`).
 
 ---
 
