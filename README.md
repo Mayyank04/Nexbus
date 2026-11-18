@@ -336,7 +336,7 @@ cd Nexbus
 
 ### Select the Submission Branch
 ```bash
-git checkout phase-22-final-demonstration-and-submission-certification
+git checkout phase-23-final-external-submission-and-judge-readiness
 ```
 
 ### Install Dependencies
@@ -432,6 +432,15 @@ The following documents form the NEXBUS competition submission package:
 
 *Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 160.59s narration in en_IN by Aman, 10.75 MB H.264/AAC MP4). Accessible directly at [docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) with poster thumbnail at [docs/phase-22/demo/DEMO_THUMBNAIL.png](docs/phase-22/demo/DEMO_THUMBNAIL.png) and recording validation log at [docs/phase-22/demo/DEMO_VALIDATION_REPORT.md](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md). Marked LOCALLY_VALIDATED pending competition portal upload or public cloud video stream hosting.*
 
+### Phase 23 Final External Submission & Judge Readiness
+- [Final Competition Release Report](docs/phase-23/FINAL_COMPETITION_RELEASE_REPORT.md)
+- [Final External Submission Dossier](docs/phase-23/FINAL_EXTERNAL_SUBMISSION_INDEX.md)
+- [Judge Demonstration & Rehearsal Guide](docs/phase-23/JUDGE_DEMONSTRATION_GUIDE.md)
+- [Judge Q&A & Technical Defence (20 Questions)](docs/phase-23/JUDGE_QA_AND_TECHNICAL_DEFENCE.md)
+- [Independent Judge-Perspective Evaluation](docs/phase-23/JUDGE_PERSPECTIVE_EVALUATION.md)
+- [Video Publication Report](docs/phase-23/VIDEO_PUBLICATION_REPORT.md)
+- [Phase 23 Baseline Review](docs/phase-23/BASELINE_REVIEW.md)
+
 ### Phase 22 Final Demonstration and Submission Certification
 - [Final Competition Certification](docs/phase-22/FINAL_COMPETITION_CERTIFICATION.md)
 - [Submission Package Dossier](docs/phase-22/SUBMISSION_PACKAGE.md)
@@ -501,14 +510,14 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Release baseline:** Phase 22 — Final Demonstration Production, Submission Package Validation & Competition Release Certification
-- **Release commit:** `89848ea` (Phase 21 baseline), transitioning to Phase 22 certification commit
-- **Working branch:** `phase-22-final-demonstration-and-submission-certification`
+- **Release baseline:** Phase 23 — Final External Submission, Video Publication, Judge Rehearsal & Evaluation Readiness
+- **Release commit:** `5357b1d` (Phase 22 certification), transitioning to Phase 23 submission commit
+- **Working branch:** `phase-23-final-external-submission-and-judge-readiness`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
 - **CI status:** 🟢 Continuous Integration matrix verified across Node.js 20.x and 22.x ([GitHub Actions](https://github.com/Mayyank04/Nexbus/actions)).
 
-NEXBUS has fulfilled all five competition deliverables under the READ-ONLY + PASSIVE + ADVISORY operational safety invariant. The system is certified as `SUBMISSION_READY_WITH_DISCLOSED_LIMITATIONS`.
+NEXBUS has fulfilled all five competition deliverables under the READ-ONLY + PASSIVE + ADVISORY operational safety invariant. The system is certified as `SUBMISSION_READY_WITH_VIDEO_UPLOAD_PENDING`.
 
 <p align="center">
   <strong>NEXBUS</strong><br/>
