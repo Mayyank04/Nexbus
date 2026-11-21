@@ -14,7 +14,15 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
-import {
+import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
+
+const formattersModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/utils/formatters.ts'));
+const {
   formatNumber,
   formatIndianNumber,
   formatPax,
@@ -22,7 +30,7 @@ import {
   formatDateUtc,
   formatDateTimeUtc,
   formatCurrencyInr,
-} from '../src/lib/utils/formatters.ts';
+} = formattersModule;
 
 console.log('=== NEXBUS PHASE 24 HYDRATION REGRESSION TEST SUITE ===\n');
 

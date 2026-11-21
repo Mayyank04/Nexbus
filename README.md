@@ -9,6 +9,7 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
   <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a> · 
+  <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a> · 
   <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a>
 </p>
 
@@ -350,7 +351,7 @@ cd Nexbus
 
 ### Select the Submission Branch
 ```bash
-git checkout phase-22-final-demonstration-and-submission-certification
+git checkout phase-23-final-external-submission-and-judge-readiness
 ```
 
 ### Install Dependencies
@@ -446,6 +447,15 @@ The following documents form the NEXBUS competition submission package:
 
 *Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 160.59s narration in en_IN by Aman, 10.75 MB H.264/AAC MP4). Accessible directly at [docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) with poster thumbnail at [docs/phase-22/demo/DEMO_THUMBNAIL.png](docs/phase-22/demo/DEMO_THUMBNAIL.png) and recording validation log at [docs/phase-22/demo/DEMO_VALIDATION_REPORT.md](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md). Marked LOCALLY_VALIDATED pending competition portal upload or public cloud video stream hosting.*
 
+### Phase 23 Final External Submission & Judge Readiness
+- [Final Competition Release Report](docs/phase-23/FINAL_COMPETITION_RELEASE_REPORT.md)
+- [Final External Submission Dossier](docs/phase-23/FINAL_EXTERNAL_SUBMISSION_INDEX.md)
+- [Judge Demonstration & Rehearsal Guide](docs/phase-23/JUDGE_DEMONSTRATION_GUIDE.md)
+- [Judge Q&A & Technical Defence (20 Questions)](docs/phase-23/JUDGE_QA_AND_TECHNICAL_DEFENCE.md)
+- [Independent Judge-Perspective Evaluation](docs/phase-23/JUDGE_PERSPECTIVE_EVALUATION.md)
+- [Video Publication Report](docs/phase-23/VIDEO_PUBLICATION_REPORT.md)
+- [Phase 23 Baseline Review](docs/phase-23/BASELINE_REVIEW.md)
+
 ### Phase 22 Final Demonstration and Submission Certification
 - [Final Competition Certification](docs/phase-22/FINAL_COMPETITION_CERTIFICATION.md)
 - [Submission Package Dossier](docs/phase-22/SUBMISSION_PACKAGE.md)
@@ -515,17 +525,22 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Release baseline:** Phase 24 — Universal Usability, Hydration Stability & Runtime Certification
-- **Baseline commit:** `62f2a07` (Phase 23 release) following Phase 22 competition certification (`5357b1d`)
+- **Current release status:** Phase 24 — Universal Usability, Hydration Stability & Runtime Certification
+- **Release baseline:** `62f2a07` (Phase 23 release) following Phase 22 competition certification (`5357b1d`)
 - **Working branch:** `phase-24-universal-usability-and-runtime-certification`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
-- **CI / Automated Test Matrix:** 🟢 274/274 Automated Assertions Passed across:
+- **CI / Automated Test Matrix:** 🟢 274/274 Automated Assertions Passed across Node.js 20.x and 22.x:
   - `verify-platform.mjs`: 77/77 Platform & Deliverables Assertions
   - `test-phase24-hydration.mjs`: 25/25 SSR/CSR Hydration & Determinism Assertions (0 unpinned `toLocaleString()`, 0 `suppressHydrationWarning`)
   - `test-phase24-usability.mjs`: 172/172 Usability, GIS Layers, Two-Level Explainer & Governance Assertions
 - **Multi-Viewport Evidence:** 18 Headless Chrome Screenshot Artifacts across 7 viewports ($1920\times1080$ to $360\times800$) cataloged in [SCREENSHOT_MANIFEST.json](docs/phase-24/evidence/screenshots/SCREENSHOT_MANIFEST.json).
 - **Audit Suite:** 18 dedicated technical reports in [docs/phase-24/](docs/phase-24/PHASE24_MASTER_AUDIT.md).
+
+### Milestone History
+- **Phase 23:** Final External Submission, Video Publication, Judge Rehearsal & Evaluation Readiness (`a35c1a8`), and Universal Understanding & Child-Friendly Experience (`62f2a07`).
+- **Phase 22:** Final Demonstration Production, Submission Package Validation & Competition Release Certification (`5357b1d`).
+- **Phase 21:** Competition Submission, Project Proposal, Technical Note & Demonstration Readiness (`89848ea`, `6e56d3d`).
 
 NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE_AND_RUNTIME_CERTIFIED`.
 

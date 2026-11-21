@@ -13,8 +13,18 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
-import { PLAIN_LANGUAGE_DICTIONARY, getCrowdingDescription } from '../src/lib/content/plainLanguage.ts';
-import { GIS_LAYERS_REGISTRY } from '../src/data/gisLayersRegistry.ts';
+import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
+
+const plainLangModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/content/plainLanguage.ts'));
+const { PLAIN_LANGUAGE_DICTIONARY, getCrowdingDescription } = plainLangModule;
+
+const gisModule = await loadTsModule(path.join(ROOT_DIR, 'src/data/gisLayersRegistry.ts'));
+const { GIS_LAYERS_REGISTRY } = gisModule;
 
 console.log('=== NEXBUS PHASE 24 USABILITY & GOVERNANCE TEST SUITE ===\n');
 

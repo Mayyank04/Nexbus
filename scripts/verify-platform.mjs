@@ -472,7 +472,7 @@ async function runTests() {
 
   console.log('\n--- Executing Phase 23 Universal Understanding & Formatter Invariant Tests ---');
   try {
-    const phase23Output = execSync('node --experimental-strip-types scripts/test-formatters.mjs', { encoding: 'utf8' });
+    const phase23Output = execSync('node scripts/test-formatters.mjs', { encoding: 'utf8' });
     assert(
       phase23Output.includes('ALL FORMATTER TESTS PASSED DETERMINISTICALLY'),
       'Phase 23 deterministic number/date/currency formatters eliminate SSR/CSR hydration divergences across all browsers and locales'
@@ -483,7 +483,7 @@ async function runTests() {
 
   console.log('\n--- Executing Phase 24 Hydration Regression & Locale Parity Tests ---');
   try {
-    const phase24HydrationOutput = execSync('node --experimental-strip-types scripts/test-phase24-hydration.mjs', { encoding: 'utf8' });
+    const phase24HydrationOutput = execSync('node scripts/test-phase24-hydration.mjs', { encoding: 'utf8' });
     assert(
       phase24HydrationOutput.includes('PHASE 24 HYDRATION TEST RESULTS: 25 PASSED, 0 FAILED'),
       'Phase 24 hydration regression suite validates zero unconfigured locale calls, zero suppressHydrationWarning uses, and deterministic 642,000 international vs 6,42,000 Indian parity across all locales'
@@ -494,7 +494,7 @@ async function runTests() {
 
   console.log('\n--- Executing Phase 24 Usability, Explainability & Governance Tests ---');
   try {
-    const phase24UsabilityOutput = execSync('node --experimental-strip-types scripts/test-phase24-usability.mjs', { encoding: 'utf8' });
+    const phase24UsabilityOutput = execSync('node scripts/test-phase24-usability.mjs', { encoding: 'utf8' });
     assert(
       phase24UsabilityOutput.includes('PHASE 24 USABILITY & GOVERNANCE RESULTS: 172 PASSED, 0 FAILED'),
       'Phase 24 usability suite verifies canonical 2-level terminology registry, 11 GIS layers explainability, 3-mode journey planning, simulation curiosity cards, and read-only passive advisory safety invariant'
