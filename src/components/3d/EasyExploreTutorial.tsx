@@ -13,7 +13,6 @@ import {
   RotateCcw,
   CheckCircle2,
   X,
-  Sparkles,
   Info,
 } from 'lucide-react';
 

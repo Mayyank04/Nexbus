@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
 import {
-  Sparkles,
   Map,
   Compass,
   Bus,
@@ -14,6 +13,7 @@ import {
   ChevronRight,
   ChevronLeft,
   RotateCcw,
+  MapPin,
 } from 'lucide-react';
 
 interface OnboardingStep {
@@ -54,7 +54,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     badge: 'Step 4 of 7',
     title: 'Important Stops & Stations',
     sentence: 'These markers highlight key stations where people board buses and change to metro lines.',
-    icon: <Sparkles className="w-10 h-10 text-amber-700" />,
+    icon: <MapPin className="w-10 h-10 text-amber-700" />,
     illustrationBg: 'bg-amber-50 border-amber-200',
     tip: 'Stations like AIIMS and Kashmere Gate let you easily switch between buses and trains.',
   },
@@ -64,7 +64,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     sentence: 'See simple colors and labels showing if a bus has plenty of seats or is very crowded.',
     icon: <Users className="w-10 h-10 text-emerald-700" />,
     illustrationBg: 'bg-emerald-50 border-emerald-200',
-    tip: '🟢 Green = plenty of space, 🟡 Yellow = getting busy, 🔴 Red = very crowded.',
+    tip: 'Green = plenty of space, Yellow = getting busy, Red = very crowded.',
   },
   {
     badge: 'Step 6 of 7',
@@ -145,7 +145,7 @@ export default function WelcomeOnboardingModal() {
       aria-modal="true"
       aria-labelledby="onboarding-title"
       aria-describedby="onboarding-desc"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/70 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/70 transition-opacity animate-in fade-in duration-200"
     >
       <div className="relative w-full max-w-lg bg-surface-white border-2 border-divider shadow-2xl rounded-none p-6 sm:p-8 space-y-6 text-ink selection:bg-terracotta selection:text-surface-white">
         {/* Header Bar */}

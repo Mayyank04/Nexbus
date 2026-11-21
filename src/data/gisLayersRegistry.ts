@@ -135,7 +135,7 @@ export const GIS_LAYERS_REGISTRY: GisLayerMetadata[] = [
     sourceClassification: 'ESTIMATED',
     freshnessState: 'FRESH',
     units: 'Passenger Load Factor Percentage (%)',
-    legend: '🟢 Green < 65% (Seats Available) | 🟡 Yellow 65-85% (Moderate Standing) | 🔴 Red > 85% (Rush Crush Load)',
+    legend: 'Green < 65% (Seats Available) | Yellow 65-85% (Moderate Standing) | Red > 85% (Rush Crush Load)',
     doesNotProve: 'Does not prove that every single bus arriving at a stop has identical cabin occupancy.',
   },
   {

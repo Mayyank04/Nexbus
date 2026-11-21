@@ -198,7 +198,7 @@ export function ProvenanceIndicator({
           role="dialog"
           aria-modal="true"
           aria-label="Data Source Provenance Dossier"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0D1B2A]/40 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0D1B2A]/60 animate-fadeIn"
           onClick={() => setIsOpen(false)}
         >
           <div

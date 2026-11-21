@@ -10,7 +10,8 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
   <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a> · 
-  <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a>
+  <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a> · 
+  <a href="docs/phase-25/FINAL_PHASE_25_REPORT.md"><strong>Phase 25 Final Report</strong></a>
 </p>
 
 ---
@@ -525,24 +526,33 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Current release status:** Phase 24 — Universal Usability, Hydration Stability & Runtime Certification
-- **Release baseline:** `62f2a07` (Phase 23 release) following Phase 22 competition certification (`5357b1d`)
-- **Working branch:** `phase-24-universal-usability-and-runtime-certification`
+- **Current release status:** Phase 25 — Universal Human-Centred Redesign, Complete AI-Slop Elimination & Design System Certification
+- **Release baseline:** `28944f2` following Phase 24 merge conflict resolution and CI stabilization
+- **Working branch:** `phase-25-universal-human-centred-design-and-ai-slop-elimination`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
-- **CI / Automated Test Matrix:** 🟢 274/274 Automated Assertions Passed across Node.js 20.x and 22.x:
+- **CI / Automated Test Matrix:** 🟢 302/302 Automated Assertions Passed across Node.js 20.x and 22.x:
   - `verify-platform.mjs`: 77/77 Platform & Deliverables Assertions
+  - `test-phase20-governance.mjs`: 16/16 Governance, Provenance, & Rate-Limit Assertions
   - `test-phase24-hydration.mjs`: 25/25 SSR/CSR Hydration & Determinism Assertions (0 unpinned `toLocaleString()`, 0 `suppressHydrationWarning`)
   - `test-phase24-usability.mjs`: 172/172 Usability, GIS Layers, Two-Level Explainer & Governance Assertions
-- **Multi-Viewport Evidence:** 18 Headless Chrome Screenshot Artifacts across 7 viewports ($1920\times1080$ to $360\times800$) cataloged in [SCREENSHOT_MANIFEST.json](docs/phase-24/evidence/screenshots/SCREENSHOT_MANIFEST.json).
-- **Audit Suite:** 18 dedicated technical reports in [docs/phase-24/](docs/phase-24/PHASE24_MASTER_AUDIT.md).
+  - `test-formatters.mjs`: 12/12 Deterministic Formatting Utilities Assertions
+- **Design Quality & Anti-Slop Certification:**
+  - 100% elimination of decorative `Sparkles` icons and `backdrop-blur` compositing layers
+  - Complete replacement of raw casual emojis with Lucide transit vector iconography
+  - Humanized UI copywriting eliminating marketing jargon and AI rhetorical clichés
+  - Adherence to Swiss Transit Cartography tokens defined in `DESIGN.md`
+- **Multi-Viewport Evidence:** 25 Headless Chrome Screenshot Artifacts across 5 viewports ($1440\times900$ to $360\times800$) cataloged in [BEFORE_AFTER_SCREENSHOT_INDEX.md](docs/phase-25/BEFORE_AFTER_SCREENSHOT_INDEX.md).
+- **Audit Suite:** 10 dedicated technical reports in [docs/phase-25/](docs/phase-25/FINAL_PHASE_25_REPORT.md).
 
 ### Milestone History
+- **Phase 25:** Universal Human-Centred Redesign, Complete AI-Slop Elimination & Design System Certification.
+- **Phase 24:** Merge Conflict Resolution, Node.js 20 CI Repair & Usability Runtime Certification.
 - **Phase 23:** Final External Submission, Video Publication, Judge Rehearsal & Evaluation Readiness (`a35c1a8`), and Universal Understanding & Child-Friendly Experience (`62f2a07`).
 - **Phase 22:** Final Demonstration Production, Submission Package Validation & Competition Release Certification (`5357b1d`).
 - **Phase 21:** Competition Submission, Project Proposal, Technical Note & Demonstration Readiness (`89848ea`, `6e56d3d`).
 
-NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE_AND_RUNTIME_CERTIFIED`.
+NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE`.
 
 <p align="center">
   <strong>NEXBUS</strong><br/>

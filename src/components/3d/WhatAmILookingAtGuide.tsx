@@ -7,7 +7,10 @@ import {
   ChevronUp,
   Bus,
   MapPin,
-  Sparkles,
+  Map,
+  Palette,
+  MousePointerClick,
+  SlidersHorizontal,
   Info,
   CheckCircle2,
   Compass,
@@ -20,7 +23,7 @@ interface QuestionAnswer {
   question: string;
   shortAnswer: string;
   detailedAnswer: string;
-  icon: string;
+  icon: React.ReactNode;
   badge: string;
 }
 
@@ -31,7 +34,7 @@ const FAQS: QuestionAnswer[] = [
     shortAnswer: 'A computer model of Delhi’s bus and metro routes.',
     detailedAnswer:
       'This is an interactive map showing how public transit connects different parts of Delhi — from the Ring Road in the south to Kashmiri Gate in the north. You are looking at real routes where buses and metro trains run every day.',
-    icon: '🗺️',
+    icon: <Map className="w-4 h-4 text-terracotta shrink-0" />,
     badge: 'DELHI MAP',
   },
   {
@@ -40,7 +43,7 @@ const FAQS: QuestionAnswer[] = [
     shortAnswer: 'Simulated buses following typical schedules (not live satellite GPS).',
     detailedAnswer:
       'The moving markers represent city buses traveling along their scheduled routes. Note: This is an analytical simulation based on published schedules and timetables — it is not real-time satellite GPS tracking of physical vehicles on the road.',
-    icon: '🚌',
+    icon: <Bus className="w-4 h-4 text-blue-700 shrink-0" />,
     badge: 'SIMULATED MOVEMENT',
   },
   {
@@ -48,8 +51,8 @@ const FAQS: QuestionAnswer[] = [
     question: 'What do the colors mean?',
     shortAnswer: 'Green = not crowded, Yellow = getting busy, Red = very crowded.',
     detailedAnswer:
-      'Colors indicate how busy a route or station is estimated to be. 🟢 Green means plenty of seats are available. 🟡 Yellow means some passengers are standing. 🔴 Red indicates peak rush hours with packed vehicles.',
-    icon: '🎨',
+      'Colors indicate how busy a route or station is estimated to be. Green means plenty of seats are available. Yellow means some passengers are standing. Red indicates peak rush hours with packed vehicles.',
+    icon: <Palette className="w-4 h-4 text-emerald-700 shrink-0" />,
     badge: 'CROWD LEVEL',
   },
   {
@@ -58,7 +61,7 @@ const FAQS: QuestionAnswer[] = [
     shortAnswer: 'Yes! Click any bus stop or line to learn where it goes.',
     detailedAnswer:
       'Feel free to click or tap on any road, bus stop, or vehicle marker. A side card will appear showing the stop name, connecting routes, daily visitors, and metro transfer options.',
-    icon: '👆',
+    icon: <MousePointerClick className="w-4 h-4 text-amber-700 shrink-0" />,
     badge: 'INTERACTIVE',
   },
   {
@@ -67,7 +70,7 @@ const FAQS: QuestionAnswer[] = [
     shortAnswer: 'A computer simulation based on real published transit data.',
     detailedAnswer:
       'The routes, stop locations, and schedules are from official public data (DTC, DIMTS, and DMRC). The vehicle movements, crowding predictions, and wait times are simulated by our computer models to help test ideas and plan journeys.',
-    icon: '🔬',
+    icon: <SlidersHorizontal className="w-4 h-4 text-purple-700 shrink-0" />,
     badge: 'ADVISORY MODEL',
   },
 ];
@@ -145,8 +148,8 @@ export default function WhatAmILookingAtGuide({
                     className="w-full p-2.5 text-left flex items-center justify-between gap-2"
                     aria-expanded={isExpanded}
                   >
-                    <div className="flex items-center space-x-2 min-w-0">
-                      <span className="text-base shrink-0">{faq.icon}</span>
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                      <span className="w-5 h-5 flex items-center justify-center shrink-0">{faq.icon}</span>
                       <div className="min-w-0">
                         <span className="font-medium text-xs text-ink block truncate">
                           {faq.question}
