@@ -14,3 +14,4 @@ export * from './stat-card';
 export * from './stop-autocomplete';
 export * from './magnetic';
 export * from './scroll-reveal';
+export { default as TwoLevelExplainer } from './TwoLevelExplainer';

@@ -474,6 +474,68 @@ export default function SimulationLabPage() {
               </div>
             )}
 
+            {/* Plain-Language Scenario Explainability Dossier */}
+            <div className="border border-divider bg-parchment/30 p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-divider pb-3">
+                <span className="font-mono text-xs uppercase tracking-wider text-terracotta font-semibold">
+                  PLAIN-LANGUAGE SCENARIO EXPLAINER
+                </span>
+                <span className="font-mono text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 border border-amber-200 uppercase font-medium">
+                  EVIDENCE: SIMULATED (ADVISORY ONLY)
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="bg-surface-white border border-divider p-4 space-y-1.5 shadow-xs">
+                  <div className="font-mono text-[10px] uppercase text-terracotta font-semibold">
+                    1. WHAT DID YOU CHANGE?
+                  </div>
+                  <h4 className="font-serif text-sm font-medium text-ink">
+                    Parameter Adjustments
+                  </h4>
+                  <p className="text-ink-secondary leading-relaxed">
+                    You added <strong>{additionalBuses} electric buses</strong> to {selectedCorridor.name}, set the target headway between buses to <strong>{targetHeadway} minutes</strong>, and set transit signal preemption to <strong>{signalPriority ? 'ACTIVE' : 'OFF'}</strong>.
+                  </p>
+                </div>
+
+                <div className="bg-surface-white border border-divider p-4 space-y-1.5 shadow-xs">
+                  <div className="font-mono text-[10px] uppercase text-terracotta font-semibold">
+                    2. WHAT DID THE MODEL CALCULATE?
+                  </div>
+                  <h4 className="font-serif text-sm font-medium text-ink">
+                    Direct Analytical Results
+                  </h4>
+                  <p className="text-ink-secondary leading-relaxed">
+                    Average platform waiting times dropped by <strong>{Math.abs(simulationData.deltas.waitTimeDeltaPct)}%</strong> ({simulationData.baseline.averageWaitTimeMinutes}m → {simulationData.simulated.averageWaitTimeMinutes}m) and vehicle crowding decreased by <strong>{simulationData.deltas.crowdingReliefPoints} points</strong>.
+                  </p>
+                </div>
+
+                <div className="bg-surface-white border border-divider p-4 space-y-1.5 shadow-xs">
+                  <div className="font-mono text-[10px] uppercase text-terracotta font-semibold">
+                    3. WHAT DOES THIS MEAN FOR COMMUTERS?
+                  </div>
+                  <h4 className="font-serif text-sm font-medium text-ink">
+                    Everyday Commute Impact
+                  </h4>
+                  <p className="text-ink-secondary leading-relaxed">
+                    Commuters spend less time standing in Delhi&apos;s heat at bus stops, find seats more easily during rush hours, and benefit from <strong>{simulationData.environmentalImpact.monthlyCo2OffsetTons} tons</strong> of avoided carbon emissions per month.
+                  </p>
+                </div>
+
+                <div className="bg-surface-white border border-divider p-4 space-y-1.5 shadow-xs">
+                  <div className="font-mono text-[10px] uppercase text-terracotta font-semibold">
+                    4. WHAT ASSUMPTIONS WERE USED?
+                  </div>
+                  <h4 className="font-serif text-sm font-medium text-ink">
+                    Assumptions & Limitations
+                  </h4>
+                  <p className="text-ink-secondary leading-relaxed">
+                    Based on Little&apos;s Law queue equilibrium (L = λW) and a calibrated Delhi transit price elasticity (ε = -0.38). This is a counterfactual advisory simulation; it does not model unplanned road floods or control actual physical vehicles.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Governing Equations Block */}
             {simulationData.governingEquations && (
               <div className="p-5 border border-divider bg-ivory space-y-2">

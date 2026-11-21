@@ -9,7 +9,7 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
   <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a> · 
-  <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a>
+  <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a>
 </p>
 
 ---
@@ -515,17 +515,22 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Release baseline:** Phase 22 — Final Demonstration Production, Submission Package Validation & Competition Release Certification
-- **Release commit:** `89848ea` (Phase 21 baseline), transitioning to Phase 22 certification commit
-- **Working branch:** `phase-22-final-demonstration-and-submission-certification`
+- **Release baseline:** Phase 24 — Universal Usability, Hydration Stability & Runtime Certification
+- **Baseline commit:** `62f2a07` (Phase 23 release) following Phase 22 competition certification (`5357b1d`)
+- **Working branch:** `phase-24-universal-usability-and-runtime-certification`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
-- **CI status:** 🟢 Continuous Integration matrix verified across Node.js 20.x and 22.x ([GitHub Actions](https://github.com/Mayyank04/Nexbus/actions)).
+- **CI / Automated Test Matrix:** 🟢 274/274 Automated Assertions Passed across:
+  - `verify-platform.mjs`: 77/77 Platform & Deliverables Assertions
+  - `test-phase24-hydration.mjs`: 25/25 SSR/CSR Hydration & Determinism Assertions (0 unpinned `toLocaleString()`, 0 `suppressHydrationWarning`)
+  - `test-phase24-usability.mjs`: 172/172 Usability, GIS Layers, Two-Level Explainer & Governance Assertions
+- **Multi-Viewport Evidence:** 18 Headless Chrome Screenshot Artifacts across 7 viewports ($1920\times1080$ to $360\times800$) cataloged in [SCREENSHOT_MANIFEST.json](docs/phase-24/evidence/screenshots/SCREENSHOT_MANIFEST.json).
+- **Audit Suite:** 18 dedicated technical reports in [docs/phase-24/](docs/phase-24/PHASE24_MASTER_AUDIT.md).
 
-NEXBUS has fulfilled all five competition deliverables under the READ-ONLY + PASSIVE + ADVISORY operational safety invariant. The system is certified as `SUBMISSION_READY_WITH_DISCLOSED_LIMITATIONS`.
+NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE_AND_RUNTIME_CERTIFIED`.
 
 <p align="center">
   <strong>NEXBUS</strong><br/>
   Delhi Urban Mobility Intelligence & Advisory Decision-Support Platform<br/>
-  <em>Understand the network. Explore the possibilities. Support better decisions.</em>
+  <em>Simple enough for a child. Useful enough for an adult. Powerful enough for an engineer.</em>
 </p>

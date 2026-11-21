@@ -481,6 +481,28 @@ async function runTests() {
     assert(false, `Phase 23 formatter tests failed: ${err.message}`);
   }
 
+  console.log('\n--- Executing Phase 24 Hydration Regression & Locale Parity Tests ---');
+  try {
+    const phase24HydrationOutput = execSync('node --experimental-strip-types scripts/test-phase24-hydration.mjs', { encoding: 'utf8' });
+    assert(
+      phase24HydrationOutput.includes('PHASE 24 HYDRATION TEST RESULTS: 25 PASSED, 0 FAILED'),
+      'Phase 24 hydration regression suite validates zero unconfigured locale calls, zero suppressHydrationWarning uses, and deterministic 642,000 international vs 6,42,000 Indian parity across all locales'
+    );
+  } catch (err) {
+    assert(false, `Phase 24 hydration tests failed: ${err.message}`);
+  }
+
+  console.log('\n--- Executing Phase 24 Usability, Explainability & Governance Tests ---');
+  try {
+    const phase24UsabilityOutput = execSync('node --experimental-strip-types scripts/test-phase24-usability.mjs', { encoding: 'utf8' });
+    assert(
+      phase24UsabilityOutput.includes('PHASE 24 USABILITY & GOVERNANCE RESULTS: 172 PASSED, 0 FAILED'),
+      'Phase 24 usability suite verifies canonical 2-level terminology registry, 11 GIS layers explainability, 3-mode journey planning, simulation curiosity cards, and read-only passive advisory safety invariant'
+    );
+  } catch (err) {
+    assert(false, `Phase 24 usability tests failed: ${err.message}`);
+  }
+
 
 
   console.log(`\n========================================`);
