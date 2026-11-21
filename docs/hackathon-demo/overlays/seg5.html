@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 56px;
+    }
+
+    /* Top HUD Telemetry Bar */
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(13, 27, 42, 0.94);
+      border: 1px solid rgba(222, 213, 200, 0.25);
+      border-left: 5px solid #B84C32;
+      border-radius: 8px;
+      padding: 14px 28px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+    }
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .hud-logo {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 2px;
+    }
+    .hud-divider {
+      color: #8C8275;
+      font-size: 18px;
+    }
+    .hud-category {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: #FFB703;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .badge-tag {
+      background: rgba(184, 76, 50, 0.25);
+      color: #F5F0E6;
+      border: 1px solid #B84C32;
+    }
+    .badge-safety {
+      background: rgba(22, 101, 52, 0.35);
+      color: #4ADE80;
+      border: 1px solid #22C55E;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22C55E;
+      box-shadow: 0 0 8px #22C55E;
+    }
+
+    /* Bottom Subtitle / Cue Card */
+    .hud-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .subtitle-card {
+      width: 1560px;
+      background: rgba(13, 27, 42, 0.95);
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      border-bottom: 4px solid #B84C32;
+      border-radius: 12px;
+      padding: 24px 36px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
+      position: relative;
+    }
+    .scene-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(222, 213, 200, 0.2);
+      padding-bottom: 8px;
+    }
+    .scene-title {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFB703;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .scene-mandate {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: #94A3B8;
+      letter-spacing: 1px;
+    }
+    .subtitle-text {
+      font-size: 25px;
+      line-height: 1.45;
+      color: #F8FAFC;
+      font-weight: 400;
+      white-space: pre-line;
+      letter-spacing: -0.2px;
+    }
+    .subtitle-text strong {
+      color: #FFB703;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud-header">
+    <div class="hud-left">
+      <span class="hud-logo">NEXBUS</span>
+      <span class="hud-divider">/</span>
+      <span class="hud-category">PARETO-OPTIMAL ROUTING</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-badge badge-tag">FASTEST · BALANCED · COMFORT FIRST</span>
+      <span class="hud-badge badge-safety"><span class="status-dot"></span>READ-ONLY + PASSIVE + ADVISORY</span>
+    </div>
+  </div>
+
+  <div class="hud-footer">
+    <div class="subtitle-card">
+      <div class="scene-meta">
+        <span class="scene-title">SCENE 05 // Multi-Criteria Journey Planner</span>
+        <span class="scene-mandate">DELHI MOBILITY INTELLIGENCE PLATFORM</span>
+      </div>
+      <div class="subtitle-text">NEXBUS also includes a multi-criteria journey planner. Rather than presenting only one route, it provides three different travel priorities: Fastest, Balanced and Comfort First.
+
+This helps users compare journey alternatives based on travel time, transfers, waiting and estimated crowding.</div>
+    </div>
+  </div>
+</body>
+</html>

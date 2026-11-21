@@ -25,6 +25,9 @@ import {
   Square,
   Building2,
   BarChart3,
+  Bus,
+  CloudRain,
+  AlertTriangle,
 } from 'lucide-react';
 import { Magnetic } from '@/components/ui/magnetic';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -131,7 +134,7 @@ export default function SimulationLabPage() {
             {/* Prominent Advisory Badge */}
             <div className="p-3 bg-amber-50 border border-amber-300 text-amber-950 font-mono text-xs flex flex-wrap items-center justify-between gap-2 shadow-xs">
               <span className="flex items-center gap-1.5">
-                <span className="text-sm">⚠️</span>
+                <AlertTriangle className="w-4 h-4 text-amber-800 shrink-0" />
                 <span><strong>ADVISORY SIMULATION:</strong> This is a computer test to explore ideas, not a real-world promise.</span>
               </span>
               <span className="text-[11px] uppercase tracking-wider text-amber-800">NO PHYSICAL DISPATCH • PASSIVE TWIN</span>
@@ -160,7 +163,7 @@ export default function SimulationLabPage() {
                   className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
                 >
                   <div className="flex items-center gap-2 mb-1.5 text-terracotta font-mono text-xs">
-                    <span>🚌</span>
+                    <Bus className="w-4 h-4" />
                     <span className="font-semibold uppercase tracking-wider">Fleet Expansion</span>
                   </div>
                   <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">
@@ -182,7 +185,7 @@ export default function SimulationLabPage() {
                   className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
                 >
                   <div className="flex items-center gap-2 mb-1.5 text-emerald-700 font-mono text-xs">
-                    <span>🍃</span>
+                    <Leaf className="w-4 h-4" />
                     <span className="font-semibold uppercase tracking-wider">Clean Air Day</span>
                   </div>
                   <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">
@@ -204,7 +207,7 @@ export default function SimulationLabPage() {
                   className="p-4 border border-divider bg-surface-white hover:border-terracotta text-left transition-all group shadow-xs cursor-pointer"
                 >
                   <div className="flex items-center gap-2 mb-1.5 text-amber-700 font-mono text-xs">
-                    <span>🌧️</span>
+                    <CloudRain className="w-4 h-4" />
                     <span className="font-semibold uppercase tracking-wider">Monsoon Congestion</span>
                   </div>
                   <h3 className="font-serif text-base text-ink group-hover:text-terracotta transition-colors leading-snug">

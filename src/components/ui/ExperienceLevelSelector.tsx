@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useExperienceLevel, ExperienceLevel } from '@/lib/context/ExperienceLevelContext';
-import { Sparkles, Compass, SlidersHorizontal, HelpCircle } from 'lucide-react';
+import { Compass, Bus, SlidersHorizontal, HelpCircle } from 'lucide-react';
 
 interface ExperienceLevelSelectorProps {
   compact?: boolean;
@@ -27,8 +27,8 @@ export default function ExperienceLevelSelector({
       id: 'easy',
       label: 'Easy Explore',
       shortLabel: 'Easy',
-      description: 'Simple words, friendly icons, and plain-English explanations for everyone.',
-      icon: <Sparkles className="w-3.5 h-3.5 text-emerald-600" />,
+      description: 'Simple words, clear navigation, and plain-language explanations for everyone.',
+      icon: <Compass className="w-3.5 h-3.5 text-emerald-600" />,
       colorClass: 'border-emerald-500 bg-emerald-50/50 text-emerald-950 font-semibold',
     },
     {
@@ -36,7 +36,7 @@ export default function ExperienceLevelSelector({
       label: 'Commuter',
       shortLabel: 'Rider',
       description: 'Practical journey planning, connections, and bus fullness for daily travel.',
-      icon: <Compass className="w-3.5 h-3.5 text-blue-600" />,
+      icon: <Bus className="w-3.5 h-3.5 text-blue-600" />,
       colorClass: 'border-blue-500 bg-blue-50/50 text-blue-950 font-semibold',
     },
     {
@@ -107,7 +107,8 @@ export default function ExperienceLevelSelector({
           onClick={openOnboarding}
           className="text-xs font-mono text-terracotta hover:underline flex items-center space-x-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta"
         >
-          <span>👋 First time? Take tour</span>
+          <HelpCircle className="w-3.5 h-3.5" />
+          <span>First time? Take the tour</span>
         </button>
       </div>
 

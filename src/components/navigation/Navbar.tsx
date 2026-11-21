@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ArrowUpRight, Compass, Sparkles } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ExperienceLevelSelector from '@/components/ui/ExperienceLevelSelector';
 
@@ -24,7 +24,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-ivory/95 backdrop-blur-md border-b border-divider transition-colors">
+      <header className="sticky top-0 z-50 w-full bg-ivory border-b border-divider transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Wordmark & Geographic Coordinate */}
           <div className="flex items-center space-x-3 sm:space-x-4">

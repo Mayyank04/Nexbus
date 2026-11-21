@@ -1245,7 +1245,7 @@ export default function DelhiCityCanvas({
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-divider pb-3">
               <div>
                 <span className="font-mono text-[11px] tracking-widest text-terracotta uppercase block">
-                  {isContextLost ? '⚠️ WEBGL CONTEXT RECOVERY ACTIVE' : 'CARTOGRAPHIC PROJECTION · 2D VECTOR FALLBACK'}
+                  {isContextLost ? 'WEBGL CONTEXT RECOVERY ACTIVE' : 'CARTOGRAPHIC PROJECTION · 2D VECTOR FALLBACK'}
                 </span>
                 <h3 className="font-serif text-xl sm:text-2xl mt-1 text-ink">
                   Delhi Metropolitan Spatial Network
@@ -1253,7 +1253,7 @@ export default function DelhiCityCanvas({
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] px-2 py-0.5 bg-surface-white border border-divider text-ink-muted">
-                  {mode === 'explore' ? '🌟 EXPLORE MODE' : '🔬 ANALYST MODE'}
+                  {mode === 'explore' ? 'EXPLORE MODE' : 'ANALYST MODE'}
                 </span>
                 {isContextLost && (
                   <button

@@ -26,6 +26,9 @@ import {
   Bus,
   Train,
   CheckCircle2,
+  Map,
+  SlidersHorizontal,
+  BarChart3,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -239,7 +242,9 @@ export default function HomePage() {
               className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">🗺️</div>
+                <div className="w-8 h-8 rounded-full bg-terracotta/10 flex items-center justify-center text-terracotta mb-3">
+                  <Map className="w-4 h-4" />
+                </div>
                 <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
                   1. Explore Delhi
                 </h3>
@@ -258,7 +263,9 @@ export default function HomePage() {
               className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">🧭</div>
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-700 mb-3">
+                  <Compass className="w-4 h-4" />
+                </div>
                 <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
                   2. Find a Journey
                 </h3>
@@ -277,12 +284,14 @@ export default function HomePage() {
               className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">👥</div>
+                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-700 mb-3">
+                  <Users className="w-4 h-4" />
+                </div>
                 <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
                   3. Understand Bus Crowding
                 </h3>
                 <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
-                  Triple-encoded visual guide: 🟢 Green (More space), 🟡 Yellow (Some space), 🔴 Red (Very crowded).
+                  Three clear levels: Green for open seats, Yellow for steady ridership, and Red for peak rush.
                 </p>
               </div>
               <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
@@ -296,7 +305,9 @@ export default function HomePage() {
               className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">🧪</div>
+                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-700 mb-3">
+                  <SlidersHorizontal className="w-4 h-4" />
+                </div>
                 <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
                   4. Try a Transport Scenario
                 </h3>
@@ -315,7 +326,9 @@ export default function HomePage() {
               className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="text-2xl mb-2">📊</div>
+                <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-700 mb-3">
+                  <BarChart3 className="w-4 h-4" />
+                </div>
                 <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
                   5. Explore Advanced Analysis
                 </h3>
@@ -340,7 +353,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             <div className="lg:col-span-5 space-y-4">
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
-                A city of 32 million souls, carved into radial arteries.
+                Delhi&apos;s transit network: 32 million residents connected by radial and ring corridors.
               </h2>
               <div className="w-12 h-[1.5px] bg-terracotta my-3" />
               <p className="text-ink-secondary leading-relaxed font-normal text-sm sm:text-base">
@@ -434,7 +447,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="max-w-xl space-y-3">
               <h2 className="font-serif text-3xl sm:text-5xl text-ink leading-tight font-normal">
-                Corridors that breathe with the morning rush.
+                Arterial corridors shaped by daily commuter flows.
               </h2>
             </div>
             <p className="text-sm text-ink-secondary max-w-sm font-normal leading-relaxed">
@@ -675,7 +688,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mx-auto text-center space-y-3 mb-12">
             <h2 className="font-serif text-3xl sm:text-5xl text-ink font-normal">
-              Scientific rigor over black-box guesswork.
+              Transparent data classification across every metric.
             </h2>
             <p className="text-ink-secondary text-sm sm:text-base font-normal leading-relaxed">
               Every data point in NEXBUS is classified into four strict epistemological tiers to maintain complete auditability, provenance tracking, and public trust.

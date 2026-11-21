@@ -6,11 +6,12 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
 <p align="center">
   <a href="https://nexbus.vercel.app"><strong>Live Prototype</strong></a> · 
   <a href="https://github.com/Mayyank04/Nexbus"><strong>Source Code</strong></a> · 
+  <a href="docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4"><strong>Hackathon Video (1080p)</strong></a> · 
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
-  <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a> · 
   <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a> · 
-  <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a>
+  <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a> · 
+  <a href="docs/phase-25/FINAL_PHASE_25_REPORT.md"><strong>Phase 25 Final Report</strong></a>
 </p>
 
 ---
@@ -443,9 +444,9 @@ The following documents form the NEXBUS competition submission package:
 | **2. Working prototype** | [nexbus.vercel.app](https://nexbus.vercel.app) | **`COMPLETE_VERIFIED`** |
 | **3. Public source code and README** | [GitHub Repository](https://github.com/Mayyank04/Nexbus) | **`COMPLETE_VERIFIED`** |
 | **4. Technical note** | [`docs/phase-21/NEXBUS_TECHNICAL_NOTE.md`](docs/phase-21/NEXBUS_TECHNICAL_NOTE.md) | **`COMPLETE_VERIFIED`** |
-| **5. Demonstration video** | [`docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4`](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) | **`LOCALLY_VALIDATED`** |
+| **5. Demonstration video** | [`docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4`](docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4)<br/>*(Web Mirror: [`public/demo/NEXBUS_HACKATHON_DEMO.mp4`](public/demo/NEXBUS_HACKATHON_DEMO.mp4))* | **`COMPLETE_VERIFIED`** |
 
-*Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 160.59s narration in en_IN by Aman, 10.75 MB H.264/AAC MP4). Accessible directly at [docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) with poster thumbnail at [docs/phase-22/demo/DEMO_THUMBNAIL.png](docs/phase-22/demo/DEMO_THUMBNAIL.png) and recording validation log at [docs/phase-22/demo/DEMO_VALIDATION_REPORT.md](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md). Marked LOCALLY_VALIDATED pending competition portal upload or public cloud video stream hosting.*
+*Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 194.56s / 3m 15s narration in en_IN by Aman, 20.30 MB H.264/AAC MP4). Features authentic project captures only, synchronized Swiss Cartography HUD overlays and subtitles, multi-criteria Pareto routing, Little's Law counterfactual simulation, 9-tier provenance, and safety invariant mandate. Accessible directly at [docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4](docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4) with poster thumbnail at [docs/hackathon-demo/DEMO_THUMBNAIL.png](docs/hackathon-demo/DEMO_THUMBNAIL.png) and validation log at [docs/hackathon-demo/DEMO_VALIDATION_REPORT.md](docs/hackathon-demo/DEMO_VALIDATION_REPORT.md).*
 
 ### Phase 23 Final External Submission & Judge Readiness
 - [Final Competition Release Report](docs/phase-23/FINAL_COMPETITION_RELEASE_REPORT.md)
@@ -525,24 +526,33 @@ See [LICENSE](LICENSE) for the full license terms.
 
 ## 16. Project Status
 
-- **Current release status:** Phase 24 — Universal Usability, Hydration Stability & Runtime Certification
-- **Release baseline:** `62f2a07` (Phase 23 release) following Phase 22 competition certification (`5357b1d`)
-- **Working branch:** `phase-24-universal-usability-and-runtime-certification`
+- **Current release status:** Phase 25 — Universal Human-Centred Redesign, Complete AI-Slop Elimination & Design System Certification
+- **Release baseline:** `28944f2` following Phase 24 merge conflict resolution and CI stabilization
+- **Working branch:** `phase-25-universal-human-centred-design-and-ai-slop-elimination`
 - **Live prototype:** [https://nexbus.vercel.app](https://nexbus.vercel.app)
 - **Source repository:** [https://github.com/Mayyank04/Nexbus](https://github.com/Mayyank04/Nexbus)
-- **CI / Automated Test Matrix:** 🟢 274/274 Automated Assertions Passed across Node.js 20.x and 22.x:
+- **CI / Automated Test Matrix:** 🟢 302/302 Automated Assertions Passed across Node.js 20.x and 22.x:
   - `verify-platform.mjs`: 77/77 Platform & Deliverables Assertions
+  - `test-phase20-governance.mjs`: 16/16 Governance, Provenance, & Rate-Limit Assertions
   - `test-phase24-hydration.mjs`: 25/25 SSR/CSR Hydration & Determinism Assertions (0 unpinned `toLocaleString()`, 0 `suppressHydrationWarning`)
   - `test-phase24-usability.mjs`: 172/172 Usability, GIS Layers, Two-Level Explainer & Governance Assertions
-- **Multi-Viewport Evidence:** 18 Headless Chrome Screenshot Artifacts across 7 viewports ($1920\times1080$ to $360\times800$) cataloged in [SCREENSHOT_MANIFEST.json](docs/phase-24/evidence/screenshots/SCREENSHOT_MANIFEST.json).
-- **Audit Suite:** 18 dedicated technical reports in [docs/phase-24/](docs/phase-24/PHASE24_MASTER_AUDIT.md).
+  - `test-formatters.mjs`: 12/12 Deterministic Formatting Utilities Assertions
+- **Design Quality & Anti-Slop Certification:**
+  - 100% elimination of decorative `Sparkles` icons and `backdrop-blur` compositing layers
+  - Complete replacement of raw casual emojis with Lucide transit vector iconography
+  - Humanized UI copywriting eliminating marketing jargon and AI rhetorical clichés
+  - Adherence to Swiss Transit Cartography tokens defined in `DESIGN.md`
+- **Multi-Viewport Evidence:** 25 Headless Chrome Screenshot Artifacts across 5 viewports ($1440\times900$ to $360\times800$) cataloged in [BEFORE_AFTER_SCREENSHOT_INDEX.md](docs/phase-25/BEFORE_AFTER_SCREENSHOT_INDEX.md).
+- **Audit Suite:** 10 dedicated technical reports in [docs/phase-25/](docs/phase-25/FINAL_PHASE_25_REPORT.md).
 
 ### Milestone History
+- **Phase 25:** Universal Human-Centred Redesign, Complete AI-Slop Elimination & Design System Certification.
+- **Phase 24:** Merge Conflict Resolution, Node.js 20 CI Repair & Usability Runtime Certification.
 - **Phase 23:** Final External Submission, Video Publication, Judge Rehearsal & Evaluation Readiness (`a35c1a8`), and Universal Understanding & Child-Friendly Experience (`62f2a07`).
 - **Phase 22:** Final Demonstration Production, Submission Package Validation & Competition Release Certification (`5357b1d`).
 - **Phase 21:** Competition Submission, Project Proposal, Technical Note & Demonstration Readiness (`89848ea`, `6e56d3d`).
 
-NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE_AND_RUNTIME_CERTIFIED`.
+NEXBUS has fulfilled all competition and usability deliverables under the absolute, non-negotiable **READ-ONLY + PASSIVE + ADVISORY** operational safety invariant. The system is certified as `SUBMISSION_READY_UNIVERSALLY_USABLE`.
 
 <p align="center">
   <strong>NEXBUS</strong><br/>

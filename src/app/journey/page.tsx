@@ -66,7 +66,7 @@ export default function JourneyPlannerPage() {
             <span>Multimodal Urban Journey Intelligence</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl text-ink font-normal leading-[1.1]">
-            Seamless Journeys Across Delhi
+            Plan Your Trip Across Delhi
           </h1>
           <p className="text-base text-ink-muted font-light leading-relaxed">
             Optimal pathfinding across Delhi Metro (DMRC), DTC arterial bus corridors, and validated pedestrian transfers with real-time interchange friction scoring.
@@ -119,9 +119,9 @@ export default function JourneyPlannerPage() {
               {(isSimple
                 ? [
                     { id: 'ALL', label: 'All 3 Options' },
-                    { id: 'FASTEST', label: '⚡ Fastest (Save Time)' },
-                    { id: 'LEAST_TRANSFERS', label: '⚖️ Balanced (Fewer Changes)' },
-                    { id: 'BUS_ONLY', label: '💺 Comfort First (Bus Priority)' },
+                    { id: 'FASTEST', label: 'Fastest (Save Time)' },
+                    { id: 'LEAST_TRANSFERS', label: 'Balanced (Fewer Changes)' },
+                    { id: 'BUS_ONLY', label: 'Comfort First (Bus Priority)' },
                   ]
                 : [
                     { id: 'ALL', label: 'All Criteria' },
@@ -254,10 +254,10 @@ export default function JourneyPlannerPage() {
                           }`}
                         >
                           {plan.preference === 'FASTEST'
-                            ? '⚡ FASTEST'
+                            ? 'FASTEST'
                             : plan.preference === 'LEAST_TRANSFERS'
-                            ? '⚖️ BALANCED'
-                            : '💺 COMFORT FIRST'}
+                            ? 'BALANCED'
+                            : 'COMFORT FIRST'}
                         </span>
                         <h3 className="font-serif text-xl text-ink font-normal mt-1.5">
                           {plan.title}
@@ -314,7 +314,7 @@ export default function JourneyPlannerPage() {
                     {/* Crowding Expectations & Evidence Tag (Triple Encoded) */}
                     <div className="my-2 p-2.5 bg-ivory border border-divider/60 flex items-center justify-between text-xs font-mono">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm">{plan.reliabilityScorePct > 80 ? '🟢' : '🟡'}</span>
+                        <span className={`w-2.5 h-2.5 rounded-full inline-block ${plan.reliabilityScorePct > 80 ? 'bg-emerald-600' : 'bg-amber-600'}`} />
                         <span className="font-medium text-ink">
                           {plan.reliabilityScorePct > 80 ? 'More space available' : 'Some space available'}
                         </span>
@@ -436,8 +436,8 @@ export default function JourneyPlannerPage() {
 
                         {/* Crowd expectation with triple encoding */}
                         <div className="pt-1 flex flex-wrap items-center gap-2 text-[10px] font-mono">
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-xs bg-emerald-50 text-emerald-800 border border-emerald-200">
-                            <span>🟢</span>
+                          <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-xs bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
                             <span>Plenty of empty seats expected</span>
                           </span>
                           {leg.mode === 'TRANSFER' && (

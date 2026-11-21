@@ -38,8 +38,8 @@ import {
   Compass,
   MapPin,
   Route,
-  Sparkles,
   AlertCircle,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 const TWIN_LAYERS = GIS_LAYERS_REGISTRY;
@@ -130,24 +130,24 @@ export default function DigitalTwinPage() {
           <div className="flex items-center space-x-1 border border-divider p-0.5 bg-surface-white">
             <button
               onClick={() => setMode('explore')}
-              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1 ${
+              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1.5 ${
                 mode === 'explore'
                   ? 'bg-terracotta text-surface-white font-medium shadow-xs'
                   : 'text-ink-muted hover:text-ink'
               }`}
             >
-              <span>🌟</span>
+              <Compass className="w-3.5 h-3.5" />
               <span>EXPLORE DELHI</span>
             </button>
             <button
               onClick={() => setMode('analyst')}
-              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1 ${
+              className={`px-2.5 py-1 font-mono text-[11px] transition-colors flex items-center space-x-1.5 ${
                 mode === 'analyst'
                   ? 'bg-ink text-surface-white font-medium shadow-xs'
                   : 'text-ink-muted hover:text-ink'
               }`}
             >
-              <span>🔬</span>
+              <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>ADVANCED ANALYSIS</span>
             </button>
           </div>
@@ -165,7 +165,7 @@ export default function DigitalTwinPage() {
             title={isMotionPaused ? 'Resume vehicle movement' : 'Pause vehicle movement'}
             className="px-2 py-0.5 border border-divider bg-surface-white hover:border-ink text-ink-muted hover:text-ink transition-colors flex items-center space-x-1"
           >
-            <span>{isMotionPaused ? '▶️' : '⏸️'}</span>
+            {isMotionPaused ? <Play className="w-3 h-3 text-emerald-700" /> : <Pause className="w-3 h-3 text-ink" />}
             <span className="hidden sm:inline">{isMotionPaused ? 'RESUME' : 'PAUSE'}</span>
           </button>
 
@@ -173,13 +173,13 @@ export default function DigitalTwinPage() {
           {mode === 'explore' && (
             <button
               onClick={() => setIsTutorialOpen((prev) => !prev)}
-              className={`px-2 py-0.5 font-mono text-[11px] border transition-colors flex items-center space-x-1 ${
+              className={`px-2 py-0.5 font-mono text-[11px] border transition-colors flex items-center space-x-1.5 ${
                 isTutorialOpen
                   ? 'border-terracotta bg-terracotta/10 text-terracotta font-medium'
                   : 'border-divider bg-surface-white text-ink-muted hover:text-ink'
               }`}
             >
-              <span>🗺️</span>
+              <Compass className="w-3 h-3" />
               <span>GUIDED TOUR ({tutorialStepIndex + 1}/6)</span>
             </button>
           )}
@@ -229,7 +229,7 @@ export default function DigitalTwinPage() {
 
               <div className="bg-surface-white border border-divider p-3.5 space-y-2">
                 <div className="flex items-center space-x-1.5 text-xs font-mono text-terracotta">
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <Compass className="w-3.5 h-3.5" />
                   <span className="font-semibold uppercase tracking-wider">Explore Delhi Mode</span>
                 </div>
                 <h3 className="font-serif text-lg text-ink font-normal leading-snug">
@@ -246,7 +246,7 @@ export default function DigitalTwinPage() {
                     }}
                     className="w-full mt-1.5 py-2 px-3 bg-terracotta text-surface-white font-mono text-xs uppercase flex items-center justify-center space-x-1.5 hover:bg-ink transition-colors font-medium shadow-xs"
                   >
-                    <span>🌟</span>
+                    <Compass className="w-3.5 h-3.5" />
                     <span>Start 6-Step Guided Tour</span>
                   </button>
                 )}
@@ -332,17 +332,17 @@ export default function DigitalTwinPage() {
                 <div className="space-y-1.5 text-xs">
                   <div className="flex items-center space-x-2">
                     <span className="w-3 h-3 rounded-full bg-emerald-700 flex items-center justify-center text-[9px] text-white font-bold">✓</span>
-                    <span className="font-medium text-ink">🟢 Not Very Crowded</span>
+                    <span className="font-medium text-ink">Not Very Crowded</span>
                     <span className="text-ink-muted text-[11px] ml-auto">Plenty of seats</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="w-3 h-3 rounded-full bg-amber-600 flex items-center justify-center text-[9px] text-white font-bold">~</span>
-                    <span className="font-medium text-ink">🟡 Getting Busy</span>
+                    <span className="font-medium text-ink">Getting Busy</span>
                     <span className="text-ink-muted text-[11px] ml-auto">Some standing</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="w-3 h-3 rounded-full bg-terracotta flex items-center justify-center text-[9px] text-white font-bold">!</span>
-                    <span className="font-medium text-ink">🔴 Very Crowded</span>
+                    <span className="font-medium text-ink">Very Crowded</span>
                     <span className="text-ink-muted text-[11px] ml-auto">Peak rush pack</span>
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function DigitalTwinPage() {
             <div className="absolute top-4 left-4 z-10 space-y-2 pointer-events-auto">
               {/* Prominent Simulation Disclosure Badge */}
               <div className="bg-amber-100/95 border border-amber-300 text-amber-950 px-3 py-1.5 text-xs font-mono flex items-center gap-2 shadow-xs">
-                <span className="text-sm">⚠️</span>
+                <AlertCircle className="w-4 h-4 text-amber-800 shrink-0" />
                 <span><strong>SIMULATED MOVEMENT:</strong> Not real-time satellite GPS tracking</span>
               </div>
 
@@ -681,10 +681,10 @@ export default function DigitalTwinPage() {
                 {/* Friendly Time-of-Day Quick Jump Buttons */}
                 <div className="hidden sm:flex items-center space-x-1">
                   {[
-                    { hour: 8, label: '☀️ 8 AM (Rush)' },
-                    { hour: 14, label: '🌤️ 2 PM' },
-                    { hour: 18, label: '🌆 6 PM (Rush)' },
-                    { hour: 21, label: '🌙 9 PM' },
+                    { hour: 8, label: '08:00 (Morning Rush)' },
+                    { hour: 14, label: '14:00 (Midday)' },
+                    { hour: 18, label: '18:00 (Evening Rush)' },
+                    { hour: 21, label: '21:00 (Night)' },
                   ].map((preset) => (
                     <button
                       key={preset.hour}

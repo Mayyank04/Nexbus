@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background: #0D1B2A;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      position: relative;
+      color: #F5F0E6;
+    }
+    .grid-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(rgba(245, 240, 230, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 240, 230, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.6;
+    }
+    .container {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      padding: 80px 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    .top-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid rgba(245, 240, 230, 0.2);
+      padding-bottom: 24px;
+    }
+    .brand-badge {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 16px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: #FFB703;
+      text-transform: uppercase;
+    }
+    .competition-badge {
+      background: #B84C32;
+      color: #FFFFFF;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 8px 18px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .center-content {
+      margin: auto 0;
+    }
+    h1 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 120px;
+      font-weight: 900;
+      letter-spacing: -3px;
+      color: #FFFFFF;
+      line-height: 1.0;
+      margin-bottom: 20px;
+    }
+    .subtitle {
+      font-size: 38px;
+      font-weight: 400;
+      color: #F5F0E6;
+      max-width: 1400px;
+      line-height: 1.35;
+      margin-bottom: 40px;
+    }
+    .url-box {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 24px 32px;
+      width: fit-content;
+      margin-bottom: 30px;
+    }
+    .url-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 24px;
+    }
+    .url-label {
+      color: #FFB703;
+      font-weight: 700;
+      min-width: 180px;
+    }
+    .url-val {
+      color: #FFFFFF;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+    }
+    .bottom-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid rgba(245, 240, 230, 0.2);
+      padding-top: 28px;
+    }
+    .tagline {
+      font-size: 24px;
+      font-weight: 300;
+      color: #94A3B8;
+      font-style: italic;
+    }
+    .mandate-pill {
+      background: rgba(184, 76, 50, 0.25);
+      border: 2px solid #B84C32;
+      color: #FFFFFF;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 12px 28px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="container">
+    <div class="top-meta">
+      <div class="brand-badge">NCT DELHI URBAN MOBILITY INTELLIGENCE PLATFORM</div>
+      <div class="competition-badge">HACKATHON PRESENTATION</div>
+    </div>
+    <div class="center-content">
+      <h1>NEXBUS</h1>
+      <div class="subtitle">Delhi Urban Mobility Intelligence and Advisory Decision-Support Platform</div>
+      <div class="url-box">
+        <div class="url-row">
+          <span class="url-label">Live Prototype:</span>
+          <span class="url-val">https://nexbus.vercel.app</span>
+        </div>
+        <div class="url-row">
+          <span class="url-label">Source Code:</span>
+          <span class="url-val">https://github.com/Mayyank04/Nexbus</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-meta">
+      <div class="tagline">NEXBUS — Helping people understand how a city moves.</div>
+      <div class="mandate-pill">READ-ONLY + PASSIVE + ADVISORY</div>
+    </div>
+  </div>
+</body>
+</html>
