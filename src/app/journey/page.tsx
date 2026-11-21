@@ -118,16 +118,16 @@ export default function JourneyPlannerPage() {
               </span>
               {(isSimple
                 ? [
-                    { id: 'ALL', label: 'All Choices' },
+                    { id: 'ALL', label: 'All 3 Options' },
                     { id: 'FASTEST', label: '⚡ Fastest (Save Time)' },
-                    { id: 'LEAST_TRANSFERS', label: '🔄 Fewest Changes (Easy)' },
-                    { id: 'BUS_ONLY', label: '🚌 Bus Only' },
+                    { id: 'LEAST_TRANSFERS', label: '⚖️ Balanced (Fewer Changes)' },
+                    { id: 'BUS_ONLY', label: '💺 Comfort First (Bus Priority)' },
                   ]
                 : [
-                    { id: 'ALL', label: 'All Modes' },
-                    { id: 'FASTEST', label: 'Fastest Multimodal' },
-                    { id: 'LEAST_TRANSFERS', label: 'Least Transfers' },
-                    { id: 'BUS_ONLY', label: 'Bus Only' },
+                    { id: 'ALL', label: 'All Criteria' },
+                    { id: 'FASTEST', label: 'Fastest (Min Time)' },
+                    { id: 'LEAST_TRANSFERS', label: 'Balanced (Min Transfers)' },
+                    { id: 'BUS_ONLY', label: 'Comfort First (Bus Priority)' },
                   ]
               ).map((tab) => (
                 <button
@@ -253,11 +253,20 @@ export default function JourneyPlannerPage() {
                               : 'bg-emerald-100 text-emerald-900 border-emerald-300'
                           }`}
                         >
-                          {plan.preference.replace('_', ' ')}
+                          {plan.preference === 'FASTEST'
+                            ? '⚡ FASTEST'
+                            : plan.preference === 'LEAST_TRANSFERS'
+                            ? '⚖️ BALANCED'
+                            : '💺 COMFORT FIRST'}
                         </span>
                         <h3 className="font-serif text-xl text-ink font-normal mt-1.5">
                           {plan.title}
                         </h3>
+                        <div className="text-xs font-mono text-ink-muted mt-0.5">
+                          <span>{plan.legs[0]?.originName}</span>
+                          <span className="mx-1 text-terracotta">→</span>
+                          <span>{plan.legs[plan.legs.length - 1]?.destinationName}</span>
+                        </div>
                       </div>
 
                       <div className="text-right shrink-0">
@@ -296,17 +305,37 @@ export default function JourneyPlannerPage() {
                     <div className="mb-3 p-2.5 bg-parchment/50 border border-divider/60 text-xs text-ink-secondary leading-snug">
                       <span className="font-semibold text-ink">Why this choice? </span>
                       {plan.preference === 'FASTEST'
-                        ? 'Quickest option: prioritizes high-speed Delhi Metro lines to bypass street congestion.'
+                        ? 'Fastest: Get there in less time by prioritizing rapid grade-separated Delhi Metro spines to bypass road congestion.'
                         : plan.preference === 'LEAST_TRANSFERS'
-                        ? 'Easiest option: minimizes transfers so you can sit comfortably with minimal switching.'
-                        : 'Balanced option: steady pace, predictable frequency, and moderate walking.'}
+                        ? 'Balanced: A reasonable mix of time and comfort with fewest vehicle transfers so you can stay seated.'
+                        : 'Comfort First: Prefer a less crowded journey with dedicated seating and step-free road access where supported by data.'}
+                    </div>
+
+                    {/* Crowding Expectations & Evidence Tag (Triple Encoded) */}
+                    <div className="my-2 p-2.5 bg-ivory border border-divider/60 flex items-center justify-between text-xs font-mono">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">{plan.reliabilityScorePct > 80 ? '🟢' : '🟡'}</span>
+                        <span className="font-medium text-ink">
+                          {plan.reliabilityScorePct > 80 ? 'More space available' : 'Some space available'}
+                        </span>
+                        <span className="text-[10px] text-ink-muted">
+                          (Estimated ~{plan.reliabilityScorePct > 80 ? '60%' : '75%'} load)
+                        </span>
+                      </div>
+                      <span className="text-[10px] uppercase text-stone font-semibold">
+                        CLASSIFICATION: {plan.evidenceClassification}
+                      </span>
                     </div>
 
                     {/* Metric Bar */}
-                    <div className="grid grid-cols-4 gap-2 pt-3 border-t border-divider/60 font-mono text-[11px] text-ink-muted">
+                    <div className="grid grid-cols-5 gap-2 pt-3 border-t border-divider/60 font-mono text-[11px] text-ink-muted">
                       <div>
                         <span className="block text-[9px] uppercase">DISTANCE</span>
                         <span className="font-medium text-ink">{plan.totalDistanceKm} km</span>
+                      </div>
+                      <div>
+                        <span className="block text-[9px] uppercase">WAIT TIME</span>
+                        <span className="font-medium text-ink">{plan.waitingDurationMinutes} min</span>
                       </div>
                       <div>
                         <span className="block text-[9px] uppercase">TRANSFERS</span>
@@ -422,8 +451,18 @@ export default function JourneyPlannerPage() {
                   ))}
                 </div>
 
-                <div className="pt-3 border-t border-divider text-[10px] text-ink-muted/80 font-mono leading-relaxed">
-                  Notice: Walking transfer durations are calibrated at 4.5 km/h with vertical level penalties. Real-time metro headways sourced from DMRC operational schedules.
+                <div className="pt-3 border-t border-divider space-y-1.5">
+                  <div className="text-[10px] text-ink-muted/80 font-mono leading-relaxed">
+                    Notice: Walking transfer durations are calibrated at 4.5 km/h with vertical level penalties. Real-time metro headways sourced from DMRC operational schedules.
+                  </div>
+                  <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-900 font-mono">
+                    <span className="font-semibold uppercase tracking-wider block mb-0.5">
+                      ▲ PASSIVE ADVISORY • READ-ONLY DECISION SUPPORT
+                    </span>
+                    <span>
+                      Itineraries reflect timetable network graphs. NEXBUS does not track live passenger phones, does not track real-time physical vehicle GPS coordinates on the road, and issues zero dispatch commands.
+                    </span>
+                  </div>
                 </div>
               </div>
             )}

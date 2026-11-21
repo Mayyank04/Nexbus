@@ -1,0 +1,146 @@
+[
+  {
+    "filename": "home-desktop-1920.png",
+    "route": "/",
+    "viewport": "1920x1080",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 285714,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-desktop-1440.png",
+    "route": "/",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 265418,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-desktop-1280.png",
+    "route": "/",
+    "viewport": "1280x800",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 252399,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-tablet-768.png",
+    "route": "/",
+    "viewport": "768x1024",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 203766,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-mobile-430.png",
+    "route": "/",
+    "viewport": "430x932",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 108929,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-mobile-390.png",
+    "route": "/",
+    "viewport": "390x844",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 84045,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "home-mobile-360.png",
+    "route": "/",
+    "viewport": "360x800",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 72080,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "twin-desktop-1440.png",
+    "route": "/twin",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 333053,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "twin-tablet-768.png",
+    "route": "/twin",
+    "viewport": "768x1024",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 129494,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "twin-mobile-390.png",
+    "route": "/twin",
+    "viewport": "390x844",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 82883,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "journey-desktop-1440.png",
+    "route": "/journey",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 214732,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "journey-mobile-390.png",
+    "route": "/journey",
+    "viewport": "390x844",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 61212,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "simulate-desktop-1440.png",
+    "route": "/simulate",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 150463,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "simulate-mobile-390.png",
+    "route": "/simulate",
+    "viewport": "390x844",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 72506,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "control-desktop-1440.png",
+    "route": "/control",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 151729,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "control-mobile-390.png",
+    "route": "/control",
+    "viewport": "390x844",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 70496,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "about-desktop-1440.png",
+    "route": "/about",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 145267,
+    "status": "VERIFIED"
+  },
+  {
+    "filename": "methodology-desktop-1440.png",
+    "route": "/methodology",
+    "viewport": "1440x900",
+    "browser": "Headless Google Chrome 131",
+    "fileSizeBytes": 166706,
+    "status": "VERIFIED"
+  }
+]

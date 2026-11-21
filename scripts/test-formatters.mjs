@@ -5,7 +5,16 @@
  */
 
 import assert from 'node:assert';
-import {
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadTsModule } from './load-ts-module.mjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '..');
+
+const formattersModule = await loadTsModule(path.join(ROOT_DIR, 'src/lib/utils/formatters.ts'));
+const {
   formatNumber,
   formatIndianNumber,
   formatPax,
@@ -13,7 +22,7 @@ import {
   formatDateUtc,
   formatDateTimeUtc,
   formatCurrencyInr
-} from '../src/lib/utils/formatters.ts';
+} = formattersModule;
 
 console.log('=== TESTING NEXBUS DETERMINISTIC FORMATTING UTILITIES ===\n');
 

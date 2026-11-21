@@ -8,6 +8,7 @@ import DelhiCityCanvas, { CameraPreset } from '@/components/3d/DelhiCityCanvas';
 import { DELHI_CORRIDORS, DELHI_STOPS, TransitCorridor, BusStop } from '@/data/delhiTransitData';
 import { formatPax, formatNumber } from '@/lib/utils/formatters';
 import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
+import { TwoLevelExplainer } from '@/components/ui';
 import {
   ArrowUpRight,
   Compass,
@@ -59,9 +60,9 @@ export default function HomePage() {
               <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl leading-[1.0] tracking-tight text-ink font-normal">
                 {level === 'easy' ? (
                   <>
-                    How Delhi Moves —
+                    Understand how buses and
                     <br />
-                    <span className="text-terracotta">Explained</span> for Everyone.
+                    <span className="text-terracotta">transport move</span> around Delhi.
                   </>
                 ) : level === 'commuter' ? (
                   <>
@@ -80,7 +81,7 @@ export default function HomePage() {
 
               <p className="text-sm sm:text-base text-ink-secondary leading-relaxed max-w-lg pt-1 font-normal break-words">
                 {level === 'easy'
-                  ? 'Explore buses and metro trains on an interactive 3D map of our capital city. See where routes travel, check which times are crowded, and plan easy journeys without confusion.'
+                  ? 'NEXBUS helps you explore transport routes, understand how crowded buses may be, compare journeys and see how possible changes could affect travel.'
                   : level === 'commuter'
                   ? 'Real-time crowding insights, multimodal metro-bus transfers, and reliable schedule predictions across 3,840 connected transit vehicles.'
                   : 'Empirical digital twin and advisory decision-support for the National Capital Territory. Reconciling real-time vehicle headways, corridor crowding thresholds, and multimodal transfers across 3,840 connected buses.'}
@@ -215,71 +216,115 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Friendly Three-Card Onboarding Anchor */}
+      {/* 5 Clear Entry Points to Start Exploring */}
       <section className="py-12 border-b border-divider bg-surface-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-divider pb-4">
             <div>
-              <span className="font-mono text-xs uppercase tracking-wider text-terracotta">
+              <span className="font-mono text-xs uppercase tracking-wider text-terracotta font-semibold">
                 FIRST-TIME VISITOR GUIDE
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl font-normal text-ink mt-1">
-                Three Simple Things You Can Do on NEXBUS
+                Five Clear Ways to Explore Delhi Transit
               </h2>
             </div>
             <p className="text-xs text-ink-muted font-mono">
-              CLICK ANY CARD TO GET STARTED
+              NO TECHNICAL KNOWLEDGE NEEDED • SELECT ANY STARTING POINT BELOW
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <Link
               href="/twin"
-              className="border border-divider p-6 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs"
+              className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
-              <div className="text-2xl mb-3">🗺️</div>
-              <h3 className="font-serif text-xl text-ink group-hover:text-terracotta transition-colors leading-snug">
-                1. Explore the 3D City Map
-              </h3>
-              <p className="text-xs text-ink-secondary mt-2 leading-relaxed font-normal">
-                Watch simulated buses travel through Delhi. Tap on any bus stop or road line to discover where it goes and how busy it gets.
-              </p>
+              <div>
+                <div className="text-2xl mb-2">🗺️</div>
+                <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
+                  1. Explore Delhi
+                </h3>
+                <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
+                  Watch buses move on the 3D map or accessible 2D flat map. Tap stops to see connecting lines.
+                </p>
+              </div>
               <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
-                <span>Open Digital Twin</span>
+                <span>Open Map</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
 
             <Link
               href="/journey"
-              className="border border-divider p-6 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs"
+              className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
-              <div className="text-2xl mb-3">🧭</div>
-              <h3 className="font-serif text-xl text-ink group-hover:text-terracotta transition-colors leading-snug">
-                2. Plan an Easy Journey
-              </h3>
-              <p className="text-xs text-ink-secondary mt-2 leading-relaxed font-normal">
-                Choose where you start and where you want to go. Get clear step-by-step instructions, ticket prices in Rupees, and crowd estimates.
-              </p>
+              <div>
+                <div className="text-2xl mb-2">🧭</div>
+                <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
+                  2. Find a Journey
+                </h3>
+                <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
+                  Compare fastest, balanced, and comfortable routes across Metro and DTC with fares in ₹.
+                </p>
+              </div>
               <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
-                <span>Plan a Route</span>
+                <span>Plan Route</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/twin"
+              className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
+            >
+              <div>
+                <div className="text-2xl mb-2">👥</div>
+                <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
+                  3. Understand Bus Crowding
+                </h3>
+                <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
+                  Triple-encoded visual guide: 🟢 Green (More space), 🟡 Yellow (Some space), 🔴 Red (Very crowded).
+                </p>
+              </div>
+              <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
+                <span>Check Crowds</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
 
             <Link
               href="/simulate"
-              className="border border-divider p-6 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs"
+              className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
             >
-              <div className="text-2xl mb-3">🔬</div>
-              <h3 className="font-serif text-xl text-ink group-hover:text-terracotta transition-colors leading-snug">
-                3. Test &quot;What-If&quot; Ideas
-              </h3>
-              <p className="text-xs text-ink-secondary mt-2 leading-relaxed font-normal">
-                Curious what happens if we add 10 more electric buses or if a road gets flooded? Run instant computer tests to see the answers.
-              </p>
+              <div>
+                <div className="text-2xl mb-2">🧪</div>
+                <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
+                  4. Try a Transport Scenario
+                </h3>
+                <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
+                  Try "what if" tests like adding 10 electric buses. See how wait times and emissions respond safely.
+                </p>
+              </div>
               <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
-                <span>Try Simulation Lab</span>
+                <span>Try Simulation</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/control"
+              className="border border-divider p-5 bg-parchment/20 hover:border-terracotta hover:bg-parchment/40 transition-all group block shadow-xs flex flex-col justify-between"
+            >
+              <div>
+                <div className="text-2xl mb-2">📊</div>
+                <h3 className="font-serif text-lg text-ink group-hover:text-terracotta transition-colors leading-snug font-normal">
+                  5. Explore Advanced Analysis
+                </h3>
+                <p className="text-xs text-ink-secondary mt-1.5 leading-relaxed font-normal">
+                  Inspect ST-GNN models, 11 GIS layers, Little's Law queues, and cryptographic data provenance.
+                </p>
+              </div>
+              <div className="mt-4 font-mono text-xs text-terracotta flex items-center gap-1 font-medium">
+                <span>View Analytics</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </Link>
@@ -323,10 +368,16 @@ export default function HomePage() {
                 <table className="w-full text-left font-mono text-xs">
                   <thead>
                     <tr className="border-b border-divider bg-surface-white text-ink-muted text-[11px] uppercase tracking-wider">
-                      <th className="py-3 px-4">Corridor</th>
+                      <th className="py-3 px-4">
+                        <TwoLevelExplainer termKey="transitNetwork" label="Corridor" />
+                      </th>
                       <th className="py-3 px-4">Type</th>
-                      <th className="py-3 px-4">Daily Commuters</th>
-                      <th className="py-3 px-4">On-Time</th>
+                      <th className="py-3 px-4">
+                        <TwoLevelExplainer termKey="crowdingIndex" label="Daily Commuters" />
+                      </th>
+                      <th className="py-3 px-4">
+                        <TwoLevelExplainer termKey="headway" label="On-Time Reliability" />
+                      </th>
                       <th className="py-3 px-4">Status</th>
                     </tr>
                   </thead>

@@ -19,6 +19,8 @@ import { formatNumber } from '@/lib/utils/formatters';
 import { useDigitalTwin } from '@/hooks/useDigitalTwin';
 import { useExperienceLevel } from '@/lib/context/ExperienceLevelContext';
 import WhatAmILookingAtGuide from '@/components/3d/WhatAmILookingAtGuide';
+import { GIS_LAYERS_REGISTRY, getGisLayerMetadata, GisLayerMetadata } from '@/data/gisLayersRegistry';
+import { ProvenanceIndicator } from '@/components/ui/ProvenanceIndicator';
 import {
   Clock,
   Play,
@@ -37,21 +39,10 @@ import {
   MapPin,
   Route,
   Sparkles,
+  AlertCircle,
 } from 'lucide-react';
 
-const TWIN_LAYERS: { id: DigitalTwinLayer; label: string; tag: string }[] = [
-  { id: 'all', label: 'All Multimodal', tag: 'OVERVIEW' },
-  { id: 'metro', label: 'Metro Rail', tag: 'DMRC' },
-  { id: 'buses', label: 'Bus Network', tag: 'DTC/DIMTS' },
-  { id: 'interchanges', label: 'Hubs & Terminals', tag: 'TRANSFER' },
-  { id: 'demand', label: 'OD Gravity', tag: 'DEMAND' },
-  { id: 'flow', label: 'Desire Arcs', tag: 'FLOW' },
-  { id: 'utilization', label: 'Corridor Load', tag: 'CAPACITY' },
-  { id: 'accessibility', label: 'Walk Isochrones', tag: 'EQUITY' },
-  { id: 'disruption', label: 'Hazard Beacons', tag: 'INCIDENT' },
-  { id: 'flood_risk', label: 'Yamuna Flood', tag: 'CLIMATE' },
-  { id: 'demographics', label: 'Population', tag: 'CENSUS' },
-];
+const TWIN_LAYERS = GIS_LAYERS_REGISTRY;
 
 export default function DigitalTwinPage() {
   const { level } = useExperienceLevel();
@@ -387,24 +378,57 @@ export default function DigitalTwinPage() {
                   ))}
                 </div>
 
-                {/* Layer Legend */}
-                <div className="pt-2 border-t border-divider/60 flex items-center justify-between font-mono text-[11px] text-ink-muted">
-                  <span>LEGEND:</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-[#A69A89]" />
-                      <span>Normal</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-[#C89B53]" />
-                      <span>Moderate</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span className="w-2 h-2 rounded-full bg-[#B84C32]" />
-                      <span>Surge</span>
-                    </span>
-                  </div>
-                </div>
+                {/* Active Layer Explainability Dossier */}
+                {(() => {
+                  const currentLayerMeta = getGisLayerMetadata(activeLayer);
+                  return (
+                    <div className="pt-2 border-t border-divider/60 space-y-2 text-xs">
+                      <div className="bg-surface-white border border-divider p-2.5 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[10px] text-terracotta uppercase font-semibold">
+                            ACTIVE LAYER DOSSIER
+                          </span>
+                          <ProvenanceIndicator
+                            compact={true}
+                            provenance={{
+                              evidenceClassification: currentLayerMeta.sourceClassification,
+                              freshnessStatus: currentLayerMeta.freshnessState,
+                              sourceName: currentLayerMeta.tag,
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <span className="font-mono text-[10px] text-ink-muted uppercase block">
+                            {currentLayerMeta.label}
+                          </span>
+                          <h4 className="font-serif text-sm font-normal text-ink">
+                            {currentLayerMeta.plainTitle}
+                          </h4>
+                        </div>
+                        <p className="text-[11px] text-ink-muted leading-relaxed font-normal">
+                          {currentLayerMeta.description}
+                        </p>
+                        <div className="font-mono text-[10px] text-ink-secondary bg-parchment/40 p-1.5 border border-divider/60">
+                          <span className="font-semibold text-ink">Units: </span>
+                          <span>{currentLayerMeta.units}</span>
+                        </div>
+                        <div className="font-mono text-[10px] text-ink-secondary bg-parchment/40 p-1.5 border border-divider/60">
+                          <span className="font-semibold text-ink">Legend: </span>
+                          <span>{currentLayerMeta.legend}</span>
+                        </div>
+                        <div className="p-2 bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-900 space-y-0.5">
+                          <div className="font-mono font-semibold uppercase flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3 text-amber-700 shrink-0" />
+                            <span>What this layer does not prove:</span>
+                          </div>
+                          <p className="leading-tight">
+                            {currentLayerMeta.doesNotProve}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Search Input */}
