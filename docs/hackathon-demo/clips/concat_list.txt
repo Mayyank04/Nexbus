@@ -1,0 +1,8 @@
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_01.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_02.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_03.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_04.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_05.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_06.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_07.mp4'
+file '/Users/mayankgautam/Desktop/nexbus/docs/hackathon-demo/clips/clip_08.mp4'

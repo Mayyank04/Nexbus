@@ -6,9 +6,9 @@ An interactive, data-driven platform for exploring Delhi's urban transit network
 <p align="center">
   <a href="https://nexbus.vercel.app"><strong>Live Prototype</strong></a> · 
   <a href="https://github.com/Mayyank04/Nexbus"><strong>Source Code</strong></a> · 
+  <a href="docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4"><strong>Hackathon Video (1080p)</strong></a> · 
   <a href="docs/phase-21/NEXBUS_COMPETITION_PROPOSAL.md"><strong>Project Proposal</strong></a> · 
   <a href="docs/phase-21/NEXBUS_TECHNICAL_NOTE.md"><strong>Technical Note</strong></a> · 
-  <a href="docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4"><strong>Demo Video</strong></a> · 
   <a href="docs/phase-23/PHASE23_MASTER_REPORT.md"><strong>Phase 23 Report</strong></a> · 
   <a href="docs/phase-24/PHASE24_MASTER_AUDIT.md"><strong>Phase 24 Master Audit</strong></a>
 </p>
@@ -443,9 +443,9 @@ The following documents form the NEXBUS competition submission package:
 | **2. Working prototype** | [nexbus.vercel.app](https://nexbus.vercel.app) | **`COMPLETE_VERIFIED`** |
 | **3. Public source code and README** | [GitHub Repository](https://github.com/Mayyank04/Nexbus) | **`COMPLETE_VERIFIED`** |
 | **4. Technical note** | [`docs/phase-21/NEXBUS_TECHNICAL_NOTE.md`](docs/phase-21/NEXBUS_TECHNICAL_NOTE.md) | **`COMPLETE_VERIFIED`** |
-| **5. Demonstration video** | [`docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4`](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) | **`LOCALLY_VALIDATED`** |
+| **5. Demonstration video** | [`docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4`](docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4)<br/>*(Web Mirror: [`public/demo/NEXBUS_HACKATHON_DEMO.mp4`](public/demo/NEXBUS_HACKATHON_DEMO.mp4))* | **`COMPLETE_VERIFIED`** |
 
-*Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 160.59s narration in en_IN by Aman, 10.75 MB H.264/AAC MP4). Accessible directly at [docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4](docs/phase-22/demo/NEXBUS_COMPETITION_DEMO.mp4) with poster thumbnail at [docs/phase-22/demo/DEMO_THUMBNAIL.png](docs/phase-22/demo/DEMO_THUMBNAIL.png) and recording validation log at [docs/phase-22/demo/DEMO_VALIDATION_REPORT.md](docs/phase-22/demo/DEMO_VALIDATION_REPORT.md). Marked LOCALLY_VALIDATED pending competition portal upload or public cloud video stream hosting.*
+*Demonstration video: Produced and locally validated (1080p Full HD, 30fps, 194.56s / 3m 15s narration in en_IN by Aman, 20.30 MB H.264/AAC MP4). Features authentic project captures only, synchronized Swiss Cartography HUD overlays and subtitles, multi-criteria Pareto routing, Little's Law counterfactual simulation, 9-tier provenance, and safety invariant mandate. Accessible directly at [docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4](docs/hackathon-demo/NEXBUS_HACKATHON_DEMO.mp4) with poster thumbnail at [docs/hackathon-demo/DEMO_THUMBNAIL.png](docs/hackathon-demo/DEMO_THUMBNAIL.png) and validation log at [docs/hackathon-demo/DEMO_VALIDATION_REPORT.md](docs/hackathon-demo/DEMO_VALIDATION_REPORT.md).*
 
 ### Phase 23 Final External Submission & Judge Readiness
 - [Final Competition Release Report](docs/phase-23/FINAL_COMPETITION_RELEASE_REPORT.md)
